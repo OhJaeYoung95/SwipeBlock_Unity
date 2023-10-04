@@ -14,7 +14,10 @@ public class InputManager : MonoBehaviour
     private void Awake()
     {
         if (Instance == null)
+        {
             Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
         else
             Destroy(this);
     }
@@ -41,29 +44,11 @@ public class InputManager : MonoBehaviour
     {
         Vector2 swipeDir = mouseUpPos - mouseDownPos;
         float swipeDistance = swipeDir.magnitude;
-        Debug.Log($"SwipeDir : {swipeDir}");
 
         if (swipeDistance < minSwipeDistance)
         {
             float swipeAngle = Mathf.Atan2(swipeDir.y, swipeDir.x) * Mathf.Rad2Deg;
-            Debug.Log($"swipeAngle : {swipeAngle}");
-
-            if (Mathf.Abs(swipeAngle) < 45)
-            {
-                Debug.Log("RightSwipe");
-            }
-            else if(Mathf.Abs(swipeAngle) > 135)
-            {
-                Debug.Log("LeftSwipe");
-            }
-            else if(swipeAngle < - 45 && swipeAngle > -135)
-            {
-                Debug.Log("DownSwipe");
-            }
-            else
-            {
-                Debug.Log("UpSwipe");
-            }
+            BlockMananger.Instance.MoveBlocks(swipeAngle);
         }
     }
 }

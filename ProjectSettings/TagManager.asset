@@ -3,7 +3,8 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - GridPanel
   layers:
   - Default
   - TransparentFX
@@ -43,4 +44,10 @@ TagManager:
     locked: 0
   - name: UI
     uniqueID: 325182017
+    locked: 0
+  - name: Background
+    uniqueID: 1699992667
+    locked: 0
+  - name: Foreground
+    uniqueID: 278873975
     locked: 0
