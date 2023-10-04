@@ -5,7 +5,7 @@ using UnityEngine;
 public class ObjectPoolManager : MonoBehaviour
 {
     public static ObjectPoolManager Instance { get; private set; }
-    public Dictionary<string, ObjectPool<Component>> pools = new Dictionary<string, ObjectPool<Component>>();
+    public Dictionary<string, ObjectPool<Component>> objectPools = new Dictionary<string, ObjectPool<Component>>();
 
     private void Awake()
     {
@@ -26,11 +26,19 @@ public class ObjectPoolManager : MonoBehaviour
             () => Instantiate(prefab),
             initialCount
         );
-        pools.Add(poolName, objectPool);
+        objectPools.Add(poolName, objectPool);
     }
 
     public T GetObjectPool<T>(string poolName) where T : Component
     {
-        return (T)pools[poolName].GetObject();
+        if(objectPools.ContainsKey(poolName))
+        { 
+        }
+        return (T)objectPools[poolName].GetObject();
+    }
+
+    public void ReturnObjectPool<T>(string poolName,T obj) where T : Component
+    {
+        objectPools[poolName].ReturnObject(obj);
     }
 }

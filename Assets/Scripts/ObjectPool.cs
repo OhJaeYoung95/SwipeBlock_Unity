@@ -42,7 +42,7 @@ public class ObjectPool<T> : MonoBehaviour where T : Component
         return obj; 
     }
 
-    public void ReturnPool(T obj)
+    public void ReturnObject(T obj)
     {
         obj.gameObject.SetActive(false);
         pool.Add(obj);
