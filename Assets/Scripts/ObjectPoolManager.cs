@@ -11,18 +11,21 @@ public class ObjectPoolManager : MonoBehaviour
     public Block diamondPrefab;
     public Block heartPrefab;
     public Block cloverPrefab;
+    public Block obstaclePrefab;
 
 
     private string spadeBlockPoolKey = "SpadeBlockPool";
     private string diamondBlockPoolKey = "DiamondBlockPool";
     private string heartBlockPoolKey = "HeartBlockPool";
     private string cloverBlockPoolKey = "CloverBlockPool";
+    private string obstacleBlockPoolKey = "ObstacleBlockPool";
     private string particlePoolKey = "ParticlePool";
 
     private GameObject spadePoolFolder;
     private GameObject diamondPoolFolder;
     private GameObject heartPoolFolder;
     private GameObject cloverPoolFolder;
+    private GameObject obstaclePoolFolder;
 
     private void Awake()
     {
@@ -52,11 +55,15 @@ public class ObjectPoolManager : MonoBehaviour
         cloverPoolFolder.name = cloverBlockPoolKey;
         cloverPoolFolder.tag = cloverBlockPoolKey;
 
+        obstaclePoolFolder = new GameObject();
+        obstaclePoolFolder.name = obstacleBlockPoolKey;
+        obstaclePoolFolder.tag = obstacleBlockPoolKey;
 
         CreateObjectPool<Component>(spadeBlockPoolKey, spadePrefab, 30);
         CreateObjectPool<Component>(diamondBlockPoolKey, diamondPrefab, 30);
         CreateObjectPool<Component>(heartBlockPoolKey, heartPrefab, 30);
         CreateObjectPool<Component>(cloverBlockPoolKey, cloverPrefab, 30);
+        CreateObjectPool<Component>(obstacleBlockPoolKey, obstaclePrefab, 30);
     }
 
     public void CreateObjectPool<T>(string poolName, T prefab, int initialCount) where T : Component

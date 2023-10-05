@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2599607750398807189}
   - component: {fileID: 7240421264901767759}
   m_Layer: 0
-  m_Name: Clover
+  m_Name: Obstacle
   m_TagString: Block
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -75,7 +75,7 @@ SpriteRenderer:
   m_SortingLayerID: 278873975
   m_SortingLayer: 3
   m_SortingOrder: 5
-  m_Sprite: {fileID: 21300000, guid: 19bd38a802173b5458cecd86071bdeb9, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 80c52c120013deb47be427c2fa628176, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -98,7 +98,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b495130fca166c479d492ba0ed5c667, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 4
+  type: 5
   blockSize: 0.18
 --- !u!61 &7240421264901767759
 BoxCollider2D:

@@ -9,6 +9,8 @@ TagManager:
   - DiamondBlockPool
   - HeartBlockPool
   - CloverBlockPool
+  - ObstacleBlockPool
+  - Block
   layers:
   - Default
   - TransparentFX

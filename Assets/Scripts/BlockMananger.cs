@@ -9,6 +9,7 @@ public enum BlockState
     Diamond,
     Heart,
     Clover,
+    Obstcle,
     Count
 }
 
@@ -18,27 +19,32 @@ public class BlockMananger : MonoBehaviour
 
     private int[,] blockIndexs = new int[5, 5];
     private Vector2[,] indexPos = new Vector2[5, 5];
-    private GameObject[,] blocks = new GameObject[5, 5];
+    private Block[,] blocks = new Block[5, 5];
 
     [SerializeField]
     private int initCount = 5;
     [SerializeField]
     private float posOffset = 0.18f;
     [SerializeField]
-    private GameObject spadePrefab;
+    private Block spadePrefab;
     [SerializeField]
-    private GameObject diamondPrefab;
+    private Block diamondPrefab;
     [SerializeField]
-    private GameObject heartPrefab;
+    private Block heartPrefab;
     [SerializeField]
-    private GameObject cloverPrefab;
+    private Block cloverPrefab;
+    [SerializeField]
+    private Block obstaclePrefab;
     [SerializeField]
     private GameObject gridPrefab;
+
+    private List<string> poolKeys= new List<string>();
 
     private string spadeBlockPoolKey = "SpadeBlockPool";
     private string diamondBlockPoolKey = "DiamondBlockPool";
     private string heartBlockPoolKey = "HeartBlockPool";
     private string cloverBlockPoolKey = "CloverBlockPool";
+    private string obstacleBlockPoolKey = "ObstacleBlockPool";
 
     private void Awake()
     {
@@ -49,6 +55,12 @@ public class BlockMananger : MonoBehaviour
         }
         else
             Destroy(this);
+
+        poolKeys.Add(spadeBlockPoolKey);
+        poolKeys.Add(diamondBlockPoolKey);
+        poolKeys.Add(heartBlockPoolKey);
+        poolKeys.Add(cloverBlockPoolKey);
+        poolKeys.Add(obstacleBlockPoolKey);
     }
 
     // Start is called before the first frame update
@@ -76,7 +88,6 @@ public class BlockMananger : MonoBehaviour
             RandomCreate();
         }
     }
-
     private void RandomCreate()
     {
         int y = 0;
@@ -90,29 +101,34 @@ public class BlockMananger : MonoBehaviour
 
         int ranBlockState =  Random.Range((int)BlockState.None + 1, (int)BlockState.Count);
         blockIndexs[y, x] = ranBlockState;
-        GameObject newBlock = null;
-        switch ((BlockState)ranBlockState)
-        {
-            case BlockState.Spade:
-                 newBlock = ObjectPoolManager.Instance.GetObjectPool<Block>(spadeBlockPoolKey).gameObject;
-                break;
-            case BlockState.Diamond:
-                newBlock = ObjectPoolManager.Instance.GetObjectPool<Block>(diamondBlockPoolKey).gameObject;
-                break;
-            case BlockState.Heart:
-                newBlock = ObjectPoolManager.Instance.GetObjectPool<Block>(heartBlockPoolKey).gameObject;
-                break;
-            case BlockState.Clover:
-                newBlock = ObjectPoolManager.Instance.GetObjectPool<Block>(cloverBlockPoolKey).gameObject;
-                break;
-            default:
-                newBlock = ObjectPoolManager.Instance.GetObjectPool<Block>(cloverBlockPoolKey).gameObject;
-                break;
-        }
+        Block newBlock = ObjectPoolManager.Instance.GetObjectPool<Block>(poolKeys[ranBlockState - 1]);
+
+        // 줄일 수 있는 방법이 있어보임 추후 생각하기
+        //switch ((BlockState)ranBlockState)
+        //{
+        //    case BlockState.Spade:
+        //         newBlock = ObjectPoolManager.Instance.GetObjectPool<Block>(spadeBlockPoolKey);
+        //        break;
+        //    case BlockState.Diamond:
+        //        newBlock = ObjectPoolManager.Instance.GetObjectPool<Block>(diamondBlockPoolKey);
+        //        break;
+        //    case BlockState.Heart:
+        //        newBlock = ObjectPoolManager.Instance.GetObjectPool<Block>(heartBlockPoolKey);
+        //        break;
+        //    case BlockState.Clover:
+        //        newBlock = ObjectPoolManager.Instance.GetObjectPool<Block>(cloverBlockPoolKey);
+        //        break;
+        //    case BlockState.Obstcle:
+        //        newBlock = ObjectPoolManager.Instance.GetObjectPool<Block>(obstacleBlockPoolKey);
+        //        break;
+        //    //default:
+        //    //    newBlock = ObjectPoolManager.Instance.GetObjectPool<Block>(cloverBlockPoolKey);
+        //    //    break;
+        //}
         newBlock.transform.position = indexPos[y, x];
         blocks[y, x] = newBlock;
+        blocks[y, x].SetIndex(y, x);
     }
-
     public void MoveBlocks(float swipeAngle)
     {
         if (Mathf.Abs(swipeAngle) < 45)     // Right
@@ -125,16 +141,18 @@ public class BlockMananger : MonoBehaviour
                     if (blockIndexs[y, x] == 0)
                         continue;
 
+                    // 이동 위치 계산
                     Vector2Int moveIndex = IsRightBlockEmpty(y, x);
                     if (moveIndex.x != y || moveIndex.y != x)
                     {
-                        blocks[y, x].transform.position = indexPos[moveIndex.x, moveIndex.y];
-                        blocks[moveIndex.x, moveIndex.y] = blocks[y, x];
-                        blocks[y, x] = null;
+                        // 이동
+                        MoveBlock(y, x, moveIndex);
+                        // 이동 후 머지
                     }
                 }
             }
-
+            MergeBlocks();
+            ResetIsMerged();
         }
         else if (Mathf.Abs(swipeAngle) > 135)       // Left
         {
@@ -149,13 +167,12 @@ public class BlockMananger : MonoBehaviour
                     Vector2Int moveIndex = IsLeftBlockEmpty(y, x);
                     if (moveIndex.x != y || moveIndex.y != x)
                     {
-                        blocks[y, x].transform.position = indexPos[moveIndex.x, moveIndex.y];
-                        blocks[moveIndex.x, moveIndex.y] = blocks[y, x];
-                        blocks[y, x] = null;
+                        MoveBlock(y, x, moveIndex);
                     }
                 }
             }
-
+            MergeBlocks();
+            ResetIsMerged();
         }
         else if (swipeAngle < -45 && swipeAngle > -135)     // Down
         {
@@ -170,13 +187,12 @@ public class BlockMananger : MonoBehaviour
                     Vector2Int moveIndex = IsDownBlockEmpty(y, x);
                     if (moveIndex.x != y || moveIndex.y != x)
                     {
-                        blocks[y, x].transform.position = indexPos[moveIndex.x, moveIndex.y];
-                        blocks[moveIndex.x, moveIndex.y] = blocks[y, x];
-                        blocks[y, x] = null;
+                        MoveBlock(y, x, moveIndex);
                     }
                 }
             }
-
+            MergeBlocks();
+            ResetIsMerged();
         }
         else        // Up
         {
@@ -190,12 +206,85 @@ public class BlockMananger : MonoBehaviour
                     Vector2Int moveIndex = IsUpBlockEmpty(y, x);
                     if(moveIndex.x != y || moveIndex.y != x)
                     {
-                        blocks[y, x].transform.position = indexPos[moveIndex.x, moveIndex.y];
-                        blocks[moveIndex.x, moveIndex.y] = blocks[y, x];
-                        blocks[y, x] = null;
+                        MoveBlock(y, x, moveIndex);
                     }
                 }
             }
+            MergeBlocks();
+            ResetIsMerged();
+        }
+    }
+
+    public void MoveBlock(int y, int x, Vector2Int moveIndex)
+    {
+        blocks[y, x].transform.position = indexPos[moveIndex.x, moveIndex.y];
+        blocks[moveIndex.x, moveIndex.y] = blocks[y, x];
+        blocks[moveIndex.x, moveIndex.y].SetIndex(moveIndex.x, moveIndex.y);
+        blocks[y, x] = null;
+    }
+    public void MergeBlocks()
+    {
+        List<Block> connectedBlocks = new List<Block>();
+
+        for (int y = 0; y < blockIndexs.GetLength(0); y++)
+        {
+            for (int x = 0; x < blockIndexs.GetLength(1); x++)
+            {
+                if (!blocks[y, x])
+                    continue;
+                if (blocks[y, x].type == BlockState.None || blocks[y, x].IsMerged)
+                    continue;
+
+                blocks[y, x].IsMerged = true;
+                connectedBlocks.Add(blocks[y, x]);
+                FindConnectedBlocks(blocks[y, x], connectedBlocks);
+
+                if(connectedBlocks.Count >= 2)
+                {
+                    foreach(Block block in connectedBlocks)
+                    {
+                        blockIndexs[block.Y, block.X] = 0;
+                        ObjectPoolManager.Instance.ReturnObjectPool<Block>(poolKeys[(int)blocks[block.Y, block.X].type - 1], block);
+                        blocks[block.Y, block.X] = null;
+                    }
+                }
+                connectedBlocks.Clear();
+            }
+        }
+    }
+    public void FindConnectedBlocks(Block currentBlock, List<Block> connectedBlocks)
+    {
+        Vector2Int[] directions = { new Vector2Int(currentBlock.Y + 1, currentBlock.X), 
+            new Vector2Int(currentBlock.Y - 1, currentBlock.X), 
+            new Vector2Int(currentBlock.Y, currentBlock.X - 1), 
+            new Vector2Int(currentBlock.Y, currentBlock.X + 1) };
+
+        foreach (Vector2Int direction in directions)
+        {
+
+            if (direction.y == -1 || direction.x == -1 || direction.y == blocks.GetLength(0) || direction.x == blocks.GetLength(1))
+                continue;
+
+            if (!blocks[direction.y, direction.x])
+                continue;
+
+            if (blocks[direction.y, direction.x].type == currentBlock.type && !blocks[direction.y, direction.x].IsMerged)
+            {
+                blocks[direction.y, direction.x].IsMerged = true;
+                connectedBlocks.Add(blocks[direction.y, direction.x]);
+                FindConnectedBlocks(blocks[direction.y, direction.x], connectedBlocks);
+            }
+        }
+    }
+    public void ResetIsMerged()
+    {
+        foreach(Block block in blocks)
+        {
+            if (!block)
+                continue;
+            if(block.type == BlockState.None) 
+                continue;
+            block.IsMerged = false;
         }
     }
 
@@ -271,4 +360,6 @@ public class BlockMananger : MonoBehaviour
             return new Vector2Int(y, x);
         }
     }
+
+
 }

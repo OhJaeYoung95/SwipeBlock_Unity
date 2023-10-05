@@ -263,6 +263,7 @@ MonoBehaviour:
   diamondPrefab: {fileID: 1429616678887611583, guid: ddd4b2fe717a5884497ed1ea0b1d7cd3, type: 3}
   heartPrefab: {fileID: 5048900380122952790, guid: a719617062dd1754caa98d808d4b8cdc, type: 3}
   cloverPrefab: {fileID: 2599607750398807189, guid: 88c1be751492f6c408b985cb6dd48abf, type: 3}
+  obstaclePrefab: {fileID: 2599607750398807189, guid: d7422decdc9c75b4eb4b9c52bd559aec, type: 3}
 --- !u!1 &1057953215
 GameObject:
   m_ObjectHideFlags: 0
@@ -309,10 +310,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   initCount: 5
   posOffset: 0.18
-  spadePrefab: {fileID: 5505624023696903624, guid: 48e25b8583fc9164f9e87ed363fa2162, type: 3}
-  diamondPrefab: {fileID: 5505624023696903624, guid: ddd4b2fe717a5884497ed1ea0b1d7cd3, type: 3}
-  heartPrefab: {fileID: 5505624023696903624, guid: a719617062dd1754caa98d808d4b8cdc, type: 3}
-  cloverPrefab: {fileID: 5505624023696903624, guid: 88c1be751492f6c408b985cb6dd48abf, type: 3}
+  spadePrefab: {fileID: -848185658437290497, guid: 48e25b8583fc9164f9e87ed363fa2162, type: 3}
+  diamondPrefab: {fileID: 1429616678887611583, guid: ddd4b2fe717a5884497ed1ea0b1d7cd3, type: 3}
+  heartPrefab: {fileID: 5048900380122952790, guid: a719617062dd1754caa98d808d4b8cdc, type: 3}
+  cloverPrefab: {fileID: 2599607750398807189, guid: 88c1be751492f6c408b985cb6dd48abf, type: 3}
+  obstaclePrefab: {fileID: 2599607750398807189, guid: d7422decdc9c75b4eb4b9c52bd559aec, type: 3}
   gridPrefab: {fileID: 6307700011507732437, guid: 2eb7f2dd3103cc54fbf32bf7b682981d, type: 3}
 --- !u!1 &1518861128
 GameObject:
@@ -548,7 +550,7 @@ SceneRoots:
   m_Roots:
   - {fileID: 519420032}
   - {fileID: 2052014612}
+  - {fileID: 2084010051}
   - {fileID: 1609883393}
   - {fileID: 1057953216}
-  - {fileID: 2084010051}
   - {fileID: 619310853}
