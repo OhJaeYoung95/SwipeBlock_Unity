@@ -25,6 +25,8 @@ public class BlockManager : MonoBehaviour
     private int initCount = 5;
     [SerializeField]
     private float posOffset = 0.18f;
+    private bool isChainMerge = false;
+
     [SerializeField]
     private Block spadePrefab;
     [SerializeField]
@@ -38,7 +40,7 @@ public class BlockManager : MonoBehaviour
     [SerializeField]
     private GameObject gridPrefab;
 
-    private List<string> poolKeys= new List<string>();
+    private List<string> poolKeys = new List<string>();
 
     private string spadeBlockPoolKey = "SpadeBlockPool";
     private string diamondBlockPoolKey = "DiamondBlockPool";
@@ -69,7 +71,7 @@ public class BlockManager : MonoBehaviour
         GameObject panel = GameObject.FindGameObjectWithTag("GridPanel");
         for (int y = 0; y < blockIndexs.GetLength(0); ++y)
         {
-            for(int x = 0; x < blockIndexs.GetLength(1); ++x)
+            for (int x = 0; x < blockIndexs.GetLength(1); ++x)
             {
                 blockIndexs[y, x] = 0;
                 indexPos[y, x] = new Vector2(-(posOffset * 2) + posOffset * x, -(posOffset * 2) + posOffset * y) * 8;
@@ -99,7 +101,7 @@ public class BlockManager : MonoBehaviour
         } while (blockIndexs[y, x] != 0);
 
 
-        int ranBlockState =  Random.Range((int)BlockState.None + 1, (int)BlockState.Count);
+        int ranBlockState = Random.Range((int)BlockState.None + 1, (int)BlockState.Count);
         blockIndexs[y, x] = ranBlockState;
         Block newBlock = ObjectPoolManager.Instance.GetObjectPool<Block>(poolKeys[ranBlockState - 1]);
         //Block newBlock = ObjectPoolManager.Instance.GetObjectPool<Block>(poolKeys[1]);
@@ -132,80 +134,84 @@ public class BlockManager : MonoBehaviour
     }
     public void MoveBlocks(float swipeAngle)
     {
-        if (Mathf.Abs(swipeAngle) < 45)     // Right
+        do
         {
-            Debug.Log("RightSwipe");
-            for (int y = 0; y < blockIndexs.GetLength(0); ++y)
+            isChainMerge = false;
+            if (Mathf.Abs(swipeAngle) < 45)     // Right
             {
-                for (int x = blockIndexs.GetLength(1) - 1; x >= 0; --x)
+                Debug.Log("RightSwipe");
+                for (int y = 0; y < blockIndexs.GetLength(0); ++y)
                 {
-                    if (blockIndexs[y, x] == 0)
-                        continue;
+                    for (int x = blockIndexs.GetLength(1) - 1; x >= 0; --x)
+                    {
+                        if (blockIndexs[y, x] == 0)
+                            continue;
 
-                    // 이동 위치 계산
-                    Vector2Int moveIndex = IsRightBlockEmpty(y, x);
-                    if (moveIndex.x != y || moveIndex.y != x)
-                    {
-                        MoveBlock(y, x, moveIndex);
+                        // 이동 위치 계산
+                        Vector2Int moveIndex = IsRightBlockEmpty(y, x);
+                        if (moveIndex.x != y || moveIndex.y != x)
+                        {
+                            MoveBlock(y, x, moveIndex);
+                        }
                     }
                 }
             }
-        }
-        else if (Mathf.Abs(swipeAngle) > 135)       // Left
-        {
-            Debug.Log("LeftSwipe");
-            for (int y = 0; y < blockIndexs.GetLength(0); ++y)
+            else if (Mathf.Abs(swipeAngle) > 135)       // Left
             {
-                for (int x = 0; x < blockIndexs.GetLength(1); ++x)
+                Debug.Log("LeftSwipe");
+                for (int y = 0; y < blockIndexs.GetLength(0); ++y)
                 {
-                    if (blockIndexs[y, x] == 0)
-                        continue;
+                    for (int x = 0; x < blockIndexs.GetLength(1); ++x)
+                    {
+                        if (blockIndexs[y, x] == 0)
+                            continue;
 
-                    Vector2Int moveIndex = IsLeftBlockEmpty(y, x);
-                    if (moveIndex.x != y || moveIndex.y != x)
-                    {
-                        MoveBlock(y, x, moveIndex);
+                        Vector2Int moveIndex = IsLeftBlockEmpty(y, x);
+                        if (moveIndex.x != y || moveIndex.y != x)
+                        {
+                            MoveBlock(y, x, moveIndex);
+                        }
                     }
                 }
             }
-        }
-        else if (swipeAngle < -45 && swipeAngle > -135)     // Down
-        {
-            Debug.Log("DownSwipe");
-            for (int y = 0; y < blockIndexs.GetLength(0); ++y)
+            else if (swipeAngle < -45 && swipeAngle > -135)     // Down
             {
-                for (int x = 0; x < blockIndexs.GetLength(1); ++x)
+                Debug.Log("DownSwipe");
+                for (int y = 0; y < blockIndexs.GetLength(0); ++y)
                 {
-                    if (blockIndexs[y, x] == 0)
-                        continue;
+                    for (int x = 0; x < blockIndexs.GetLength(1); ++x)
+                    {
+                        if (blockIndexs[y, x] == 0)
+                            continue;
 
-                    Vector2Int moveIndex = IsDownBlockEmpty(y, x);
-                    if (moveIndex.x != y || moveIndex.y != x)
-                    {
-                        MoveBlock(y, x, moveIndex);
+                        Vector2Int moveIndex = IsDownBlockEmpty(y, x);
+                        if (moveIndex.x != y || moveIndex.y != x)
+                        {
+                            MoveBlock(y, x, moveIndex);
+                        }
                     }
                 }
             }
-        }
-        else        // Up
-        {
-            Debug.Log("UpSwipe");
-            for (int y = blockIndexs.GetLength(0) - 1; y >= 0; --y)
+            else        // Up
             {
-                for (int x = 0; x < blockIndexs.GetLength(1); ++x)
+                Debug.Log("UpSwipe");
+                for (int y = blockIndexs.GetLength(0) - 1; y >= 0; --y)
                 {
-                    if (blockIndexs[y, x] == 0)
-                        continue;
-                    Vector2Int moveIndex = IsUpBlockEmpty(y, x);
-                    if(moveIndex.x != y || moveIndex.y != x)
+                    for (int x = 0; x < blockIndexs.GetLength(1); ++x)
                     {
-                        MoveBlock(y, x, moveIndex);
+                        if (blockIndexs[y, x] == 0)
+                            continue;
+                        Vector2Int moveIndex = IsUpBlockEmpty(y, x);
+                        if (moveIndex.x != y || moveIndex.y != x)
+                        {
+                            MoveBlock(y, x, moveIndex);
+                        }
                     }
                 }
             }
-        }
-        MergeBlocks();
-        ResetIsMerged();
+            MergeBlocks();
+            ResetIsMerged();
+        } while (isChainMerge);
     }
 
     public void MoveBlock(int y, int x, Vector2Int moveIndex)
@@ -227,14 +233,15 @@ public class BlockManager : MonoBehaviour
                     continue;
                 if (blocks[y, x].type == BlockState.None || blocks[y, x].type == BlockState.Obstcle || blocks[y, x].IsMerged)
                     continue;
-                    
+
                 blocks[y, x].IsMerged = true;
                 connectedBlocks.Add(blocks[y, x]);
                 FindConnectedBlocks(blocks[y, x], connectedBlocks);
 
-                if(connectedBlocks.Count >= 2)
+                if (connectedBlocks.Count >= 2)
                 {
-                    foreach(Block block in connectedBlocks)
+                    isChainMerge = true;
+                    foreach (Block block in connectedBlocks)
                     {
                         blockIndexs[block.Y, block.X] = 0;
                         ObjectPoolManager.Instance.ReturnObjectPool<Block>(poolKeys[(int)blocks[block.Y, block.X].type - 1], block);
@@ -247,9 +254,9 @@ public class BlockManager : MonoBehaviour
     }
     public void FindConnectedBlocks(Block currentBlock, List<Block> connectedBlocks)
     {
-        Vector2Int[] directions = { new Vector2Int(currentBlock.Y + 1, currentBlock.X), 
-            new Vector2Int(currentBlock.Y - 1, currentBlock.X), 
-            new Vector2Int(currentBlock.Y, currentBlock.X - 1), 
+        Vector2Int[] directions = { new Vector2Int(currentBlock.Y + 1, currentBlock.X),
+            new Vector2Int(currentBlock.Y - 1, currentBlock.X),
+            new Vector2Int(currentBlock.Y, currentBlock.X - 1),
             new Vector2Int(currentBlock.Y, currentBlock.X + 1) };
 
         foreach (Vector2Int direction in directions)
@@ -271,17 +278,17 @@ public class BlockManager : MonoBehaviour
     }
     public void ResetIsMerged()
     {
-        foreach(Block block in blocks)
+        foreach (Block block in blocks)
         {
             if (!block)
                 continue;
-            if(block.type == BlockState.None) 
+            if (block.type == BlockState.None)
                 continue;
             block.IsMerged = false;
         }
     }
 
-    private Vector2Int IsUpBlockEmpty(int y,  int x)
+    private Vector2Int IsUpBlockEmpty(int y, int x)
     {
         if (y + 1 == blockIndexs.GetLength(0))
         {
@@ -299,7 +306,7 @@ public class BlockManager : MonoBehaviour
             return new Vector2Int(y, x);
         }
     }
-    private Vector2Int IsDownBlockEmpty(int y,  int x)
+    private Vector2Int IsDownBlockEmpty(int y, int x)
     {
         if (y - 1 == -1)
         {
@@ -317,7 +324,7 @@ public class BlockManager : MonoBehaviour
             return new Vector2Int(y, x);
         }
     }
-    private Vector2Int IsRightBlockEmpty(int y,  int x)
+    private Vector2Int IsRightBlockEmpty(int y, int x)
     {
         if (x + 1 == blockIndexs.GetLength(1))
         {
@@ -335,7 +342,7 @@ public class BlockManager : MonoBehaviour
             return new Vector2Int(y, x);
         }
     }
-    private Vector2Int IsLeftBlockEmpty(int y,  int x)
+    private Vector2Int IsLeftBlockEmpty(int y, int x)
     {
         if (x - 1 == -1)
         {
