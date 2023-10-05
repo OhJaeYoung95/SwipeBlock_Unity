@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ObjectPool<T> : MonoBehaviour where T : Component
+public class ObjectPool<T> where T : Component
 {
     private List<T> pool = new List<T>();
     private Func<T> create;

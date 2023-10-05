@@ -48,7 +48,7 @@ public class InputManager : MonoBehaviour
         if (swipeDistance < minSwipeDistance)
         {
             float swipeAngle = Mathf.Atan2(swipeDir.y, swipeDir.x) * Mathf.Rad2Deg;
-            BlockMananger.Instance.MoveBlocks(swipeAngle);
+            BlockManager.Instance.MoveBlocks(swipeAngle);
         }
     }
 }

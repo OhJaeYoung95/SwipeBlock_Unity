@@ -308,7 +308,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da3da0320df24c74baa823f8d4a5f7f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  initCount: 5
+  initCount: 10
   posOffset: 0.18
   spadePrefab: {fileID: -848185658437290497, guid: 48e25b8583fc9164f9e87ed363fa2162, type: 3}
   diamondPrefab: {fileID: 1429616678887611583, guid: ddd4b2fe717a5884497ed1ea0b1d7cd3, type: 3}
