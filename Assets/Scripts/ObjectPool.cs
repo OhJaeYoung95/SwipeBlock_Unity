@@ -8,13 +8,14 @@ public class ObjectPool<T> : MonoBehaviour where T : Component
     private List<T> pool = new List<T>();
     private Func<T> create;
 
-    public ObjectPool(Func<T> create, int initialCount)
+    public ObjectPool(Func<T> create, GameObject folder, int initialCount)
     {
         this.create = create;
 
         for (int i = 0; i < initialCount; i++)
         {
-            T obj = create();
+            T obj = this.create();
+            obj.transform.parent = folder.transform;
             obj.gameObject.SetActive(false);
             pool.Add(obj);
         }

@@ -35,6 +35,11 @@ public class BlockMananger : MonoBehaviour
     [SerializeField]
     private GameObject gridPrefab;
 
+    private string spadeBlockPoolKey = "SpadeBlockPool";
+    private string diamondBlockPoolKey = "DiamondBlockPool";
+    private string heartBlockPoolKey = "HeartBlockPool";
+    private string cloverBlockPoolKey = "CloverBlockPool";
+
     private void Awake()
     {
         if (Instance == null)
@@ -86,24 +91,25 @@ public class BlockMananger : MonoBehaviour
         int ranBlockState =  Random.Range((int)BlockState.None + 1, (int)BlockState.Count);
         blockIndexs[y, x] = ranBlockState;
         GameObject newBlock = null;
-        switch (ranBlockState)
+        switch ((BlockState)ranBlockState)
         {
-            case 1:
-                newBlock = Instantiate(spadePrefab, indexPos[y, x], Quaternion.identity);
+            case BlockState.Spade:
+                 newBlock = ObjectPoolManager.Instance.GetObjectPool<Block>(spadeBlockPoolKey).gameObject;
                 break;
-            case 2:
-                newBlock = Instantiate(diamondPrefab, indexPos[y, x], Quaternion.identity);
+            case BlockState.Diamond:
+                newBlock = ObjectPoolManager.Instance.GetObjectPool<Block>(diamondBlockPoolKey).gameObject;
                 break;
-            case 3:
-                newBlock = Instantiate(heartPrefab, indexPos[y, x], Quaternion.identity);
+            case BlockState.Heart:
+                newBlock = ObjectPoolManager.Instance.GetObjectPool<Block>(heartBlockPoolKey).gameObject;
                 break;
-            case 4:
-                newBlock = Instantiate(cloverPrefab, indexPos[y, x], Quaternion.identity);
+            case BlockState.Clover:
+                newBlock = ObjectPoolManager.Instance.GetObjectPool<Block>(cloverBlockPoolKey).gameObject;
                 break;
             default:
-                newBlock = Instantiate(cloverPrefab, indexPos[y, x], Quaternion.identity);
+                newBlock = ObjectPoolManager.Instance.GetObjectPool<Block>(cloverBlockPoolKey).gameObject;
                 break;
         }
+        newBlock.transform.position = indexPos[y, x];
         blocks[y, x] = newBlock;
     }
 

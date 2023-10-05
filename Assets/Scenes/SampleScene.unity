@@ -259,6 +259,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 320b040b0fc9e304db65b53d1056601f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spadePrefab: {fileID: -848185658437290497, guid: 48e25b8583fc9164f9e87ed363fa2162, type: 3}
+  diamondPrefab: {fileID: 1429616678887611583, guid: ddd4b2fe717a5884497ed1ea0b1d7cd3, type: 3}
+  heartPrefab: {fileID: 5048900380122952790, guid: a719617062dd1754caa98d808d4b8cdc, type: 3}
+  cloverPrefab: {fileID: 2599607750398807189, guid: 88c1be751492f6c408b985cb6dd48abf, type: 3}
 --- !u!1 &1057953215
 GameObject:
   m_ObjectHideFlags: 0

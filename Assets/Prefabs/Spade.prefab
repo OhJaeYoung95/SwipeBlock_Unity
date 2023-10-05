@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1707029484292751972}
   - component: {fileID: 7190251231320868634}
+  - component: {fileID: -848185658437290497}
   m_Layer: 0
   m_Name: Spade
   m_TagString: Untagged
@@ -84,3 +85,16 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &-848185658437290497
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5505624023696903624}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b495130fca166c479d492ba0ed5c667, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  state: 1
