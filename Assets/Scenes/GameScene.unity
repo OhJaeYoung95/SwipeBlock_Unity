@@ -409,7 +409,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da3da0320df24c74baa823f8d4a5f7f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  initCount: 10
+  initCount: 15
   posOffset: 0.18
   moveDuration: 0.3
   spadePrefab: {fileID: -848185658437290497, guid: 48e25b8583fc9164f9e87ed363fa2162, type: 3}

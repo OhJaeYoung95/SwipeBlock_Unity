@@ -73,7 +73,6 @@ public class BlockManager : MonoBehaviour
         poolKeys.Add(cloverBlockPoolKey);
         poolKeys.Add(obstacleBlockPoolKey);
 
-        //GameObject panel = GameObject.FindGameObjectWithTag("GridPanel");
         float size = gridPanel.transform.localScale.x;
         for (int y = 0; y < blockIndexs.GetLength(0); ++y)
         {

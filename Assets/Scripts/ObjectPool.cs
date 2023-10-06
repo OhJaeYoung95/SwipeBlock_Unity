@@ -7,6 +7,7 @@ public class ObjectPool<T> where T : Component
     private List<T> pool = new List<T>();
     private Func<T> create;
 
+
     public ObjectPool(Func<T> create, GameObject folder, int initialCount)
     {
         this.create = create;
@@ -46,5 +47,13 @@ public class ObjectPool<T> where T : Component
     {
         obj.gameObject.SetActive(false);
         pool.Add(obj);
+    }
+
+    public void ReturnAllObject()
+    {
+        foreach(T obj in pool)
+        {
+            ReturnObject(obj);
+        }
     }
 }

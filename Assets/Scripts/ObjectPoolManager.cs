@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class ObjectPoolManager : MonoBehaviour
 {
@@ -31,13 +32,18 @@ public class ObjectPoolManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+            Init();
             DontDestroyOnLoad(gameObject);
         }
         else
         {
+            Instance.ReturnAllObjectPool();
             Destroy(this);
         }
+    }
 
+    private void Init()
+    {
         spadePoolFolder = new GameObject();
         spadePoolFolder.name = spadeBlockPoolKey;
         spadePoolFolder.tag = spadeBlockPoolKey;
@@ -58,18 +64,25 @@ public class ObjectPoolManager : MonoBehaviour
         obstaclePoolFolder.name = obstacleBlockPoolKey;
         obstaclePoolFolder.tag = obstacleBlockPoolKey;
 
+        DontDestroyOnLoad(spadePoolFolder);
+        DontDestroyOnLoad(diamondPoolFolder);
+        DontDestroyOnLoad(heartPoolFolder);
+        DontDestroyOnLoad(cloverPoolFolder);
+        DontDestroyOnLoad(obstaclePoolFolder);
+
         CreateObjectPool<Component>(spadeBlockPoolKey, spadePrefab, 30);
         CreateObjectPool<Component>(diamondBlockPoolKey, diamondPrefab, 30);
         CreateObjectPool<Component>(heartBlockPoolKey, heartPrefab, 30);
         CreateObjectPool<Component>(cloverBlockPoolKey, cloverPrefab, 30);
         CreateObjectPool<Component>(obstacleBlockPoolKey, obstaclePrefab, 30);
+
     }
 
     public void CreateObjectPool<T>(string poolName, T prefab, int initialCount) where T : Component
     {
         GameObject folder = GameObject.FindGameObjectWithTag(poolName);
         ObjectPool<Component> objectPool = new ObjectPool<Component>(
-            () => Instantiate(prefab), 
+            () => Instantiate(prefab),
             folder,
             initialCount
         );
@@ -78,7 +91,7 @@ public class ObjectPoolManager : MonoBehaviour
 
     public T GetObjectPool<T>(string poolName) where T : Component
     {
-        if(!objectPools.ContainsKey(poolName))
+        if (!objectPools.ContainsKey(poolName))
         {
             Debug.Log($"Not Contains \"{poolName}\"");
             return null;
@@ -86,7 +99,7 @@ public class ObjectPoolManager : MonoBehaviour
         return (T)objectPools[poolName].GetObject();
     }
 
-    public void ReturnObjectPool<T>(string poolName,T obj) where T : Component
+    public void ReturnObjectPool<T>(string poolName, T obj) where T : Component
     {
         if (!objectPools.ContainsKey(poolName))
         {
@@ -94,5 +107,14 @@ public class ObjectPoolManager : MonoBehaviour
             return;
         }
         objectPools[poolName].ReturnObject(obj);
+    }
+
+    public void ReturnAllObjectPool()
+    {
+        objectPools[spadeBlockPoolKey].ReturnAllObject();
+        objectPools[diamondBlockPoolKey].ReturnAllObject();
+        objectPools[heartBlockPoolKey].ReturnAllObject();
+        objectPools[cloverBlockPoolKey].ReturnAllObject();
+        objectPools[obstacleBlockPoolKey].ReturnAllObject();
     }
 }

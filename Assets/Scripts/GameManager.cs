@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour
     public void GameOver()
     {
         IsGameOver = true;
+        IsMove = false;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }

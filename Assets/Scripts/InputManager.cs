@@ -23,7 +23,6 @@ public class InputManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         if (Input.GetMouseButtonDown(0) && !GameManager.Instance.IsMove)
         {
             mouseDownPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
