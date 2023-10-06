@@ -1,11 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 
 public class InputManager : MonoBehaviour
 {
-    public InputManager Instance { get; private set; }
+    public static InputManager Instance { get; private set; }
 
     private Vector2 mouseDownPos;
     private Vector2 mouseUpPos;
@@ -26,15 +24,15 @@ public class InputManager : MonoBehaviour
     void Update()
     {
 
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && !GameManager.Instance.IsMove)
         {
             mouseDownPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             mouseUpPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        
         }
         
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButtonUp(0) && !GameManager.Instance.IsMove)
         {
+            GameManager.Instance.IsMove = true;
             mouseUpPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             DetectSwipe();
         }
@@ -48,7 +46,7 @@ public class InputManager : MonoBehaviour
         if (swipeDistance < minSwipeDistance)
         {
             float swipeAngle = Mathf.Atan2(swipeDir.y, swipeDir.x) * Mathf.Rad2Deg;
-            BlockManager.Instance.MoveBlocks(swipeAngle);
+            StartCoroutine(BlockManager.Instance.MoveBlocks(swipeAngle));
         }
     }
 }

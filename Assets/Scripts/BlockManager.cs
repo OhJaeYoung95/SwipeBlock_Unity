@@ -25,6 +25,10 @@ public class BlockManager : MonoBehaviour
     private int initCount = 5;
     [SerializeField]
     private float posOffset = 0.18f;
+    [SerializeField]
+    private float moveDuration = 0.3f;
+    private float moveStartTime = 0f;
+
     private bool isChainMerge = false;
 
     [SerializeField]
@@ -40,6 +44,9 @@ public class BlockManager : MonoBehaviour
     [SerializeField]
     private GameObject gridPrefab;
 
+    [SerializeField]
+    private GameObject gridPanel;
+
     private List<string> poolKeys = new List<string>();
 
     private string spadeBlockPoolKey = "SpadeBlockPool";
@@ -47,6 +54,8 @@ public class BlockManager : MonoBehaviour
     private string heartBlockPoolKey = "HeartBlockPool";
     private string cloverBlockPoolKey = "CloverBlockPool";
     private string obstacleBlockPoolKey = "ObstacleBlockPool";
+
+    private WaitForSeconds delayMergeTime = new WaitForSeconds(0.5f);
 
     private void Awake()
     {
@@ -63,24 +72,41 @@ public class BlockManager : MonoBehaviour
         poolKeys.Add(heartBlockPoolKey);
         poolKeys.Add(cloverBlockPoolKey);
         poolKeys.Add(obstacleBlockPoolKey);
-    }
 
-    // Start is called before the first frame update
-    private void Start()
-    {
-        GameObject panel = GameObject.FindGameObjectWithTag("GridPanel");
+        //GameObject panel = GameObject.FindGameObjectWithTag("GridPanel");
+        float size = gridPanel.transform.localScale.x;
         for (int y = 0; y < blockIndexs.GetLength(0); ++y)
         {
             for (int x = 0; x < blockIndexs.GetLength(1); ++x)
             {
                 blockIndexs[y, x] = 0;
-                indexPos[y, x] = new Vector2(-(posOffset * 2) + posOffset * x, -(posOffset * 2) + posOffset * y) * 8;
-                GameObject grid = Instantiate(gridPrefab, panel.transform);
+                indexPos[y, x] = new Vector2(-(posOffset * 2) + posOffset * x, -(posOffset * 2) + posOffset * y) * size;
+                GameObject grid = Instantiate(gridPrefab, gridPanel.transform);
                 grid.transform.position = indexPos[y, x];
                 grid.name = $"{y} x {x}";
             }
         }
         InitRandomCreate();
+
+    }
+
+    // Start is called before the first frame update
+    private void Start()
+    {
+        ////GameObject panel = GameObject.FindGameObjectWithTag("GridPanel");
+        //float size = gridPanel.transform.localScale.x;
+        //for (int y = 0; y < blockIndexs.GetLength(0); ++y)
+        //{
+        //    for (int x = 0; x < blockIndexs.GetLength(1); ++x)
+        //    {
+        //        blockIndexs[y, x] = 0;
+        //        indexPos[y, x] = new Vector2(-(posOffset * 2) + posOffset * x, -(posOffset * 2) + posOffset * y) * size;
+        //        GameObject grid = Instantiate(gridPrefab, gridPanel.transform);
+        //        grid.transform.position = indexPos[y, x];
+        //        grid.name = $"{y} x {x}";
+        //    }
+        //}
+        //InitRandomCreate();
     }
 
     private void InitRandomCreate()
@@ -100,39 +126,14 @@ public class BlockManager : MonoBehaviour
             x = Random.Range(0, blockIndexs.GetLength(1));
         } while (blockIndexs[y, x] != 0);
 
-
         int ranBlockState = Random.Range((int)BlockState.None + 1, (int)BlockState.Count);
         blockIndexs[y, x] = ranBlockState;
         Block newBlock = ObjectPoolManager.Instance.GetObjectPool<Block>(poolKeys[ranBlockState - 1]);
-        //Block newBlock = ObjectPoolManager.Instance.GetObjectPool<Block>(poolKeys[1]);
-
-        // 줄일 수 있는 방법이 있어보임 추후 생각하기
-        //switch ((BlockState)ranBlockState)
-        //{
-        //    case BlockState.Spade:
-        //         newBlock = ObjectPoolManager.Instance.GetObjectPool<Block>(spadeBlockPoolKey);
-        //        break;
-        //    case BlockState.Diamond:
-        //        newBlock = ObjectPoolManager.Instance.GetObjectPool<Block>(diamondBlockPoolKey);
-        //        break;
-        //    case BlockState.Heart:
-        //        newBlock = ObjectPoolManager.Instance.GetObjectPool<Block>(heartBlockPoolKey);
-        //        break;
-        //    case BlockState.Clover:
-        //        newBlock = ObjectPoolManager.Instance.GetObjectPool<Block>(cloverBlockPoolKey);
-        //        break;
-        //    case BlockState.Obstcle:
-        //        newBlock = ObjectPoolManager.Instance.GetObjectPool<Block>(obstacleBlockPoolKey);
-        //        break;
-        //    //default:
-        //    //    newBlock = ObjectPoolManager.Instance.GetObjectPool<Block>(cloverBlockPoolKey);
-        //    //    break;
-        //}
         newBlock.transform.position = indexPos[y, x];
         blocks[y, x] = newBlock;
         blocks[y, x].SetIndex(y, x);
     }
-    public void MoveBlocks(float swipeAngle)
+    public IEnumerator MoveBlocks(float swipeAngle)
     {
         do
         {
@@ -151,7 +152,7 @@ public class BlockManager : MonoBehaviour
                         Vector2Int moveIndex = IsRightBlockEmpty(y, x);
                         if (moveIndex.x != y || moveIndex.y != x)
                         {
-                            MoveBlock(y, x, moveIndex);
+                            StartCoroutine(MoveBlockCoroutine(y, x, moveIndex));
                         }
                     }
                 }
@@ -169,7 +170,7 @@ public class BlockManager : MonoBehaviour
                         Vector2Int moveIndex = IsLeftBlockEmpty(y, x);
                         if (moveIndex.x != y || moveIndex.y != x)
                         {
-                            MoveBlock(y, x, moveIndex);
+                            StartCoroutine(MoveBlockCoroutine(y, x, moveIndex));
                         }
                     }
                 }
@@ -187,7 +188,7 @@ public class BlockManager : MonoBehaviour
                         Vector2Int moveIndex = IsDownBlockEmpty(y, x);
                         if (moveIndex.x != y || moveIndex.y != x)
                         {
-                            MoveBlock(y, x, moveIndex);
+                            StartCoroutine(MoveBlockCoroutine(y, x, moveIndex));
                         }
                     }
                 }
@@ -204,14 +205,22 @@ public class BlockManager : MonoBehaviour
                         Vector2Int moveIndex = IsUpBlockEmpty(y, x);
                         if (moveIndex.x != y || moveIndex.y != x)
                         {
-                            MoveBlock(y, x, moveIndex);
+                            StartCoroutine(MoveBlockCoroutine(y, x, moveIndex));
                         }
                     }
                 }
             }
-            MergeBlocks();
+            yield return StartCoroutine(MergeBlocksCoroutine());
             ResetIsMerged();
         } while (isChainMerge);
+
+        RandomCreate();
+        GameManager.Instance.IsMove = false;
+
+        if(CheckFullBoard())
+        {
+            GameManager.Instance.GameOver();
+        }
     }
 
     public void MoveBlock(int y, int x, Vector2Int moveIndex)
@@ -220,6 +229,26 @@ public class BlockManager : MonoBehaviour
         blocks[moveIndex.x, moveIndex.y] = blocks[y, x];
         blocks[moveIndex.x, moveIndex.y].SetIndex(moveIndex.x, moveIndex.y);
         blocks[y, x] = null;
+    }
+
+    IEnumerator MoveBlockCoroutine(int y, int x, Vector2Int moveIndex)
+    {
+        float elapsedTime = 0f;
+        moveStartTime = Time.time;
+        Vector2 startPos = blocks[y, x].transform.position;
+        Vector2 destPos = indexPos[moveIndex.x, moveIndex.y];
+        blocks[moveIndex.x, moveIndex.y] = blocks[y, x];
+        blocks[moveIndex.x, moveIndex.y].SetIndex(moveIndex.x, moveIndex.y);
+        blocks[y, x] = null;
+
+        while (elapsedTime < moveDuration)
+        {
+            float t = Mathf.Clamp01(elapsedTime / moveDuration);
+            blocks[moveIndex.x, moveIndex.y].transform.position = Vector2.Lerp(startPos, destPos, t);
+            elapsedTime = Time.time - moveStartTime;
+            yield return null;
+        }
+        blocks[moveIndex.x, moveIndex.y].transform.position = destPos;
     }
     public void MergeBlocks()
     {
@@ -251,6 +280,11 @@ public class BlockManager : MonoBehaviour
                 connectedBlocks.Clear();
             }
         }
+    }
+    IEnumerator MergeBlocksCoroutine()
+    {
+        yield return delayMergeTime;
+        MergeBlocks();
     }
     public void FindConnectedBlocks(Block currentBlock, List<Block> connectedBlocks)
     {
@@ -286,6 +320,18 @@ public class BlockManager : MonoBehaviour
                 continue;
             block.IsMerged = false;
         }
+    }
+    public bool CheckFullBoard()
+    {
+        for (int y = 0; y < blockIndexs.GetLength(0); ++y)
+        {
+            for(int x = 0; x < blockIndexs.GetLength(1); ++x)
+            {
+                if (blockIndexs[y, x] == 0)
+                    return false;
+            }
+        }
+        return true;
     }
 
     private Vector2Int IsUpBlockEmpty(int y, int x)
