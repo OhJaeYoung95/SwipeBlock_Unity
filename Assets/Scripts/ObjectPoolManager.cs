@@ -37,8 +37,8 @@ public class ObjectPoolManager : MonoBehaviour
         }
         else
         {
-            Instance.ReturnAllObjectPool();
-            Destroy(this);
+            Destroy(gameObject);
+            return;
         }
     }
 
@@ -75,7 +75,6 @@ public class ObjectPoolManager : MonoBehaviour
         CreateObjectPool<Component>(heartBlockPoolKey, heartPrefab, 30);
         CreateObjectPool<Component>(cloverBlockPoolKey, cloverPrefab, 30);
         CreateObjectPool<Component>(obstacleBlockPoolKey, obstaclePrefab, 30);
-
     }
 
     public void CreateObjectPool<T>(string poolName, T prefab, int initialCount) where T : Component

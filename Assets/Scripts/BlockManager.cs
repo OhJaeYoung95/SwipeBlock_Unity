@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Unity.Collections.AllocatorManager;
 
 public enum BlockState
 {
@@ -62,16 +63,34 @@ public class BlockManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+            ReloadBoard();
             DontDestroyOnLoad(gameObject);
         }
         else
-            Destroy(this);
+        {
+            Instance.ReloadBoard();
+            Destroy(gameObject);
+            return;
+        }
+    }
 
+    public void ReloadBoard()
+    {
+        for (int y = 0; y < blockIndexs.GetLength(0); y++)
+        {
+            for (int x = 0; x < blockIndexs.GetLength(1); x++)
+            {
+                blockIndexs[y, x] = 0;
+                blocks[y, x] = null;
+            }
+        }
         poolKeys.Add(spadeBlockPoolKey);
         poolKeys.Add(diamondBlockPoolKey);
         poolKeys.Add(heartBlockPoolKey);
         poolKeys.Add(cloverBlockPoolKey);
         poolKeys.Add(obstacleBlockPoolKey);
+
+        gridPanel = GameObject.FindGameObjectWithTag("GridPanel");
 
         float size = gridPanel.transform.localScale.x;
         for (int y = 0; y < blockIndexs.GetLength(0); ++y)
@@ -86,26 +105,6 @@ public class BlockManager : MonoBehaviour
             }
         }
         InitRandomCreate();
-
-    }
-
-    // Start is called before the first frame update
-    private void Start()
-    {
-        ////GameObject panel = GameObject.FindGameObjectWithTag("GridPanel");
-        //float size = gridPanel.transform.localScale.x;
-        //for (int y = 0; y < blockIndexs.GetLength(0); ++y)
-        //{
-        //    for (int x = 0; x < blockIndexs.GetLength(1); ++x)
-        //    {
-        //        blockIndexs[y, x] = 0;
-        //        indexPos[y, x] = new Vector2(-(posOffset * 2) + posOffset * x, -(posOffset * 2) + posOffset * y) * size;
-        //        GameObject grid = Instantiate(gridPrefab, gridPanel.transform);
-        //        grid.transform.position = indexPos[y, x];
-        //        grid.name = $"{y} x {x}";
-        //    }
-        //}
-        //InitRandomCreate();
     }
 
     private void InitRandomCreate()
@@ -129,7 +128,7 @@ public class BlockManager : MonoBehaviour
         blockIndexs[y, x] = ranBlockState;
         Block newBlock = ObjectPoolManager.Instance.GetObjectPool<Block>(poolKeys[ranBlockState - 1]);
         newBlock.transform.position = indexPos[y, x];
-        blocks[y, x] = newBlock;
+        blocks[y, x] = newBlock; 
         blocks[y, x].SetIndex(y, x);
     }
     public IEnumerator MoveBlocks(float swipeAngle)
@@ -218,7 +217,8 @@ public class BlockManager : MonoBehaviour
 
         if(CheckFullBoard())
         {
-            GameManager.Instance.GameOver();
+            StartCoroutine(GameOver());
+            //GameManager.Instance.GameOver();
         }
     }
 
@@ -229,7 +229,6 @@ public class BlockManager : MonoBehaviour
         blocks[moveIndex.x, moveIndex.y].SetIndex(moveIndex.x, moveIndex.y);
         blocks[y, x] = null;
     }
-
     IEnumerator MoveBlockCoroutine(int y, int x, Vector2Int moveIndex)
     {
         float elapsedTime = 0f;
@@ -277,6 +276,21 @@ public class BlockManager : MonoBehaviour
                     }
                 }
                 connectedBlocks.Clear();
+            }
+        }
+    }
+    public void ClearBoard()
+    {
+        for (int y = 0; y < blocks.GetLength(0); y++)
+        {
+            for (int x = 0; x < blocks.GetLength(1); x++)
+            {
+                if (blockIndexs[y , x] == 0)
+                    continue;
+
+                blockIndexs[y, x] = 0;
+                ObjectPoolManager.Instance.ReturnObjectPool<Block>(poolKeys[(int)blocks[y, x].type - 1], blocks[y, x]);
+                blocks[y, x] = null;
             }
         }
     }
@@ -331,6 +345,12 @@ public class BlockManager : MonoBehaviour
             }
         }
         return true;
+    }
+
+    private IEnumerator GameOver()
+    {
+        yield return new WaitForSeconds(0.5f);
+        GameManager.Instance.GameOver();
     }
 
     private Vector2Int IsUpBlockEmpty(int y, int x)

@@ -20,6 +20,15 @@ public class ObjectPool<T> where T : Component
             pool.Add(obj);
         }
     }
+    public ObjectPool(T[] objects)
+    {
+        for (int i = 0; i < objects.Length; i++)
+        {
+            objects[i].gameObject.SetActive(false);
+            pool.Add(objects[i]);
+        }
+    }
+
     public void CreateObjects(Func<T> create, int initSize)
     {
         for (int i = 0; i < initSize; i++)
@@ -51,7 +60,8 @@ public class ObjectPool<T> where T : Component
 
     public void ReturnAllObject()
     {
-        foreach(T obj in pool)
+        T[] objs = pool.FindAll(item => item.gameObject.activeSelf).ToArray();
+        foreach(T obj in objs)
         {
             ReturnObject(obj);
         }

@@ -17,23 +17,31 @@ public class InputManager : MonoBehaviour
             DontDestroyOnLoad(gameObject);
         }
         else
-            Destroy(this);
+        {
+            Destroy(gameObject);
+            return;
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0) && !GameManager.Instance.IsMove)
+        if (Input.GetMouseButtonDown(0) && !GameManager.Instance.IsMove && !GameManager.Instance.IsGameOver)
         {
             mouseDownPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             mouseUpPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         }
         
-        if (Input.GetMouseButtonUp(0) && !GameManager.Instance.IsMove)
+        if (Input.GetMouseButtonUp(0) && !GameManager.Instance.IsMove && !GameManager.Instance.IsGameOver)
         {
             GameManager.Instance.IsMove = true;
             mouseUpPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             DetectSwipe();
+        }
+
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            GameManager.Instance.GameOver();
         }
     }
 
