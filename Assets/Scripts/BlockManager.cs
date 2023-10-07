@@ -24,11 +24,16 @@ public class BlockManager : MonoBehaviour
 
     [SerializeField]
     private int initCount = 5;
+
+    public int effectIndex = 0;
+
     [SerializeField]
     private float posOffset = 0.18f;
     [SerializeField]
     private float moveDuration = 0.3f;
     private float moveStartTime = 0f;
+
+
 
     private bool isChainMerge = false;
 
@@ -56,7 +61,7 @@ public class BlockManager : MonoBehaviour
     private string cloverBlockPoolKey = "CloverBlockPool";
     private string obstacleBlockPoolKey = "ObstacleBlockPool";
 
-    private WaitForSeconds delayMergeTime = new WaitForSeconds(0.5f);
+    //private WaitForSeconds delayMergeTime = new WaitForSeconds(0.5f);
 
     private void Awake()
     {
@@ -248,7 +253,7 @@ public class BlockManager : MonoBehaviour
         }
         blocks[moveIndex.x, moveIndex.y].transform.position = destPos;
     }
-    public void MergeBlocks()
+    public IEnumerator MergeBlocks()
     {
         List<Block> connectedBlocks = new List<Block>();
 
@@ -268,12 +273,15 @@ public class BlockManager : MonoBehaviour
                 if (connectedBlocks.Count >= 2)
                 {
                     isChainMerge = true;
+
                     foreach (Block block in connectedBlocks)
                     {
                         blockIndexs[block.Y, block.X] = 0;
+                        PlayMergeEffect(block);
                         ObjectPoolManager.Instance.ReturnObjectPool<Block>(poolKeys[(int)blocks[block.Y, block.X].type - 1], block);
                         blocks[block.Y, block.X] = null;
                     }
+                    yield return new WaitForSeconds(0.5f);
                 }
                 connectedBlocks.Clear();
             }
@@ -296,9 +304,26 @@ public class BlockManager : MonoBehaviour
     }
     IEnumerator MergeBlocksCoroutine()
     {
-        yield return delayMergeTime;
-        MergeBlocks();
+        yield return new WaitForSeconds(0.5f + moveDuration);
+        yield return StartCoroutine(MergeBlocks());
     }
+
+    public void PlayMergeEffect(Block block)
+    {
+        if(effectIndex == 0)
+        {
+            ParticleSystem effect = Instantiate(block.mergeEffect1, block.transform.position, Quaternion.identity);
+            effect.gameObject.SetActive(true);
+            effect.Play();
+        }
+        else
+        {
+            ParticleSystem effect = Instantiate(block.mergeEffect2, block.transform.position, Quaternion.identity);
+            effect.gameObject.SetActive(true);
+            effect.Play();
+        }
+    }
+
     public void FindConnectedBlocks(Block currentBlock, List<Block> connectedBlocks)
     {
         Vector2Int[] directions = { new Vector2Int(currentBlock.Y + 1, currentBlock.X),

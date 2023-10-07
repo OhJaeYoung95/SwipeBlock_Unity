@@ -5,6 +5,9 @@ public class Block : MonoBehaviour
     [SerializeField]
     private float blockSize = 0.18f;
 
+    public ParticleSystem mergeEffect1;
+    public ParticleSystem mergeEffect2;
+
     public BlockState type = BlockState.None;
 
     public int X { get; set; }
