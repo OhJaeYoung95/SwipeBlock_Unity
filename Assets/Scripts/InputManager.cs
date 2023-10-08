@@ -1,13 +1,14 @@
 using UnityEngine;
 
-
 public class InputManager : MonoBehaviour
 {
     public static InputManager Instance { get; private set; }
 
     private Vector2 mouseDownPos;
     private Vector2 mouseUpPos;
-    private float minSwipeDistance = 50f;
+    private float maxSwipeDistance = 50f;
+    private float minSwipeDistance = 0.1f;
+    private bool isHover = false;
 
     private void Awake()
     {
@@ -26,13 +27,13 @@ public class InputManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0) && !GameManager.Instance.IsMove && !GameManager.Instance.IsGameOver)
+        if (Input.GetMouseButtonDown(0) && !GameManager.Instance.IsMove && !GameManager.Instance.IsGameOver && !isHover)
         {
             mouseDownPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             mouseUpPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         }
         
-        if (Input.GetMouseButtonUp(0) && !GameManager.Instance.IsMove && !GameManager.Instance.IsGameOver)
+        if (Input.GetMouseButtonUp(0) && !GameManager.Instance.IsMove && !GameManager.Instance.IsGameOver && !isHover)
         {
             GameManager.Instance.IsMove = true;
             mouseUpPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -49,11 +50,28 @@ public class InputManager : MonoBehaviour
     {
         Vector2 swipeDir = mouseUpPos - mouseDownPos;
         float swipeDistance = swipeDir.magnitude;
+        Debug.Log(swipeDistance);
 
         if (swipeDistance < minSwipeDistance)
+        {
+            GameManager.Instance.IsMove = false;
+            return;
+        }
+
+        if (swipeDistance < maxSwipeDistance)
         {
             float swipeAngle = Mathf.Atan2(swipeDir.y, swipeDir.x) * Mathf.Rad2Deg;
             StartCoroutine(BlockManager.Instance.MoveBlocks(swipeAngle));
         }
+    }
+
+    public void OnButtonHoverEnter()
+    {
+        isHover = true;
+    }
+
+    public void OnButtonHoverExit()
+    {
+        isHover = false;
     }
 }

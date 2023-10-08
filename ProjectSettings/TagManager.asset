@@ -11,6 +11,14 @@ TagManager:
   - CloverBlockPool
   - ObstacleBlockPool
   - Block
+  - Canvas
+  - HpBar
+  - BestScore
+  - Score
+  - GameOverPanel
+  - Restart
+  - GameOverBestScore
+  - GameOverScore
   layers:
   - Default
   - TransparentFX

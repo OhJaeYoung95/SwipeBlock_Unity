@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static Unity.Collections.AllocatorManager;
 
 public enum BlockState
 {
@@ -18,7 +17,9 @@ public class BlockManager : MonoBehaviour
 {
     public static BlockManager Instance { get; private set; }
 
-    private int[,] blockIndexs = new int[5, 5];
+    public int boardSize = 5;
+
+    private int[,] blockIndexs;
     private Vector2[,] indexPos = new Vector2[5, 5];
     private Block[,] blocks = new Block[5, 5];
 
@@ -81,6 +82,9 @@ public class BlockManager : MonoBehaviour
 
     public void ReloadBoard()
     {
+        blockIndexs = new int[boardSize, boardSize];
+        indexPos = new Vector2[boardSize, boardSize];
+        blocks = new Block[boardSize, boardSize];
         for (int y = 0; y < blockIndexs.GetLength(0); y++)
         {
             for (int x = 0; x < blockIndexs.GetLength(1); x++)
@@ -98,13 +102,29 @@ public class BlockManager : MonoBehaviour
         gridPanel = GameObject.FindGameObjectWithTag("GridPanel");
 
         float size = gridPanel.transform.localScale.x;
+        float gridSize = 0f;
+        switch (boardSize)
+        {
+            case 4:
+                gridSize = 0.2f;
+                posOffset = 0.23f;
+                break;
+            case 5:
+                gridSize = 0.15f;
+                posOffset = 0.18f;
+                break;
+        }
+
         for (int y = 0; y < blockIndexs.GetLength(0); ++y)
         {
             for (int x = 0; x < blockIndexs.GetLength(1); ++x)
             {
                 blockIndexs[y, x] = 0;
-                indexPos[y, x] = new Vector2(-(posOffset * 2) + posOffset * x, -(posOffset * 2) + posOffset * y) * size;
+                indexPos[y, x] = (new Vector2(-(posOffset * 2) + posOffset * x, -(posOffset * 2) + posOffset * y) * size);
+                if (boardSize % 2 == 0)
+                    indexPos[y, x] += new Vector2(size * 0.5f, size * 0.5f) * Mathf.Pow(0.5f, 2f);
                 GameObject grid = Instantiate(gridPrefab, gridPanel.transform);
+                grid.transform.localScale = new Vector3(gridSize, gridSize);
                 grid.transform.position = indexPos[y, x];
                 grid.name = $"{y} x {x}";
             }
@@ -130,9 +150,21 @@ public class BlockManager : MonoBehaviour
         } while (blockIndexs[y, x] != 0);
 
         int ranBlockState = Random.Range((int)BlockState.None + 1, (int)BlockState.Count);
+        float blockSize = 0f;
+        switch (boardSize)
+        {
+            case 4:
+                blockSize = 1f;
+                break;
+            case 5:
+                blockSize = 0.8f;
+                break;
+        }
+
         blockIndexs[y, x] = ranBlockState;
         Block newBlock = ObjectPoolManager.Instance.GetObjectPool<Block>(poolKeys[ranBlockState - 1]);
         newBlock.transform.position = indexPos[y, x];
+        newBlock.transform.localScale = new Vector2(blockSize, blockSize);
         blocks[y, x] = newBlock; 
         blocks[y, x].SetIndex(y, x);
     }
@@ -273,7 +305,8 @@ public class BlockManager : MonoBehaviour
                 if (connectedBlocks.Count >= 2)
                 {
                     isChainMerge = true;
-
+                    int connectedCount = connectedBlocks.Count;
+                    ScoreManager.Instance.AddScoreByConnected(connectedCount);
                     foreach (Block block in connectedBlocks)
                     {
                         blockIndexs[block.Y, block.X] = 0;
@@ -450,6 +483,4 @@ public class BlockManager : MonoBehaviour
             return new Vector2Int(y, x);
         }
     }
-
-
 }

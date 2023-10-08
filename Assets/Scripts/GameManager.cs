@@ -6,10 +6,6 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
     public bool IsMove { get; set; } = false;
     public bool IsGameOver { get; private set; } = false;
-    public float gameTimer;
-    public float gameDuration = 2f;
-
-
 
     private void Awake()
     {
@@ -22,23 +18,32 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
 
         Instance.IsGameOver = false;
-    }
-
-    private void Update()
-    {
-        //gameTimer += Time.deltaTime;
-        //if(gameTimer > gameDuration)
-        //{
-        //    GameOver();
-        //}
+        UIManager.Instance.UpdateBestScoreUI(ScoreManager.Instance.BestScore);
+        UIManager.Instance.UpdateScoreUI(ScoreManager.Instance.CurrentScore);
     }
 
     public void GameOver()
     {
         IsGameOver = true;
         IsMove = false;
-        gameTimer = 0f;
+        Time.timeScale = 0f;
+        StopAllCoroutinesOfSingleTon();
+        UIManager.Instance.GameOver();
+    }
+
+    public void Restart()
+    {
+        Time.timeScale = 1f;
+
+        UIManager.Instance.gameTimer = UIManager.Instance.gameDuration;
         BlockManager.Instance.ClearBoard();
+        ScoreManager.Instance.Init();
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void StopAllCoroutinesOfSingleTon()
+    {
+        BlockManager.Instance.StopAllCoroutines();
+        InputManager.Instance.StopAllCoroutines();
     }
 }
