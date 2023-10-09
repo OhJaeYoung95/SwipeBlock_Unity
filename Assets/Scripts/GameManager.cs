@@ -41,6 +41,13 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
+    public void SelectStage()
+    {
+        StopAllCoroutinesOfSingleTon();
+        BlockManager.Instance.ClearBoard();
+        SceneManager.LoadScene(1);
+    }
+
     public void StopAllCoroutinesOfSingleTon()
     {
         BlockManager.Instance.StopAllCoroutines();

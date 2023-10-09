@@ -14,6 +14,7 @@ public class UIManager : MonoBehaviour
 
     private GameObject canvas;
     private GameObject gameOverPanel;
+    private GameObject pausePanel;
 
     private Button selectStage;
     private Button restart;
@@ -49,6 +50,25 @@ public class UIManager : MonoBehaviour
 
     public void Init()
     {
+        int stage = PlayerPrefs.GetInt("CurrentStage", 1);
+        switch (stage)
+        {
+            case 1:
+                gameDuration = 180;
+                break;
+            case 0:
+                gameDuration = 240;
+                break;
+            case 2:
+                gameDuration = 300;
+                break;
+            default:
+                gameDuration = 180;
+                break;
+        }
+
+
+
         gameTimer = gameDuration;
 
         hpBar = GameObject.FindGameObjectWithTag("HpBar").GetComponent<Slider>();
@@ -64,7 +84,7 @@ public class UIManager : MonoBehaviour
         if (GameManager.Instance != null)
         {
             selectStage = gameOverPanel.transform.GetChild(3).GetComponent<Button>();
-            selectStage.onClick.AddListener(GameManager.Instance.Restart);
+            selectStage.onClick.AddListener(GameManager.Instance.SelectStage);
             restart = gameOverPanel.transform.GetChild(4).GetComponent<Button>();
             restart.onClick.AddListener(GameManager.Instance.Restart);
         }

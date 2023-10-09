@@ -82,6 +82,23 @@ public class BlockManager : MonoBehaviour
 
     public void ReloadBoard()
     {
+        int stage = PlayerPrefs.GetInt("CurrentStage", 1);
+        switch(stage)
+        {
+            case 1:
+                boardSize = 4;
+                break;
+            case 0:
+                boardSize = 5;
+                break;
+            case 2:
+                boardSize = 5;
+                break;
+            default:
+                boardSize = 4;
+                break;
+        }
+
         blockIndexs = new int[boardSize, boardSize];
         indexPos = new Vector2[boardSize, boardSize];
         blocks = new Block[boardSize, boardSize];
