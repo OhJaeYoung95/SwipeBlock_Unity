@@ -49,7 +49,11 @@ public class UIManager : MonoBehaviour
     void Update()
     {
         gameTimer -= Time.deltaTime;
-        UpdateTimerUI(gameTimer / gameDuration);
+
+        float t = gameTimer/gameDuration;
+        if (t <= 0.5f && !BlockManager.Instance.isSpawnObstacle)
+            BlockManager.Instance.isSpawnObstacle = true;
+        UpdateTimerUI(t);
         if (gameTimer <= 0f)
         {
             GameManager.Instance.GameOver();

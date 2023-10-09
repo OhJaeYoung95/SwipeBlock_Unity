@@ -34,8 +34,9 @@ public class BlockManager : MonoBehaviour
     private float moveDuration = 0.3f;
     private float moveStartTime = 0f;
 
-    public int stage;
+    public int currentStage;
 
+    public bool isSpawnObstacle = false;
     private bool isChainMerge = false;
 
     [SerializeField]
@@ -82,19 +83,24 @@ public class BlockManager : MonoBehaviour
 
     public void ReloadBoard()
     {
+        isSpawnObstacle = false;
         int stage = PlayerPrefs.GetInt("CurrentStage", 1);
         switch(stage)
         {
             case 1:
+                currentStage = 0;
                 boardSize = 4;
                 break;
             case 0:
+                currentStage = 1;
                 boardSize = 5;
                 break;
             case 2:
+                currentStage = 2;
                 boardSize = 5;
                 break;
             default:
+                currentStage = 0;
                 boardSize = 4;
                 break;
         }
@@ -172,7 +178,13 @@ public class BlockManager : MonoBehaviour
             x = Random.Range(0, blockIndexs.GetLength(1));
         } while (blockIndexs[y, x] != 0);
 
-        int ranBlockState = Random.Range((int)BlockState.None + 1, (int)BlockState.Count);
+        int ranBlockState;
+
+        if(isSpawnObstacle)
+            ranBlockState = Random.Range((int)BlockState.None + 1, (int)BlockState.Count);
+        else
+            ranBlockState = Random.Range((int)BlockState.None + 1, (int)BlockState.Obstcle);
+
         float blockSize = 0f;
         switch (boardSize)
         {
