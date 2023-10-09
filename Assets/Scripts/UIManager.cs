@@ -1,6 +1,8 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using static UnityEngine.EventSystems.EventTrigger;
 
 public class UIManager : MonoBehaviour
 {
@@ -105,6 +107,16 @@ public class UIManager : MonoBehaviour
 
             continueButton = pausePanel.transform.GetChild(2).GetComponent<Button>(); ;
             continueButton.onClick.AddListener(GameManager.Instance.Continue);
+            EventTrigger eventTrigger = continueButton.GetComponent<EventTrigger>();
+            EventTrigger.Entry enterEntry = new EventTrigger.Entry();
+            enterEntry.eventID = EventTriggerType.PointerEnter;
+            enterEntry.callback.AddListener((data) => { InputManager.Instance.OnButtonHoverEnter(); });
+            eventTrigger.triggers.Add(enterEntry);
+            EventTrigger.Entry exitEntry = new EventTrigger.Entry();
+            exitEntry.eventID = EventTriggerType.PointerExit;
+            exitEntry.callback.AddListener((data) => { InputManager.Instance.OnButtonHoverExit(); });
+            eventTrigger.triggers.Add(exitEntry);
+
 
             quitButton = pausePanel.transform.GetChild(3).GetComponent<Button>(); ;
             quitButton.onClick.AddListener(GameManager.Instance.Quit);

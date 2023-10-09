@@ -34,7 +34,7 @@ public class BlockManager : MonoBehaviour
     private float moveDuration = 0.3f;
     private float moveStartTime = 0f;
 
-
+    public int stage;
 
     private bool isChainMerge = false;
 

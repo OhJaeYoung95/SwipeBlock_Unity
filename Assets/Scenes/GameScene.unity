@@ -3080,6 +3080,7 @@ GameObject:
   - component: {fileID: 969805230}
   - component: {fileID: 969805229}
   - component: {fileID: 969805228}
+  - component: {fileID: 969805231}
   m_Layer: 5
   m_Name: Continue
   m_TagString: Untagged
@@ -3201,6 +3202,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 969805226}
   m_CullTransparentMesh: 1
+--- !u!114 &969805231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 969805226}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1609883394}
+          m_TargetAssemblyTypeName: InputManager, Assembly-CSharp
+          m_MethodName: OnButtonHoverEnter
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1609883394}
+          m_TargetAssemblyTypeName: InputManager, Assembly-CSharp
+          m_MethodName: OnButtonHoverExit
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &978130550
 GameObject:
   m_ObjectHideFlags: 0
@@ -3519,6 +3565,7 @@ MonoBehaviour:
   effectIndex: 0
   posOffset: 0.18
   moveDuration: 0.3
+  stage: 0
   spadePrefab: {fileID: -848185658437290497, guid: 48e25b8583fc9164f9e87ed363fa2162, type: 3}
   diamondPrefab: {fileID: 1429616678887611583, guid: ddd4b2fe717a5884497ed1ea0b1d7cd3, type: 3}
   heartPrefab: {fileID: 5048900380122952790, guid: a719617062dd1754caa98d808d4b8cdc, type: 3}
