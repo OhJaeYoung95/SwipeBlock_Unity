@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class TitleController : MonoBehaviour
+public class MainMenuController : MonoBehaviour
 {
     public Button play;
     public Button option;
@@ -15,7 +15,7 @@ public class TitleController : MonoBehaviour
 
     public void OnClickPlayButton()
     {
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(2);
     }
 
     public void OnClickOptionButton()

@@ -49,7 +49,7 @@ public class GameManager : MonoBehaviour
     {
         StopAllCoroutinesOfSingleTon();
         BlockManager.Instance.ClearBoard();
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(2);
     }
 
     public void Pause()
