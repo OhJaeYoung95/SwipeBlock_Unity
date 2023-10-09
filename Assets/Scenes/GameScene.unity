@@ -381,6 +381,7 @@ MonoBehaviour:
   gameOverScore: {fileID: 0}
   gameTimer: 0
   gameDuration: 1000
+  fadeSpeed: 3
 --- !u!1 &57667647
 GameObject:
   m_ObjectHideFlags: 0
@@ -5090,7 +5091,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0.545
+  m_Value: 1
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
