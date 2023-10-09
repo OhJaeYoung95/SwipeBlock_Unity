@@ -101,8 +101,13 @@ public class BlockManager : MonoBehaviour
 
         gridPanel = GameObject.FindGameObjectWithTag("GridPanel");
 
-        float size = gridPanel.transform.localScale.x;
+        float panelSize = gridPanel.transform.localScale.x;
         float gridSize = 0f;
+
+        int screenWidth = Screen.width;
+        int screenHeight = Screen.height;
+
+
         switch (boardSize)
         {
             case 4:
@@ -115,14 +120,15 @@ public class BlockManager : MonoBehaviour
                 break;
         }
 
+
         for (int y = 0; y < blockIndexs.GetLength(0); ++y)
         {
             for (int x = 0; x < blockIndexs.GetLength(1); ++x)
             {
                 blockIndexs[y, x] = 0;
-                indexPos[y, x] = (new Vector2(-(posOffset * 2) + posOffset * x, -(posOffset * 2) + posOffset * y) * size);
+                indexPos[y, x] = (new Vector2(-(posOffset * 2) + posOffset * x, -(posOffset * 2) + posOffset * y) * panelSize);
                 if (boardSize % 2 == 0)
-                    indexPos[y, x] += new Vector2(size * 0.5f, size * 0.5f) * Mathf.Pow(0.5f, 2f);
+                    indexPos[y, x] += new Vector2(panelSize * 0.5f, panelSize * 0.5f) * Mathf.Pow(0.5f, 2f);
                 GameObject grid = Instantiate(gridPrefab, gridPanel.transform);
                 grid.transform.localScale = new Vector3(gridSize, gridSize);
                 grid.transform.position = indexPos[y, x];
@@ -160,6 +166,9 @@ public class BlockManager : MonoBehaviour
                 blockSize = 0.8f;
                 break;
         }
+        int screenWidth = Screen.width;
+        int screenHeight = Screen.height;
+
 
         blockIndexs[y, x] = ranBlockState;
         Block newBlock = ObjectPoolManager.Instance.GetObjectPool<Block>(poolKeys[ranBlockState - 1]);
