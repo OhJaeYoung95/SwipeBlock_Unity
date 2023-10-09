@@ -16,8 +16,14 @@ public class UIManager : MonoBehaviour
     private GameObject gameOverPanel;
     private GameObject pausePanel;
 
+    private Button puaseButton;
+
     private Button selectStage;
     private Button restart;
+
+    private Button pauseSelectStage;
+    private Button continueButton;
+    private Button quitButton;
 
     public float gameTimer;
     public float gameDuration = 20f;
@@ -75,18 +81,34 @@ public class UIManager : MonoBehaviour
         bestScore = GameObject.FindGameObjectWithTag("BestScore").GetComponent<TextMeshProUGUI>();
         score = GameObject.FindGameObjectWithTag("Score").GetComponent<TextMeshProUGUI>();
         canvas = GameObject.FindGameObjectWithTag("Canvas");
+        puaseButton = GameObject.FindGameObjectWithTag("Pause").GetComponent<Button>();
+
         gameOverPanel = canvas.transform.GetChild(2).gameObject;
         gameOverPanel.gameObject.SetActive(false);
+        pausePanel = canvas.transform.GetChild(3).gameObject;
+        pausePanel.gameObject.SetActive(false);
+
         gameOverBestScore = gameOverPanel.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
         gameOverScore = gameOverPanel.transform.GetChild(2).GetComponent<TextMeshProUGUI>();
 
-
         if (GameManager.Instance != null)
         {
+            puaseButton.onClick.AddListener(GameManager.Instance.Pause);
+
             selectStage = gameOverPanel.transform.GetChild(3).GetComponent<Button>();
             selectStage.onClick.AddListener(GameManager.Instance.SelectStage);
             restart = gameOverPanel.transform.GetChild(4).GetComponent<Button>();
             restart.onClick.AddListener(GameManager.Instance.Restart);
+
+            pauseSelectStage = pausePanel.transform.GetChild(1).GetComponent<Button>();
+            pauseSelectStage.onClick.AddListener(GameManager.Instance.SelectStage);
+
+            continueButton = pausePanel.transform.GetChild(2).GetComponent<Button>(); ;
+            continueButton.onClick.AddListener(GameManager.Instance.Continue);
+
+            quitButton = pausePanel.transform.GetChild(3).GetComponent<Button>(); ;
+            quitButton.onClick.AddListener(GameManager.Instance.Quit);
+
         }
     }
 
@@ -96,6 +118,18 @@ public class UIManager : MonoBehaviour
         ScoreManager.Instance.UpdateBestScore();
         gameOverBestScore.text = $"{ScoreManager.Instance.BestScore}";
         gameOverScore.text = $"{ScoreManager.Instance.CurrentScore}";
+    }
+
+    public void Puase()
+    {
+        Time.timeScale = 0f;
+        pausePanel.SetActive(true);
+    }
+
+    public void Continue()
+    {
+        Time.timeScale = 1f;
+        pausePanel.SetActive(false);
     }
 
     public void UpdateTimerUI(float value)

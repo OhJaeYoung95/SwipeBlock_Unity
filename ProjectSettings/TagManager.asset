@@ -19,6 +19,7 @@ TagManager:
   - Restart
   - GameOverBestScore
   - GameOverScore
+  - Pause
   layers:
   - Default
   - TransparentFX

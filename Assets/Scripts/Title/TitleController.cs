@@ -25,11 +25,9 @@ public class TitleController : MonoBehaviour
 
     public void OnClikQuitButton()
     {
-        // 에디터 상에서 종료
 #if UNITY_EDITOR
         EditorApplication.isPlaying = false;
 #else
-        // 빌드된 게임 상에서 종료
         Application.Quit();
 #endif    
     }
