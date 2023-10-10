@@ -8,7 +8,7 @@ public class Block : MonoBehaviour
     public ParticleSystem mergeEffect1;
     public ParticleSystem mergeEffect2;
 
-    public BlockState type = BlockState.None;
+    public BlockPattern type = BlockPattern.None;
 
     public int X { get; set; }
     public int Y { get; set; }

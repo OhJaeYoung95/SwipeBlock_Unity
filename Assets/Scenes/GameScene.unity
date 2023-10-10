@@ -3562,9 +3562,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boardSize: 5
-  initCount: 5
+  initCount: 10
   spawnCount: 2
   effectIndex: 0
+  comboCount: 0
   posOffset: 0.18
   moveDuration: 0.3
   currentStage: 0

@@ -102,8 +102,6 @@ public class UIManager : MonoBehaviour
                 break;
         }
 
-
-
         gameTimer = gameDuration;
 
         hpBar = GameObject.FindGameObjectWithTag("HpBar").GetComponent<Slider>();

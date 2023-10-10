@@ -50,7 +50,6 @@ public class InputManager : MonoBehaviour
     {
         Vector2 swipeDir = mouseUpPos - mouseDownPos;
         float swipeDistance = swipeDir.magnitude;
-        Debug.Log(swipeDistance);
 
         if (swipeDistance < minSwipeDistance)
         {

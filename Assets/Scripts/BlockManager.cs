@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum BlockState
+public enum BlockPattern
 {
     None,
     Spade,
@@ -11,6 +11,15 @@ public enum BlockState
     Clover,
     Obstcle,
     Count
+}
+
+public enum SwipeDir
+{
+    None = -1,
+    Right,
+    Left,
+    Down,
+    Up
 }
 
 public class BlockManager : MonoBehaviour
@@ -23,12 +32,21 @@ public class BlockManager : MonoBehaviour
     private Vector2[,] indexPos = new Vector2[5, 5];
     private Block[,] blocks = new Block[5, 5];
 
+    List<List<Block>> comparePatternBlocks = new List<List<Block>>();
+
+
+    SwipeDir swipeDir = SwipeDir.None;
+    BlockPattern standardBlock = BlockPattern.None;
+
     [SerializeField]
     private int initCount = 5;
     [SerializeField]
     private int spawnCount = 2;
 
     public int effectIndex = 0;
+
+    public int comboCount = 0;
+
 
     [SerializeField]
     private float posOffset = 0.18f;
@@ -40,6 +58,7 @@ public class BlockManager : MonoBehaviour
 
     public bool isSpawnObstacle = false;
     private bool isChainMerge = false;
+    public bool isCompare = false;
 
     [SerializeField]
     private Block spadePrefab;
@@ -87,7 +106,7 @@ public class BlockManager : MonoBehaviour
     {
         isSpawnObstacle = false;
         int stage = PlayerPrefs.GetInt("CurrentStage", 1);
-        switch(stage)
+        switch (stage)
         {
             case 1:
                 currentStage = 0;
@@ -182,10 +201,10 @@ public class BlockManager : MonoBehaviour
 
         int ranBlockState;
 
-        if(isSpawnObstacle)
-            ranBlockState = Random.Range((int)BlockState.None + 1, (int)BlockState.Count);
+        if (isSpawnObstacle)
+            ranBlockState = Random.Range((int)BlockPattern.None + 1, (int)BlockPattern.Count);
         else
-            ranBlockState = Random.Range((int)BlockState.None + 1, (int)BlockState.Obstcle);
+            ranBlockState = Random.Range((int)BlockPattern.None + 1, (int)BlockPattern.Obstcle);
 
         float blockSize = 0f;
         switch (boardSize)
@@ -205,7 +224,7 @@ public class BlockManager : MonoBehaviour
         Block newBlock = ObjectPoolManager.Instance.GetObjectPool<Block>(poolKeys[ranBlockState - 1]);
         newBlock.transform.position = indexPos[y, x];
         newBlock.transform.localScale = new Vector2(blockSize, blockSize);
-        blocks[y, x] = newBlock; 
+        blocks[y, x] = newBlock;
         blocks[y, x].SetIndex(y, x);
     }
     public IEnumerator MoveBlocks(float swipeAngle)
@@ -215,7 +234,7 @@ public class BlockManager : MonoBehaviour
             isChainMerge = false;
             if (Mathf.Abs(swipeAngle) < 45)     // Right
             {
-                Debug.Log("RightSwipe");
+                swipeDir = SwipeDir.Right;
                 for (int y = 0; y < blockIndexs.GetLength(0); ++y)
                 {
                     for (int x = blockIndexs.GetLength(1) - 1; x >= 0; --x)
@@ -234,7 +253,8 @@ public class BlockManager : MonoBehaviour
             }
             else if (Mathf.Abs(swipeAngle) > 135)       // Left
             {
-                Debug.Log("LeftSwipe");
+                swipeDir = SwipeDir.Left;
+
                 for (int y = 0; y < blockIndexs.GetLength(0); ++y)
                 {
                     for (int x = 0; x < blockIndexs.GetLength(1); ++x)
@@ -252,7 +272,8 @@ public class BlockManager : MonoBehaviour
             }
             else if (swipeAngle < -45 && swipeAngle > -135)     // Down
             {
-                Debug.Log("DownSwipe");
+                swipeDir = SwipeDir.Down;
+
                 for (int y = 0; y < blockIndexs.GetLength(0); ++y)
                 {
                     for (int x = 0; x < blockIndexs.GetLength(1); ++x)
@@ -270,7 +291,8 @@ public class BlockManager : MonoBehaviour
             }
             else        // Up
             {
-                Debug.Log("UpSwipe");
+                swipeDir = SwipeDir.Up;
+
                 for (int y = blockIndexs.GetLength(0) - 1; y >= 0; --y)
                 {
                     for (int x = 0; x < blockIndexs.GetLength(1); ++x)
@@ -288,12 +310,13 @@ public class BlockManager : MonoBehaviour
             yield return StartCoroutine(MergeBlocksCoroutine());
             ResetIsMerged();
         } while (isChainMerge);
+        comboCount = 0;
 
-        for(int x = 0; x < spawnCount; ++x)
+        for (int x = 0; x < spawnCount; ++x)
             RandomCreate();
         GameManager.Instance.IsMove = false;
 
-        if(CheckFullBoard())
+        if (CheckFullBoard())
         {
             StartCoroutine(GameOver());
             //GameManager.Instance.GameOver();
@@ -307,7 +330,7 @@ public class BlockManager : MonoBehaviour
         blocks[moveIndex.x, moveIndex.y].SetIndex(moveIndex.x, moveIndex.y);
         blocks[y, x] = null;
     }
-    IEnumerator MoveBlockCoroutine(int y, int x, Vector2Int moveIndex)
+    private IEnumerator MoveBlockCoroutine(int y, int x, Vector2Int moveIndex)
     {
         float elapsedTime = 0f;
         moveStartTime = Time.time;
@@ -326,17 +349,22 @@ public class BlockManager : MonoBehaviour
         }
         blocks[moveIndex.x, moveIndex.y].transform.position = destPos;
     }
-    public IEnumerator MergeBlocks()
+    private IEnumerator MergeBlocks()
+    {
+        ChcekPattern();
+        yield return StartCoroutine(TryMerge());
+    }
+
+    public void ChcekPattern()
     {
         List<Block> connectedBlocks = new List<Block>();
-
         for (int y = 0; y < blockIndexs.GetLength(0); y++)
         {
             for (int x = 0; x < blockIndexs.GetLength(1); x++)
             {
                 if (!blocks[y, x])
                     continue;
-                if (blocks[y, x].type == BlockState.None || blocks[y, x].type == BlockState.Obstcle || blocks[y, x].IsMerged)
+                if (blocks[y, x].type == BlockPattern.None || blocks[y, x].type == BlockPattern.Obstcle || blocks[y, x].IsMerged)
                     continue;
 
                 blocks[y, x].IsMerged = true;
@@ -345,9 +373,123 @@ public class BlockManager : MonoBehaviour
 
                 if (connectedBlocks.Count >= 2)
                 {
+                    comparePatternBlocks.Add(connectedBlocks);
+                }
+                connectedBlocks.Clear();
+            }
+        }
+
+        Block compareBlock = comparePatternBlocks[0][0];
+
+        switch (swipeDir)
+        {
+            case SwipeDir.Right:
+                foreach (List<Block> blocks in comparePatternBlocks)
+                {
+                    foreach (Block block in blocks)
+                    {
+                        if(compareBlock.X < block.X)
+                        {
+                            compareBlock = block;
+                        }
+                        else if(compareBlock.X == block.X)
+                        {
+                            if (compareBlock.Y > block.Y)
+                                compareBlock = block;
+                        }
+                    }
+                }
+                standardBlock = compareBlock.type;
+                break;
+            case SwipeDir.Left:
+                foreach (List<Block> blocks in comparePatternBlocks)
+                {
+                    foreach (Block block in blocks)
+                    {
+                        if (compareBlock.X > block.X)
+                        {
+                            compareBlock = block;
+                        }
+                        else if (compareBlock.X == block.X)
+                        {
+                            if (compareBlock.Y < block.Y)
+                                compareBlock = block;
+                        }
+                    }
+                }
+                standardBlock = compareBlock.type;
+                break;
+            case SwipeDir.Down:
+                foreach (List<Block> blocks in comparePatternBlocks)
+                {
+                    foreach (Block block in blocks)
+                    {
+                        if (compareBlock.Y > block.Y)
+                        {
+                            compareBlock = block;
+                        }
+                        else if (compareBlock.Y == block.Y)
+                        {
+                            if (compareBlock.X > block.X)
+                                compareBlock = block;
+                        }
+                    }
+                }
+                standardBlock = compareBlock.type;
+                break;
+            case SwipeDir.Up:
+                foreach (List<Block> blocks in comparePatternBlocks)
+                {
+                    foreach (Block block in blocks)
+                    {
+                        if (compareBlock.Y < block.Y)
+                        {
+                            compareBlock = block;
+                        }
+                        else if (compareBlock.Y == block.Y)
+                        {
+                            if (compareBlock.X < block.X)
+                                compareBlock = block;
+                        }
+                    }
+                }
+                standardBlock = compareBlock.type;
+                break;
+        }
+
+    }
+
+    public IEnumerator TryMerge()
+    {
+        //comparePatternBlocks 를 이용하기, isCompare를 활용해서 n차 머지까지 검사하기
+        List<Block> connectedBlocks = new List<Block>();
+
+        for (int y = 0; y < blockIndexs.GetLength(0); y++)
+        {
+            for (int x = 0; x < blockIndexs.GetLength(1); x++)
+            {
+                if (!blocks[y, x])
+                    continue;
+                if (blocks[y, x].type == BlockPattern.None || blocks[y, x].type == BlockPattern.Obstcle || blocks[y, x].IsMerged)
+                    continue;
+
+                blocks[y, x].IsMerged = true;
+                connectedBlocks.Add(blocks[y, x]);
+                FindConnectedBlocks(blocks[y, x], connectedBlocks);
+
+
+
+                // 블록 터뜨리는 처리 나중에
+                if (connectedBlocks.Count >= 2)
+                {
                     isChainMerge = true;
+                    comboCount++;
+
                     int connectedCount = connectedBlocks.Count;
+                    ScoreManager.Instance.AddScoreBase();
                     ScoreManager.Instance.AddScoreByConnected(connectedCount);
+                    if (comboCount > 1)
+                        ScoreManager.Instance.AddScoreByCombo();
                     foreach (Block block in connectedBlocks)
                     {
                         blockIndexs[block.Y, block.X] = 0;
@@ -355,19 +497,20 @@ public class BlockManager : MonoBehaviour
                         ObjectPoolManager.Instance.ReturnObjectPool<Block>(poolKeys[(int)blocks[block.Y, block.X].type - 1], block);
                         blocks[block.Y, block.X] = null;
                     }
-                    yield return new WaitForSeconds(0.5f);
+                    yield return new WaitForSeconds(0.2f);
                 }
                 connectedBlocks.Clear();
             }
         }
     }
+
     public void ClearBoard()
     {
         for (int y = 0; y < blocks.GetLength(0); y++)
         {
             for (int x = 0; x < blocks.GetLength(1); x++)
             {
-                if (blockIndexs[y , x] == 0)
+                if (blockIndexs[y, x] == 0)
                     continue;
 
                 blockIndexs[y, x] = 0;
@@ -384,7 +527,7 @@ public class BlockManager : MonoBehaviour
 
     public void PlayMergeEffect(Block block)
     {
-        if(effectIndex == 0)
+        if (effectIndex == 0)
         {
             ParticleSystem effect = Instantiate(block.mergeEffect1, block.transform.position, Quaternion.identity);
             effect.gameObject.SetActive(true);
@@ -428,7 +571,7 @@ public class BlockManager : MonoBehaviour
         {
             if (!block)
                 continue;
-            if (block.type == BlockState.None)
+            if (block.type == BlockPattern.None)
                 continue;
             block.IsMerged = false;
         }
@@ -437,7 +580,7 @@ public class BlockManager : MonoBehaviour
     {
         for (int y = 0; y < blockIndexs.GetLength(0); ++y)
         {
-            for(int x = 0; x < blockIndexs.GetLength(1); ++x)
+            for (int x = 0; x < blockIndexs.GetLength(1); ++x)
             {
                 if (blockIndexs[y, x] == 0)
                     return false;
