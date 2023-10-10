@@ -7,9 +7,15 @@ public class ScoreManager : MonoBehaviour
     public static ScoreManager Instance { get; private set; }
     public int BestScore { get; set; }
     public int CurrentScore { get; set; }
+    [SerializeField]
     private int baseScore = 10;
+    [SerializeField]
     private int chainMergeScore = 20;
+    [SerializeField]
     private int comboScore = 30;
+    [SerializeField]
+    private int compareScore = 40;
+
     private void Awake()
     {
         if (Instance == null)
@@ -52,6 +58,13 @@ public class ScoreManager : MonoBehaviour
     {
         Debug.Log("Combo");
         CurrentScore += comboScore;
+        UIManager.Instance.UpdateScoreUI(CurrentScore);
+    }
+
+    public void AddScoreByComparePattern()
+    {
+        Debug.Log("Compare");
+        CurrentScore += compareScore;
         UIManager.Instance.UpdateScoreUI(CurrentScore);
     }
 }

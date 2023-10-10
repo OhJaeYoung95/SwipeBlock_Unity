@@ -310,6 +310,8 @@ public class BlockManager : MonoBehaviour
             yield return StartCoroutine(MergeBlocksCoroutine());
             ResetIsMerged();
         } while (isChainMerge);
+
+        isCompare = false;
         comboCount = 0;
 
         for (int x = 0; x < spawnCount; ++x)
@@ -319,7 +321,6 @@ public class BlockManager : MonoBehaviour
         if (CheckFullBoard())
         {
             StartCoroutine(GameOver());
-            //GameManager.Instance.GameOver();
         }
     }
 
@@ -373,135 +374,141 @@ public class BlockManager : MonoBehaviour
 
                 if (connectedBlocks.Count >= 2)
                 {
-                    comparePatternBlocks.Add(connectedBlocks);
+                    comparePatternBlocks.Add(new List<Block>(connectedBlocks));
                 }
                 connectedBlocks.Clear();
             }
         }
 
-        Block compareBlock = comparePatternBlocks[0][0];
-
-        switch (swipeDir)
+        if (comparePatternBlocks.Count > 0 && !isCompare)
         {
-            case SwipeDir.Right:
-                foreach (List<Block> blocks in comparePatternBlocks)
-                {
-                    foreach (Block block in blocks)
+            isCompare = true;
+            Block compareBlock = comparePatternBlocks[0][0];
+            switch (swipeDir)
+            {
+                case SwipeDir.Right:
+                    foreach (List<Block> blocks in comparePatternBlocks)
                     {
-                        if(compareBlock.X < block.X)
-                        {
-                            compareBlock = block;
-                        }
-                        else if(compareBlock.X == block.X)
-                        {
-                            if (compareBlock.Y > block.Y)
-                                compareBlock = block;
-                        }
-                    }
-                }
-                standardBlock = compareBlock.type;
-                break;
-            case SwipeDir.Left:
-                foreach (List<Block> blocks in comparePatternBlocks)
-                {
-                    foreach (Block block in blocks)
-                    {
-                        if (compareBlock.X > block.X)
-                        {
-                            compareBlock = block;
-                        }
-                        else if (compareBlock.X == block.X)
-                        {
-                            if (compareBlock.Y < block.Y)
-                                compareBlock = block;
-                        }
-                    }
-                }
-                standardBlock = compareBlock.type;
-                break;
-            case SwipeDir.Down:
-                foreach (List<Block> blocks in comparePatternBlocks)
-                {
-                    foreach (Block block in blocks)
-                    {
-                        if (compareBlock.Y > block.Y)
-                        {
-                            compareBlock = block;
-                        }
-                        else if (compareBlock.Y == block.Y)
-                        {
-                            if (compareBlock.X > block.X)
-                                compareBlock = block;
-                        }
-                    }
-                }
-                standardBlock = compareBlock.type;
-                break;
-            case SwipeDir.Up:
-                foreach (List<Block> blocks in comparePatternBlocks)
-                {
-                    foreach (Block block in blocks)
-                    {
-                        if (compareBlock.Y < block.Y)
-                        {
-                            compareBlock = block;
-                        }
-                        else if (compareBlock.Y == block.Y)
+                        foreach (Block block in blocks)
                         {
                             if (compareBlock.X < block.X)
+                            {
                                 compareBlock = block;
+                            }
+                            else if (compareBlock.X == block.X)
+                            {
+                                if (compareBlock.Y > block.Y)
+                                    compareBlock = block;
+                            }
                         }
                     }
-                }
-                standardBlock = compareBlock.type;
-                break;
+                    standardBlock = compareBlock.type;
+                    break;
+                case SwipeDir.Left:
+                    foreach (List<Block> blocks in comparePatternBlocks)
+                    {
+                        foreach (Block block in blocks)
+                        {
+                            if (compareBlock.X > block.X)
+                            {
+                                compareBlock = block;
+                            }
+                            else if (compareBlock.X == block.X)
+                            {
+                                if (compareBlock.Y < block.Y)
+                                    compareBlock = block;
+                            }
+                        }
+                    }
+                    standardBlock = compareBlock.type;
+                    break;
+                case SwipeDir.Down:
+                    foreach (List<Block> blocks in comparePatternBlocks)
+                    {
+                        foreach (Block block in blocks)
+                        {
+                            if (compareBlock.Y > block.Y)
+                            {
+                                compareBlock = block;
+                            }
+                            else if (compareBlock.Y == block.Y)
+                            {
+                                if (compareBlock.X > block.X)
+                                    compareBlock = block;
+                            }
+                        }
+                    }
+                    standardBlock = compareBlock.type;
+                    break;
+                case SwipeDir.Up:
+                    foreach (List<Block> blocks in comparePatternBlocks)
+                    {
+                        foreach (Block block in blocks)
+                        {
+                            if (compareBlock.Y < block.Y)
+                            {
+                                compareBlock = block;
+                            }
+                            else if (compareBlock.Y == block.Y)
+                            {
+                                if (compareBlock.X < block.X)
+                                    compareBlock = block;
+                            }
+                        }
+                    }
+                    standardBlock = compareBlock.type;
+                    break;
+            }
+
         }
+
 
     }
 
     public IEnumerator TryMerge()
     {
         //comparePatternBlocks 를 이용하기, isCompare를 활용해서 n차 머지까지 검사하기
-        List<Block> connectedBlocks = new List<Block>();
 
-        for (int y = 0; y < blockIndexs.GetLength(0); y++)
+        foreach (List<Block> blockList in comparePatternBlocks)
         {
-            for (int x = 0; x < blockIndexs.GetLength(1); x++)
+            isChainMerge = true;
+            comboCount++;
+            int connectedCount = blockList.Count;
+            ScoreManager.Instance.AddScoreBase();
+            ScoreManager.Instance.AddScoreByConnected(connectedCount);
+
+            if (blockList[0].type != standardBlock)
+                ScoreManager.Instance.AddScoreByComparePattern();
+
+            if (comboCount > 1)
+                ScoreManager.Instance.AddScoreByCombo();
+
+            foreach (Block block in blockList)
             {
-                if (!blocks[y, x])
-                    continue;
-                if (blocks[y, x].type == BlockPattern.None || blocks[y, x].type == BlockPattern.Obstcle || blocks[y, x].IsMerged)
-                    continue;
-
-                blocks[y, x].IsMerged = true;
-                connectedBlocks.Add(blocks[y, x]);
-                FindConnectedBlocks(blocks[y, x], connectedBlocks);
-
-
-
-                // 블록 터뜨리는 처리 나중에
-                if (connectedBlocks.Count >= 2)
-                {
-                    isChainMerge = true;
-                    comboCount++;
-
-                    int connectedCount = connectedBlocks.Count;
-                    ScoreManager.Instance.AddScoreBase();
-                    ScoreManager.Instance.AddScoreByConnected(connectedCount);
-                    if (comboCount > 1)
-                        ScoreManager.Instance.AddScoreByCombo();
-                    foreach (Block block in connectedBlocks)
-                    {
-                        blockIndexs[block.Y, block.X] = 0;
-                        PlayMergeEffect(block);
-                        ObjectPoolManager.Instance.ReturnObjectPool<Block>(poolKeys[(int)blocks[block.Y, block.X].type - 1], block);
-                        blocks[block.Y, block.X] = null;
-                    }
-                    yield return new WaitForSeconds(0.2f);
-                }
-                connectedBlocks.Clear();
+                blockIndexs[block.Y, block.X] = 0;
+                PlayMergeEffect(block);
+                ObjectPoolManager.Instance.ReturnObjectPool<Block>(poolKeys[(int)blocks[block.Y, block.X].type - 1], block);
+                blocks[block.Y, block.X] = null;
             }
+            yield return new WaitForSeconds(0.2f);
         }
+        comparePatternBlocks.Clear();
+        //// 블록 터뜨리는 처리 나중에
+        //if (connectedBlocks.Count >= 2)
+        //{
+        //    isChainMerge = true;
+        //    comboCount++;
+
+        //    int connectedCount = connectedBlocks.Count;
+        //    ScoreManager.Instance.AddScoreBase();
+        //    ScoreManager.Instance.AddScoreByConnected(connectedCount);
+        //    if (comboCount > 1)
+        //        ScoreManager.Instance.AddScoreByCombo();
+        //    foreach (Block block in connectedBlocks)
+        //    {
+        //    }
+        //    yield return new WaitForSeconds(0.2f);
+        //}
     }
 
     public void ClearBoard()
