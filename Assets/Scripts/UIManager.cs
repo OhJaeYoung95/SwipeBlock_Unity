@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -54,7 +55,7 @@ public class UIManager : MonoBehaviour
     {
         gameTimer -= Time.deltaTime;
 
-        float t = gameTimer/gameDuration;
+        float t = gameTimer / gameDuration;
         if (t <= 0.5f && !BlockManager.Instance.isSpawnObstacle)
             BlockManager.Instance.isSpawnObstacle = true;
 
@@ -64,13 +65,13 @@ public class UIManager : MonoBehaviour
             hpBarFadeFrame.gameObject.SetActive(true);
         }
 
-        if(t > 0.1f && isFadeHpBar)
+        if (t > 0.1f && isFadeHpBar)
         {
             isFadeHpBar = false;
             hpBarFadeFrame.gameObject.SetActive(false);
         }
 
-        if(isFadeHpBar)
+        if (isFadeHpBar)
             FadeHpBarFrame();
 
 
@@ -159,7 +160,7 @@ public class UIManager : MonoBehaviour
         gameOverScore.text = $"{ScoreManager.Instance.CurrentScore}";
     }
 
-    public void Puase()
+    public void Pause()
     {
         Time.timeScale = 0f;
         pausePanel.SetActive(true);
@@ -169,6 +170,13 @@ public class UIManager : MonoBehaviour
     {
         Time.timeScale = 1f;
         pausePanel.SetActive(false);
+        StartCoroutine(ContinueDelay());
+    }
+
+    public IEnumerator ContinueDelay()
+    {
+        yield return new WaitForSeconds(0.5f);
+        InputManager.Instance.isHover = false;
     }
 
     public void FadeHpBarFrame()

@@ -8,7 +8,7 @@ public class InputManager : MonoBehaviour
     private Vector2 mouseUpPos;
     private float maxSwipeDistance = 50f;
     private float minSwipeDistance = 0.1f;
-    private bool isHover = false;
+    public bool isHover = false;
 
     private void Awake()
     {
