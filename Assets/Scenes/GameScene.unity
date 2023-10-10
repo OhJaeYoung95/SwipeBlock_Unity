@@ -3562,7 +3562,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boardSize: 5
-  initCount: 8
+  initCount: 5
+  spawnCount: 2
   effectIndex: 0
   posOffset: 0.18
   moveDuration: 0.3
@@ -4389,6 +4390,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 679d8f0783238854bad68081beecedf0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isHover: 0
 --- !u!1 &1676533363
 GameObject:
   m_ObjectHideFlags: 0

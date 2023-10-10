@@ -89,7 +89,7 @@ public class UIManager : MonoBehaviour
         switch (stage)
         {
             case 1:
-                gameDuration = 180;
+                gameDuration = 30;
                 break;
             case 0:
                 gameDuration = 240;
@@ -98,7 +98,7 @@ public class UIManager : MonoBehaviour
                 gameDuration = 300;
                 break;
             default:
-                gameDuration = 180;
+                gameDuration = 30;
                 break;
         }
 

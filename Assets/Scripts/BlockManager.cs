@@ -25,6 +25,8 @@ public class BlockManager : MonoBehaviour
 
     [SerializeField]
     private int initCount = 5;
+    [SerializeField]
+    private int spawnCount = 2;
 
     public int effectIndex = 0;
 
@@ -287,7 +289,8 @@ public class BlockManager : MonoBehaviour
             ResetIsMerged();
         } while (isChainMerge);
 
-        RandomCreate();
+        for(int x = 0; x < spawnCount; ++x)
+            RandomCreate();
         GameManager.Instance.IsMove = false;
 
         if(CheckFullBoard())
