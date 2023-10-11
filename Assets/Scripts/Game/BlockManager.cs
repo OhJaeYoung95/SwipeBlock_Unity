@@ -412,7 +412,8 @@ public class BlockManager : MonoBehaviour
                 if (!blocks[y, x])
                     continue;
                 if (blocks[y, x].type == BlockPattern.None || 
-                    blocks[y, x].type == BlockPattern.Obstcle || 
+                    blocks[y, x].type == BlockPattern.Obstcle ||
+                    blocks[y, x].type == BlockPattern.Joker ||
                     blocks[y, x].IsChcekIndex)
                     continue;
 
@@ -428,7 +429,6 @@ public class BlockManager : MonoBehaviour
                         // index를 조커 인덱스로 변형
                         if (block.type == BlockPattern.Joker)
                         {
-                            block.IsChcekIndex = false;
                             blockIndexs[block.Y, block.X] = (int)BlockPattern.Joker;
                         }
                     }
@@ -646,13 +646,16 @@ public class BlockManager : MonoBehaviour
             if (!blocks[direction.x, direction.y])
                 continue;
 
-            if(blocks[direction.x, direction.y].type == BlockPattern.Joker && blockIndexs[direction.x, direction.y] > blockIndexs[currentBlock.Y, currentBlock.X])
+            if(blocks[direction.x, direction.y].type == BlockPattern.Joker && 
+                blockIndexs[direction.x, direction.y] > blockIndexs[currentBlock.Y, currentBlock.X])
             {
-
+                blockIndexs[direction.x, direction.y] = (int)currentBlock.type;
+                connectedBlocks.Add(blocks[direction.x, direction.y]);
+                FindConnectedIndexs(blocks[direction.x, direction.y], connectedBlocks);
             }
 
 
-            if ((blockIndexs[direction.x, direction.y] == (int)currentBlock.type ||
+            if ((blocks[direction.x, direction.y].type == currentBlock.type ||
                 blockIndexs[direction.x, direction.y] == (int)BlockPattern.Joker) &&
                 !blocks[direction.x, direction.y].IsChcekIndex)
             {
