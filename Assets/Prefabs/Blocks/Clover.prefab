@@ -11,10 +11,9 @@ GameObject:
   - component: {fileID: 1707029484292751972}
   - component: {fileID: 7190251231320868634}
   - component: {fileID: 2599607750398807189}
-  - component: {fileID: 7240421264901767759}
-  - component: {fileID: 4001145721420055666}
+  - component: {fileID: 4570771985675970682}
   m_Layer: 0
-  m_Name: Obstacle
+  m_Name: Clover
   m_TagString: Block
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -33,8 +32,8 @@ Transform:
   m_LocalScale: {x: 0.8, y: 0.8, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 6143898882255454020}
-  - {fileID: 6061288923869440991}
+  - {fileID: 1649157327410836215}
+  - {fileID: 858999240315235391}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &7190251231320868634
@@ -78,7 +77,7 @@ SpriteRenderer:
   m_SortingLayerID: 278873975
   m_SortingLayer: 3
   m_SortingOrder: 5
-  m_Sprite: {fileID: 21300000, guid: 80c52c120013deb47be427c2fa628176, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 19bd38a802173b5458cecd86071bdeb9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -102,55 +101,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blockSize: 0.18
-  mergeEffect1: {fileID: 6143898882255454021}
-  mergeEffect2: {fileID: 6061288923869440993}
-  type: 5
---- !u!61 &7240421264901767759
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5505624023696903624}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
-    newSize: {x: 1, y: 1}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1}
-  m_EdgeRadius: 0
---- !u!95 &4001145721420055666
+  mergeEffect1: {fileID: 1649157327410836214}
+  mergeEffect2: {fileID: 858999240315235329}
+  type: 4
+--- !u!95 &4570771985675970682
 Animator:
   serializedVersion: 5
   m_ObjectHideFlags: 0
@@ -171,7 +125,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!1001 &6190337127999371965
+--- !u!1001 &728949522222218589
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -236,17 +190,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9fe8f8b3288e45a44af36ff8aa04486e, type: 3}
---- !u!4 &6061288923869440991 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 141433446842962274, guid: 9fe8f8b3288e45a44af36ff8aa04486e, type: 3}
-  m_PrefabInstance: {fileID: 6190337127999371965}
-  m_PrefabAsset: {fileID: 0}
---- !u!198 &6061288923869440993 stripped
+--- !u!198 &858999240315235329 stripped
 ParticleSystem:
   m_CorrespondingSourceObject: {fileID: 141433446842962268, guid: 9fe8f8b3288e45a44af36ff8aa04486e, type: 3}
-  m_PrefabInstance: {fileID: 6190337127999371965}
+  m_PrefabInstance: {fileID: 728949522222218589}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &6527214123712782708
+--- !u!4 &858999240315235391 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 141433446842962274, guid: 9fe8f8b3288e45a44af36ff8aa04486e, type: 3}
+  m_PrefabInstance: {fileID: 728949522222218589}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1816122767798398151
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -331,13 +285,13 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6718dc24203da53468af9ada8fef7d6d, type: 3}
---- !u!4 &6143898882255454020 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1141330259687333424, guid: 6718dc24203da53468af9ada8fef7d6d, type: 3}
-  m_PrefabInstance: {fileID: 6527214123712782708}
-  m_PrefabAsset: {fileID: 0}
---- !u!198 &6143898882255454021 stripped
+--- !u!198 &1649157327410836214 stripped
 ParticleSystem:
   m_CorrespondingSourceObject: {fileID: 1141330259687333425, guid: 6718dc24203da53468af9ada8fef7d6d, type: 3}
-  m_PrefabInstance: {fileID: 6527214123712782708}
+  m_PrefabInstance: {fileID: 1816122767798398151}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1649157327410836215 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1141330259687333424, guid: 6718dc24203da53468af9ada8fef7d6d, type: 3}
+  m_PrefabInstance: {fileID: 1816122767798398151}
   m_PrefabAsset: {fileID: 0}

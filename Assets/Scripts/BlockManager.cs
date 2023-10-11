@@ -9,6 +9,7 @@ public enum BlockPattern
     Diamond,
     Heart,
     Clover,
+    Joker,
     Obstcle,
     Count
 }
@@ -52,6 +53,11 @@ public class BlockManager : MonoBehaviour
     private float posOffset = 0.18f;
     [SerializeField]
     private float moveDuration = 0.3f;
+    [SerializeField]
+    private float acceleratedSpeed = 0.2f;
+    [SerializeField]
+    private float accelerationValue = 2f;
+
     private float moveStartTime = 0f;
 
     public int currentStage;
@@ -334,6 +340,7 @@ public class BlockManager : MonoBehaviour
     private IEnumerator MoveBlockCoroutine(int y, int x, Vector2Int moveIndex)
     {
         float elapsedTime = 0f;
+        float acceleratedTime = 0f;
         moveStartTime = Time.time;
         Vector2 startPos = blocks[y, x].transform.position;
         Vector2 destPos = indexPos[moveIndex.x, moveIndex.y];
@@ -343,7 +350,11 @@ public class BlockManager : MonoBehaviour
 
         while (elapsedTime < moveDuration)
         {
-            float t = Mathf.Clamp01(elapsedTime / moveDuration);
+            acceleratedTime += Time.deltaTime * acceleratedSpeed;
+
+            float t = Mathf.Clamp01(elapsedTime + acceleratedTime / moveDuration);
+            t = 1.0f - Mathf.Pow(1.0f - t, accelerationValue);
+
             blocks[moveIndex.x, moveIndex.y].transform.position = Vector2.Lerp(startPos, destPos, t);
             elapsedTime = Time.time - moveStartTime;
             yield return null;

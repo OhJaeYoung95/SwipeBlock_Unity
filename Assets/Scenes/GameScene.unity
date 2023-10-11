@@ -2551,6 +2551,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a31eb40e397b5714f97d42490a9c6849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  baseScore: 10
+  chainMergeScore: 20
+  comboScore: 30
+  compareScore: 40
 --- !u!1 &815297285
 GameObject:
   m_ObjectHideFlags: 0
@@ -3567,9 +3571,12 @@ MonoBehaviour:
   effectIndex: 0
   comboCount: 0
   posOffset: 0.18
-  moveDuration: 0.3
+  moveDuration: 1
+  acceleratedSpeed: 1
+  accelerationValue: 0.5
   currentStage: 0
   isSpawnObstacle: 0
+  isCompare: 0
   spadePrefab: {fileID: -848185658437290497, guid: 48e25b8583fc9164f9e87ed363fa2162, type: 3}
   diamondPrefab: {fileID: 1429616678887611583, guid: ddd4b2fe717a5884497ed1ea0b1d7cd3, type: 3}
   heartPrefab: {fileID: 5048900380122952790, guid: a719617062dd1754caa98d808d4b8cdc, type: 3}
