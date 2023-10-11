@@ -20,6 +20,8 @@ TagManager:
   - GameOverBestScore
   - GameOverScore
   - Pause
+  - FxTemporaire
+  - JokerBlockPool
   layers:
   - Default
   - TransparentFX

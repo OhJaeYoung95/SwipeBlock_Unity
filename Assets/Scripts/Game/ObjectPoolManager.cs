@@ -10,6 +10,7 @@ public class ObjectPoolManager : MonoBehaviour
     public Block diamondPrefab;
     public Block heartPrefab;
     public Block cloverPrefab;
+    public Block jokerPrefab;
     public Block obstaclePrefab;
 
 
@@ -17,6 +18,7 @@ public class ObjectPoolManager : MonoBehaviour
     private string diamondBlockPoolKey = "DiamondBlockPool";
     private string heartBlockPoolKey = "HeartBlockPool";
     private string cloverBlockPoolKey = "CloverBlockPool";
+    private string jokerBlockPoolKey = "JokerBlockPool";
     private string obstacleBlockPoolKey = "ObstacleBlockPool";
     private string particlePoolKey = "ParticlePool";
 
@@ -24,6 +26,7 @@ public class ObjectPoolManager : MonoBehaviour
     private GameObject diamondPoolFolder;
     private GameObject heartPoolFolder;
     private GameObject cloverPoolFolder;
+    private GameObject jokerPoolFolder;
     private GameObject obstaclePoolFolder;
 
     private void Awake()
@@ -59,6 +62,10 @@ public class ObjectPoolManager : MonoBehaviour
         cloverPoolFolder.name = cloverBlockPoolKey;
         cloverPoolFolder.tag = cloverBlockPoolKey;
 
+        jokerPoolFolder = new GameObject();
+        jokerPoolFolder.name = jokerBlockPoolKey;
+        jokerPoolFolder.tag = jokerBlockPoolKey;
+
         obstaclePoolFolder = new GameObject();
         obstaclePoolFolder.name = obstacleBlockPoolKey;
         obstaclePoolFolder.tag = obstacleBlockPoolKey;
@@ -67,12 +74,14 @@ public class ObjectPoolManager : MonoBehaviour
         DontDestroyOnLoad(diamondPoolFolder);
         DontDestroyOnLoad(heartPoolFolder);
         DontDestroyOnLoad(cloverPoolFolder);
+        DontDestroyOnLoad(jokerPoolFolder);
         DontDestroyOnLoad(obstaclePoolFolder);
 
         CreateObjectPool<Component>(spadeBlockPoolKey, spadePrefab, 30);
         CreateObjectPool<Component>(diamondBlockPoolKey, diamondPrefab, 30);
         CreateObjectPool<Component>(heartBlockPoolKey, heartPrefab, 30);
         CreateObjectPool<Component>(cloverBlockPoolKey, cloverPrefab, 30);
+        CreateObjectPool<Component>(jokerBlockPoolKey, jokerPrefab, 30);
         CreateObjectPool<Component>(obstacleBlockPoolKey, obstaclePrefab, 30);
     }
 
@@ -113,6 +122,7 @@ public class ObjectPoolManager : MonoBehaviour
         objectPools[diamondBlockPoolKey].ReturnAllObject();
         objectPools[heartBlockPoolKey].ReturnAllObject();
         objectPools[cloverBlockPoolKey].ReturnAllObject();
+        objectPools[jokerBlockPoolKey].ReturnAllObject();
         objectPools[obstacleBlockPoolKey].ReturnAllObject();
     }
 }

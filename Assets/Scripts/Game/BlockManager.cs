@@ -9,8 +9,8 @@ public enum BlockPattern
     Diamond,
     Heart,
     Clover,
-    Joker,
     Obstcle,
+    Joker,
     Count
 }
 
@@ -34,7 +34,8 @@ public class BlockManager : MonoBehaviour
     private Block[,] blocks = new Block[5, 5];
 
     List<List<Block>> comparePatternBlocks = new List<List<Block>>();
-
+    //List<Block> jokerList = new List<Block>();
+    //Dictionary<BlockPattern, List<Block>> patternsDic = new Dictionary<BlockPattern, List<Block>>();
 
     SwipeDir swipeDir = SwipeDir.None;
     BlockPattern standardBlock = BlockPattern.None;
@@ -77,6 +78,8 @@ public class BlockManager : MonoBehaviour
     [SerializeField]
     private Block obstaclePrefab;
     [SerializeField]
+    private Block jokerPrefab;
+    [SerializeField]
     private GameObject gridPrefab;
 
     [SerializeField]
@@ -89,6 +92,7 @@ public class BlockManager : MonoBehaviour
     private string heartBlockPoolKey = "HeartBlockPool";
     private string cloverBlockPoolKey = "CloverBlockPool";
     private string obstacleBlockPoolKey = "ObstacleBlockPool";
+    private string jokerBlockPoolKey = "JokerBlockPool";
 
     //private WaitForSeconds delayMergeTime = new WaitForSeconds(0.5f);
 
@@ -148,6 +152,7 @@ public class BlockManager : MonoBehaviour
         poolKeys.Add(heartBlockPoolKey);
         poolKeys.Add(cloverBlockPoolKey);
         poolKeys.Add(obstacleBlockPoolKey);
+        poolKeys.Add(jokerBlockPoolKey);
 
         gridPanel = GameObject.FindGameObjectWithTag("GridPanel");
 
@@ -192,10 +197,10 @@ public class BlockManager : MonoBehaviour
     {
         for (int i = 0; i < initCount; i++)
         {
-            RandomCreate();
+            RandomBlockCreate();
         }
     }
-    private void RandomCreate()
+    private void RandomBlockCreate()
     {
         int y = 0;
         int x = 0;
@@ -209,8 +214,10 @@ public class BlockManager : MonoBehaviour
 
         if (isSpawnObstacle)
             ranBlockState = Random.Range((int)BlockPattern.None + 1, (int)BlockPattern.Count);
+            //ranBlockState = Random.Range((int)BlockPattern.None + 1, (int)BlockPattern.Joker);
         else
-            ranBlockState = Random.Range((int)BlockPattern.None + 1, (int)BlockPattern.Obstcle);
+            ranBlockState = Random.Range((int)BlockPattern.None + 1, (int)BlockPattern.Count);
+            //ranBlockState = Random.Range((int)BlockPattern.None + 1, (int)BlockPattern.Obstcle);
 
         float blockSize = 0f;
         switch (boardSize)
@@ -222,9 +229,6 @@ public class BlockManager : MonoBehaviour
                 blockSize = 0.8f;
                 break;
         }
-        int screenWidth = Screen.width;
-        int screenHeight = Screen.height;
-
 
         blockIndexs[y, x] = ranBlockState;
         Block newBlock = ObjectPoolManager.Instance.GetObjectPool<Block>(poolKeys[ranBlockState - 1]);
@@ -233,6 +237,35 @@ public class BlockManager : MonoBehaviour
         blocks[y, x] = newBlock;
         blocks[y, x].SetIndex(y, x);
     }
+
+    private void RandomBlockCreate(Block newBlock)
+    {
+        int y = 0;
+        int x = 0;
+        do
+        {
+            y = Random.Range(0, blockIndexs.GetLength(0));
+            x = Random.Range(0, blockIndexs.GetLength(1));
+        } while (blockIndexs[y, x] != 0);
+
+        float blockSize = 0f;
+        switch (boardSize)
+        {
+            case 4:
+                blockSize = 1f;
+                break;
+            case 5:
+                blockSize = 0.8f;
+                break;
+        }
+
+        blockIndexs[y, x] = (int)newBlock.type;
+        newBlock.transform.position = indexPos[y, x];
+        newBlock.transform.localScale = new Vector2(blockSize, blockSize);
+        blocks[y, x] = newBlock;
+        blocks[y, x].SetIndex(y, x);
+    }
+
     public IEnumerator MoveBlocks(float swipeAngle)
     {
         do
@@ -318,10 +351,11 @@ public class BlockManager : MonoBehaviour
         } while (isChainMerge);
 
         isCompare = false;
+        ScoreManager.Instance.IsScoreIncrease = false;
         comboCount = 0;
 
         for (int x = 0; x < spawnCount; ++x)
-            RandomCreate();
+            RandomBlockCreate();
         GameManager.Instance.IsMove = false;
 
         if (CheckFullBoard())
@@ -363,22 +397,61 @@ public class BlockManager : MonoBehaviour
     }
     private IEnumerator MergeBlocks()
     {
-        ChcekPattern();
+        ConvertJokerIndex();
+        CheckPattern();
         yield return StartCoroutine(TryMerge());
     }
-
-    public void ChcekPattern()
+    public void ConvertJokerIndex()
     {
         List<Block> connectedBlocks = new List<Block>();
+
         for (int y = 0; y < blockIndexs.GetLength(0); y++)
         {
             for (int x = 0; x < blockIndexs.GetLength(1); x++)
             {
                 if (!blocks[y, x])
                     continue;
-                if (blocks[y, x].type == BlockPattern.None || blocks[y, x].type == BlockPattern.Obstcle || blocks[y, x].IsMerged)
+                if (blocks[y, x].type == BlockPattern.None || 
+                    blocks[y, x].type == BlockPattern.Obstcle || 
+                    blocks[y, x].IsChcekIndex)
                     continue;
 
+                blocks[y, x].IsChcekIndex = true;
+                connectedBlocks.Add(blocks[y, x]);
+                FindConnectedIndexs(blocks[y, x], connectedBlocks);
+
+                // 조커 우선순위는 어쩌지
+                if (connectedBlocks.Count <= 2)
+                {
+                    foreach (Block block in connectedBlocks)
+                    {
+                        // index를 조커 인덱스로 변형
+                        if (block.type == BlockPattern.Joker)
+                        {
+                            block.IsChcekIndex = false;
+                            blockIndexs[block.Y, block.X] = (int)BlockPattern.Joker;
+                        }
+                    }
+                }
+                connectedBlocks.Clear();
+            }
+        }
+
+    }
+
+    public void CheckPattern()
+    {
+        List<Block> connectedBlocks = new List<Block>();
+
+        for (int y = 0; y < blockIndexs.GetLength(0); y++)
+        {
+            for (int x = 0; x < blockIndexs.GetLength(1); x++)
+            {
+                if (!blocks[y, x])
+                    continue;
+                if (blockIndexs[y, x] == (int)BlockPattern.None || blockIndexs[y, x] == (int)BlockPattern.Obstcle 
+                    || blocks[y, x].IsMerged)
+                    continue;
                 blocks[y, x].IsMerged = true;
                 connectedBlocks.Add(blocks[y, x]);
                 FindConnectedBlocks(blocks[y, x], connectedBlocks);
@@ -387,6 +460,7 @@ public class BlockManager : MonoBehaviour
                 {
                     comparePatternBlocks.Add(new List<Block>(connectedBlocks));
                 }
+                //patternsDic[blocks[y, x].type] = connectedBlocks;
                 connectedBlocks.Clear();
             }
         }
@@ -470,21 +544,37 @@ public class BlockManager : MonoBehaviour
                     standardBlock = compareBlock.type;
                     break;
             }
-
         }
-
-
     }
-
     public IEnumerator TryMerge()
     {
-        //comparePatternBlocks 를 이용하기, isCompare를 활용해서 n차 머지까지 검사하기
-
         foreach (List<Block> blockList in comparePatternBlocks)
         {
             isChainMerge = true;
             comboCount++;
             int connectedCount = blockList.Count;
+
+            // 블록 특성
+            switch(blockList[0].type)
+            {
+                case BlockPattern.Spade:
+                    if(blockList.Count >= 3)
+                    {
+                        Block newJoker = ObjectPoolManager.Instance.GetObjectPool<Block>(poolKeys[(int)BlockPattern.Joker - 1]);
+                        //jokerList.Add(newJoker);
+                        RandomBlockCreate(newJoker);
+                    }
+                    break;
+                case BlockPattern.Diamond:
+                    ScoreManager.Instance.IsScoreIncrease = true;
+                    break;
+                case BlockPattern.Heart:
+                    UIManager.Instance.gameTimer += (5f * (connectedCount - 1));
+                    break;
+            }
+
+
+            // 점수
             ScoreManager.Instance.AddScoreBase();
             ScoreManager.Instance.AddScoreByConnected(connectedCount);
 
@@ -504,24 +594,7 @@ public class BlockManager : MonoBehaviour
             yield return new WaitForSeconds(0.2f);
         }
         comparePatternBlocks.Clear();
-        //// 블록 터뜨리는 처리 나중에
-        //if (connectedBlocks.Count >= 2)
-        //{
-        //    isChainMerge = true;
-        //    comboCount++;
-
-        //    int connectedCount = connectedBlocks.Count;
-        //    ScoreManager.Instance.AddScoreBase();
-        //    ScoreManager.Instance.AddScoreByConnected(connectedCount);
-        //    if (comboCount > 1)
-        //        ScoreManager.Instance.AddScoreByCombo();
-        //    foreach (Block block in connectedBlocks)
-        //    {
-        //    }
-        //    yield return new WaitForSeconds(0.2f);
-        //}
     }
-
     public void ClearBoard()
     {
         for (int y = 0; y < blocks.GetLength(0); y++)
@@ -539,10 +612,9 @@ public class BlockManager : MonoBehaviour
     }
     IEnumerator MergeBlocksCoroutine()
     {
-        yield return new WaitForSeconds(0.5f + moveDuration);
+        yield return new WaitForSeconds(0.2f + moveDuration);
         yield return StartCoroutine(MergeBlocks());
     }
-
     public void PlayMergeEffect(Block block)
     {
         if (effectIndex == 0)
@@ -558,8 +630,7 @@ public class BlockManager : MonoBehaviour
             effect.Play();
         }
     }
-
-    public void FindConnectedBlocks(Block currentBlock, List<Block> connectedBlocks)
+    public void FindConnectedIndexs(Block currentBlock, List<Block> connectedBlocks)
     {
         Vector2Int[] directions = { new Vector2Int(currentBlock.Y + 1, currentBlock.X),
             new Vector2Int(currentBlock.Y - 1, currentBlock.X),
@@ -575,7 +646,40 @@ public class BlockManager : MonoBehaviour
             if (!blocks[direction.x, direction.y])
                 continue;
 
-            if (blocks[direction.x, direction.y].type == currentBlock.type && !blocks[direction.x, direction.y].IsMerged)
+            if(blocks[direction.x, direction.y].type == BlockPattern.Joker && blockIndexs[direction.x, direction.y] > blockIndexs[currentBlock.Y, currentBlock.X])
+            {
+
+            }
+
+
+            if ((blockIndexs[direction.x, direction.y] == (int)currentBlock.type ||
+                blockIndexs[direction.x, direction.y] == (int)BlockPattern.Joker) &&
+                !blocks[direction.x, direction.y].IsChcekIndex)
+            {
+                blocks[direction.x, direction.y].IsChcekIndex = true;
+                blockIndexs[direction.x, direction.y] = (int)currentBlock.type;
+                connectedBlocks.Add(blocks[direction.x, direction.y]);
+                FindConnectedIndexs(blocks[direction.x, direction.y], connectedBlocks);
+            }
+        }
+    }
+    public void FindConnectedBlocks(Block currentBlock, List<Block> connectedBlocks)
+    {
+        Vector2Int[] directions = { new Vector2Int(currentBlock.Y + 1, currentBlock.X),
+            new Vector2Int(currentBlock.Y - 1, currentBlock.X),
+            new Vector2Int(currentBlock.Y, currentBlock.X - 1),
+            new Vector2Int(currentBlock.Y, currentBlock.X + 1) };
+
+        foreach (Vector2Int direction in directions)
+        {
+
+            if (direction.y == -1 || direction.x == -1 || direction.y == blocks.GetLength(0) || direction.x == blocks.GetLength(1))
+                continue;
+
+            if (blockIndexs[direction.x, direction.y] == 0)
+                continue;
+
+            if (blockIndexs[direction.x, direction.y] == (int)currentBlock.type && !blocks[direction.x, direction.y].IsMerged)
             {
                 blocks[direction.x, direction.y].IsMerged = true;
                 connectedBlocks.Add(blocks[direction.x, direction.y]);
@@ -592,6 +696,7 @@ public class BlockManager : MonoBehaviour
             if (block.type == BlockPattern.None)
                 continue;
             block.IsMerged = false;
+            block.IsChcekIndex = false;
         }
     }
     public bool CheckFullBoard()

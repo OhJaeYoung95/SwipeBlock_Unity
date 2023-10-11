@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Block : MonoBehaviour
@@ -13,6 +14,7 @@ public class Block : MonoBehaviour
     public int X { get; set; }
     public int Y { get; set; }
     public bool IsMerged { get; set; } = false;
+    public bool IsChcekIndex { get; set; } = false;
 
     public void SetIndex(int y, int x)
     {
@@ -20,7 +22,7 @@ public class Block : MonoBehaviour
         X = x;
     }
 
-    private void OnEnable()
+    protected virtual void OnEnable()
     {
         IsMerged = false;
     }

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6239899266837480013}
   m_Layer: 0
   m_Name: Joker
-  m_TagString: Untagged
+  m_TagString: Block
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -100,4 +100,4 @@ MonoBehaviour:
   blockSize: 0.18
   mergeEffect1: {fileID: 6143898882255454021, guid: d7422decdc9c75b4eb4b9c52bd559aec, type: 3}
   mergeEffect2: {fileID: 6061288923869440993, guid: d7422decdc9c75b4eb4b9c52bd559aec, type: 3}
-  type: 5
+  type: 6

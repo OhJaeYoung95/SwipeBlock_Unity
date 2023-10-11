@@ -16,6 +16,7 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI gameOverBestScore;
     public TextMeshProUGUI gameOverScore;
 
+
     private GameObject canvas;
     private GameObject gameOverPanel;
     private GameObject pausePanel;
@@ -53,11 +54,18 @@ public class UIManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (GameManager.Instance.IsGameOver)
+            return;
+
         gameTimer -= Time.deltaTime;
 
         float t = gameTimer / gameDuration;
-        if (t <= 0.5f && !BlockManager.Instance.isSpawnObstacle)
-            BlockManager.Instance.isSpawnObstacle = true;
+        // 에러 발생
+        if(BlockManager.Instance != null)
+        {
+            if (t <= 0.5f && !BlockManager.Instance.isSpawnObstacle)
+                BlockManager.Instance.isSpawnObstacle = true;
+        }
 
         if (t <= 0.1f && !isFadeHpBar)
         {
@@ -74,10 +82,8 @@ public class UIManager : MonoBehaviour
         if (isFadeHpBar)
             FadeHpBarFrame();
 
-
-
         UpdateTimerUI(t);
-        if (gameTimer <= 0f)
+        if (gameTimer <= 0f && !GameManager.Instance.IsGameOver)
         {
             GameManager.Instance.GameOver();
         }
@@ -152,6 +158,7 @@ public class UIManager : MonoBehaviour
 
     public void GameOver()
     {
+        // 여기서 미싱이 났다
         gameOverPanel.gameObject.SetActive(true);
         ScoreManager.Instance.UpdateBestScore();
         gameOverBestScore.text = $"{ScoreManager.Instance.BestScore}";
@@ -190,12 +197,12 @@ public class UIManager : MonoBehaviour
         hpBar.value = value;
     }
 
-    public void UpdateBestScoreUI(int value)
+    public void UpdateBestScoreUI(float value)
     {
-        bestScore.text = $"BEST SCORE \n {value}";
+        bestScore.text = $"BEST SCORE \n {Mathf.RoundToInt(value)}";
     }
-    public void UpdateScoreUI(int value)
+    public void UpdateScoreUI(float value)
     {
-        score.text = $"SCORE \n {value}";
+        score.text = $"SCORE \n {Mathf.RoundToInt(value)}";
     }
 }

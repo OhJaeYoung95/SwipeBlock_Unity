@@ -5,16 +5,18 @@ using UnityEngine;
 public class ScoreManager : MonoBehaviour
 {
     public static ScoreManager Instance { get; private set; }
-    public int BestScore { get; set; }
-    public int CurrentScore { get; set; }
+    public float BestScore { get; set; }
+    public float CurrentScore { get; set; }
     [SerializeField]
-    private int baseScore = 10;
+    private float baseScore = 10f;
     [SerializeField]
-    private int chainMergeScore = 20;
+    private float chainMergeScore = 20f;
     [SerializeField]
-    private int comboScore = 30;
+    private float comboScore = 30f;
     [SerializeField]
-    private int compareScore = 40;
+    private float compareScore = 40f;
+
+    public bool IsScoreIncrease { get; set; } = false;
 
     private void Awake()
     {
@@ -33,7 +35,7 @@ public class ScoreManager : MonoBehaviour
     {
         UpdateBestScore();
         UIManager.Instance.UpdateBestScoreUI(BestScore);
-        CurrentScore = 0;
+        CurrentScore = 0f;
     }
 
     public void UpdateBestScore()
@@ -43,28 +45,57 @@ public class ScoreManager : MonoBehaviour
 
     public void AddScoreBase()
     {
-        CurrentScore += baseScore;
+        if(IsScoreIncrease)
+        {
+            Debug.Log(baseScore * 1.5f);
+
+            CurrentScore += baseScore * 1.5f;
+        }
+        else
+            CurrentScore += baseScore;
         UIManager.Instance.UpdateScoreUI(CurrentScore);
     }
 
     public void AddScoreByConnected(int count)
     {
         int factor = count - 2;
-        CurrentScore += chainMergeScore * factor;
+
+        if (IsScoreIncrease)
+        {
+            Debug.Log(chainMergeScore * factor * 1.5f);
+
+            CurrentScore += chainMergeScore * factor * 1.5f;
+        }
+        else
+            CurrentScore += chainMergeScore * factor;
+
         UIManager.Instance.UpdateScoreUI(CurrentScore);
     }
 
     public void AddScoreByCombo()
     {
         Debug.Log("Combo");
-        CurrentScore += comboScore;
+        if(IsScoreIncrease)
+        {
+            Debug.Log(comboScore * 1.5f);
+
+            CurrentScore += comboScore * 1.5f;
+        }
+        else
+            CurrentScore += comboScore;
         UIManager.Instance.UpdateScoreUI(CurrentScore);
     }
 
     public void AddScoreByComparePattern()
     {
         Debug.Log("Compare");
-        CurrentScore += compareScore;
+        if(IsScoreIncrease)
+        {
+            Debug.Log(compareScore * 1.5f);
+            CurrentScore += compareScore * 1.5f;
+        }
+        else
+            CurrentScore += compareScore;
         UIManager.Instance.UpdateScoreUI(CurrentScore);
     }
 }
