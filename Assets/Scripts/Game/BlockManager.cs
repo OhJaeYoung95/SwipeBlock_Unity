@@ -214,10 +214,10 @@ public class BlockManager : MonoBehaviour
 
         if (isSpawnObstacle)
             ranBlockState = Random.Range((int)BlockPattern.None + 1, (int)BlockPattern.Count);
-            //ranBlockState = Random.Range((int)BlockPattern.None + 1, (int)BlockPattern.Joker);
+        //ranBlockState = Random.Range((int)BlockPattern.None + 1, (int)BlockPattern.Joker);
         else
             ranBlockState = Random.Range((int)BlockPattern.None + 1, (int)BlockPattern.Count);
-            //ranBlockState = Random.Range((int)BlockPattern.None + 1, (int)BlockPattern.Obstcle);
+        //ranBlockState = Random.Range((int)BlockPattern.None + 1, (int)BlockPattern.Obstcle);
 
         float blockSize = 0f;
         switch (boardSize)
@@ -411,7 +411,7 @@ public class BlockManager : MonoBehaviour
             {
                 if (!blocks[y, x])
                     continue;
-                if (blocks[y, x].type == BlockPattern.None || 
+                if (blocks[y, x].type == BlockPattern.None ||
                     blocks[y, x].type == BlockPattern.Obstcle ||
                     blocks[y, x].type == BlockPattern.Joker ||
                     blocks[y, x].IsChcekIndex)
@@ -428,7 +428,7 @@ public class BlockManager : MonoBehaviour
                         if (block.type == BlockPattern.Joker)
                         {
                             block.IsChcekIndex = false;
-                            if(block.CurrentPattern > (int)connectedBlocks[0].type)
+                            if (block.CurrentPattern > (int)connectedBlocks[0].type)
                             {
                                 block.IsContainList = true;
                                 block.CurrentPattern = (int)connectedBlocks[0].type;
@@ -443,7 +443,7 @@ public class BlockManager : MonoBehaviour
                         if (block.type == BlockPattern.Joker)
                         {
                             block.IsChcekIndex = false;
-                            if(!block.IsContainList)
+                            if (!block.IsContainList)
                                 blockIndexs[block.Y, block.X] = block.CurrentPattern;
                         }
                     }
@@ -466,7 +466,7 @@ public class BlockManager : MonoBehaviour
                     continue;
                 if (blocks[y, x].type == BlockPattern.None ||
                     blocks[y, x].type == BlockPattern.Obstcle ||
-                    blocks[y, x].type == BlockPattern.Joker || 
+                    blocks[y, x].type == BlockPattern.Joker ||
                     blocks[y, x].IsMerged)
                     continue;
                 blocks[y, x].IsMerged = true;
@@ -571,10 +571,10 @@ public class BlockManager : MonoBehaviour
             int connectedCount = blockList.Count;
 
             // 블록 특성
-            switch(blockList[0].type)
+            switch (blockList[0].type)
             {
                 case BlockPattern.Spade:
-                    if(blockList.Count >= 3)
+                    if (blockList.Count >= 3)
                     {
                         Block newJoker = ObjectPoolManager.Instance.GetObjectPool<Block>(poolKeys[(int)BlockPattern.Joker - 1]);
                         jokerList.Add(newJoker);
@@ -602,7 +602,7 @@ public class BlockManager : MonoBehaviour
 
             foreach (Block block in blockList)
             {
-                if(block.type == BlockPattern.Joker)
+                if (block.type == BlockPattern.Joker)
                     jokerList.Remove(block);
 
                 blockIndexs[block.Y, block.X] = 0;
@@ -613,7 +613,7 @@ public class BlockManager : MonoBehaviour
             yield return new WaitForSeconds(0.2f);
         }
         comparePatternBlocks.Clear();
-        foreach(Block joker in jokerList)
+        foreach (Block joker in jokerList)
         {
             joker.IsChcekIndex = false;
             joker.IsContainList = false;
@@ -671,10 +671,22 @@ public class BlockManager : MonoBehaviour
             if (!blocks[direction.x, direction.y])
                 continue;
 
+            //&&
+            //    blocks[currentBlock.Y, currentBlock.X].IsContainList
             // 인덱스가 바뀌니 접근이 안된다.
+            if ((blockIndexs[direction.x, direction.y] > blockIndexs[currentBlock.Y, currentBlock.X] &&
+                blocks[direction.x, direction.y].type == BlockPattern.Joker))
+            {
+                blocks[direction.x, direction.y].IsChcekIndex = true;
+                blocks[direction.x, direction.y].IsChcekIndex = true;
+                blockIndexs[direction.x, direction.y] = blockIndexs[currentBlock.Y, currentBlock.X];
+                connectedBlocks.Add(blocks[direction.x, direction.y]);
+                FindConnectedIndexs(blocks[direction.x, direction.y], connectedBlocks);
+            }
+
             if ((blockIndexs[direction.x, direction.y] == blockIndexs[currentBlock.Y, currentBlock.X] ||
                 blockIndexs[direction.x, direction.y] == (int)BlockPattern.Joker) &&
-                (!blocks[direction.x, direction.y].IsChcekIndex || blocks[direction.x, direction.y].IsContainList))
+                (!blocks[direction.x, direction.y].IsChcekIndex /*|| blocks[direction.x, direction.y].IsContainList*/))
             {
                 blocks[direction.x, direction.y].IsChcekIndex = true;
                 blockIndexs[direction.x, direction.y] = blockIndexs[currentBlock.Y, currentBlock.X];
@@ -699,7 +711,7 @@ public class BlockManager : MonoBehaviour
             if (blockIndexs[direction.x, direction.y] == 0)
                 continue;
 
-            if (blockIndexs[direction.x, direction.y] == blockIndexs[currentBlock.Y, currentBlock.X] && 
+            if (blockIndexs[direction.x, direction.y] == blockIndexs[currentBlock.Y, currentBlock.X] &&
                 !blocks[direction.x, direction.y].IsMerged)
             {
                 blocks[direction.x, direction.y].IsMerged = true;
