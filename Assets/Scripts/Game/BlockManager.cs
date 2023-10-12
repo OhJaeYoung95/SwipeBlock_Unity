@@ -671,6 +671,7 @@ public class BlockManager : MonoBehaviour
             if (!blocks[direction.x, direction.y])
                 continue;
 
+            // 인덱스가 바뀌니 접근이 안된다.
             if ((blockIndexs[direction.x, direction.y] == blockIndexs[currentBlock.Y, currentBlock.X] ||
                 blockIndexs[direction.x, direction.y] == (int)BlockPattern.Joker) &&
                 (!blocks[direction.x, direction.y].IsChcekIndex || blocks[direction.x, direction.y].IsContainList))
