@@ -34,7 +34,7 @@ public class BlockManager : MonoBehaviour
     private Block[,] blocks = new Block[5, 5];
 
     List<List<Block>> comparePatternBlocks = new List<List<Block>>();
-    //List<Block> jokerList = new List<Block>();
+    List<Block> jokerList = new List<Block>();
     //Dictionary<BlockPattern, List<Block>> patternsDic = new Dictionary<BlockPattern, List<Block>>();
 
     SwipeDir swipeDir = SwipeDir.None;
@@ -421,15 +421,30 @@ public class BlockManager : MonoBehaviour
                 connectedBlocks.Add(blocks[y, x]);
                 FindConnectedIndexs(blocks[y, x], connectedBlocks);
 
-                // 조커 우선순위는 어쩌지
+                if (connectedBlocks.Count > 2)
+                {
+                    foreach (Block block in connectedBlocks)
+                    {
+                        if (block.type == BlockPattern.Joker)
+                        {
+                            block.IsChcekIndex = false;
+                            if(block.CurrentPattern > (int)connectedBlocks[0].type)
+                            {
+                                block.IsContainList = true;
+                                block.CurrentPattern = (int)connectedBlocks[0].type;
+                            }
+                        }
+                    }
+                }
                 if (connectedBlocks.Count <= 2)
                 {
                     foreach (Block block in connectedBlocks)
                     {
-                        // index를 조커 인덱스로 변형
                         if (block.type == BlockPattern.Joker)
                         {
-                            blockIndexs[block.Y, block.X] = (int)BlockPattern.Joker;
+                            block.IsChcekIndex = false;
+                            if(!block.IsContainList)
+                                blockIndexs[block.Y, block.X] = block.CurrentPattern;
                         }
                     }
                 }
@@ -449,8 +464,10 @@ public class BlockManager : MonoBehaviour
             {
                 if (!blocks[y, x])
                     continue;
-                if (blockIndexs[y, x] == (int)BlockPattern.None || blockIndexs[y, x] == (int)BlockPattern.Obstcle 
-                    || blocks[y, x].IsMerged)
+                if (blocks[y, x].type == BlockPattern.None ||
+                    blocks[y, x].type == BlockPattern.Obstcle ||
+                    blocks[y, x].type == BlockPattern.Joker || 
+                    blocks[y, x].IsMerged)
                     continue;
                 blocks[y, x].IsMerged = true;
                 connectedBlocks.Add(blocks[y, x]);
@@ -460,7 +477,6 @@ public class BlockManager : MonoBehaviour
                 {
                     comparePatternBlocks.Add(new List<Block>(connectedBlocks));
                 }
-                //patternsDic[blocks[y, x].type] = connectedBlocks;
                 connectedBlocks.Clear();
             }
         }
@@ -561,7 +577,7 @@ public class BlockManager : MonoBehaviour
                     if(blockList.Count >= 3)
                     {
                         Block newJoker = ObjectPoolManager.Instance.GetObjectPool<Block>(poolKeys[(int)BlockPattern.Joker - 1]);
-                        //jokerList.Add(newJoker);
+                        jokerList.Add(newJoker);
                         RandomBlockCreate(newJoker);
                     }
                     break;
@@ -586,6 +602,9 @@ public class BlockManager : MonoBehaviour
 
             foreach (Block block in blockList)
             {
+                if(block.type == BlockPattern.Joker)
+                    jokerList.Remove(block);
+
                 blockIndexs[block.Y, block.X] = 0;
                 PlayMergeEffect(block);
                 ObjectPoolManager.Instance.ReturnObjectPool<Block>(poolKeys[(int)blocks[block.Y, block.X].type - 1], block);
@@ -594,6 +613,12 @@ public class BlockManager : MonoBehaviour
             yield return new WaitForSeconds(0.2f);
         }
         comparePatternBlocks.Clear();
+        foreach(Block joker in jokerList)
+        {
+            joker.IsChcekIndex = false;
+            joker.IsContainList = false;
+            joker.CurrentPattern = (int)BlockPattern.Joker;
+        }
     }
     public void ClearBoard()
     {
@@ -646,21 +671,12 @@ public class BlockManager : MonoBehaviour
             if (!blocks[direction.x, direction.y])
                 continue;
 
-            if(blocks[direction.x, direction.y].type == BlockPattern.Joker && 
-                blockIndexs[direction.x, direction.y] > blockIndexs[currentBlock.Y, currentBlock.X])
-            {
-                blockIndexs[direction.x, direction.y] = (int)currentBlock.type;
-                connectedBlocks.Add(blocks[direction.x, direction.y]);
-                FindConnectedIndexs(blocks[direction.x, direction.y], connectedBlocks);
-            }
-
-
-            if ((blocks[direction.x, direction.y].type == currentBlock.type ||
+            if ((blockIndexs[direction.x, direction.y] == blockIndexs[currentBlock.Y, currentBlock.X] ||
                 blockIndexs[direction.x, direction.y] == (int)BlockPattern.Joker) &&
-                !blocks[direction.x, direction.y].IsChcekIndex)
+                (!blocks[direction.x, direction.y].IsChcekIndex || blocks[direction.x, direction.y].IsContainList))
             {
                 blocks[direction.x, direction.y].IsChcekIndex = true;
-                blockIndexs[direction.x, direction.y] = (int)currentBlock.type;
+                blockIndexs[direction.x, direction.y] = blockIndexs[currentBlock.Y, currentBlock.X];
                 connectedBlocks.Add(blocks[direction.x, direction.y]);
                 FindConnectedIndexs(blocks[direction.x, direction.y], connectedBlocks);
             }
@@ -682,7 +698,8 @@ public class BlockManager : MonoBehaviour
             if (blockIndexs[direction.x, direction.y] == 0)
                 continue;
 
-            if (blockIndexs[direction.x, direction.y] == (int)currentBlock.type && !blocks[direction.x, direction.y].IsMerged)
+            if (blockIndexs[direction.x, direction.y] == blockIndexs[currentBlock.Y, currentBlock.X] && 
+                !blocks[direction.x, direction.y].IsMerged)
             {
                 blocks[direction.x, direction.y].IsMerged = true;
                 connectedBlocks.Add(blocks[direction.x, direction.y]);
@@ -700,6 +717,7 @@ public class BlockManager : MonoBehaviour
                 continue;
             block.IsMerged = false;
             block.IsChcekIndex = false;
+            block.IsContainList = false;
         }
     }
     public bool CheckFullBoard()

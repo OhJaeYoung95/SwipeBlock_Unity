@@ -13,13 +13,17 @@ public class Block : MonoBehaviour
 
     public int X { get; set; }
     public int Y { get; set; }
+
+    public int CurrentPattern { get; set; } = 0;
     public bool IsMerged { get; set; } = false;
     public bool IsChcekIndex { get; set; } = false;
+    public bool IsContainList { get; set; } = false;
 
     public void SetIndex(int y, int x)
     {
         Y = y;
         X = x;
+        CurrentPattern = (int)type;
     }
 
     protected virtual void OnEnable()
