@@ -19,6 +19,8 @@ public class AbilitiesController : MonoBehaviour
     public void UseItemSlot1()
     {
         Debug.Log("UseItemSlot1");
+        //ScoreManager.Instance.IsScoreIncreaseByItem = true;
+
     }
     public void UseItemSlot2()
     {

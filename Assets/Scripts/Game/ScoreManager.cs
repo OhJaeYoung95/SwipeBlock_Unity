@@ -16,7 +16,8 @@ public class ScoreManager : MonoBehaviour
     [SerializeField]
     private float compareScore = 40f;
 
-    public bool IsScoreIncrease { get; set; } = false;
+    public bool IsScoreIncreaseByDia { get; set; } = false;
+    public bool IsScoreIncreaseByItem { get; set; } = false;
 
     private void Awake()
     {
@@ -29,12 +30,16 @@ public class ScoreManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        Instance.Init();
     }
 
     public void Init()
     {
         UpdateBestScore();
         UIManager.Instance.UpdateBestScoreUI(BestScore);
+        IsScoreIncreaseByDia = false;
+        IsScoreIncreaseByItem = false;
         CurrentScore = 0f;
     }
 
@@ -45,7 +50,7 @@ public class ScoreManager : MonoBehaviour
 
     public void AddScoreBase()
     {
-        if(IsScoreIncrease)
+        if(IsScoreIncreaseByDia)
         {
             Debug.Log(baseScore * 1.5f);
 
@@ -60,7 +65,7 @@ public class ScoreManager : MonoBehaviour
     {
         int factor = count - 2;
 
-        if (IsScoreIncrease)
+        if (IsScoreIncreaseByDia)
         {
             Debug.Log(chainMergeScore * factor * 1.5f);
 
@@ -75,7 +80,7 @@ public class ScoreManager : MonoBehaviour
     public void AddScoreByCombo()
     {
         Debug.Log("Combo");
-        if(IsScoreIncrease)
+        if(IsScoreIncreaseByDia)
         {
             Debug.Log(comboScore * 1.5f);
 
@@ -89,7 +94,7 @@ public class ScoreManager : MonoBehaviour
     public void AddScoreByComparePattern()
     {
         Debug.Log("Compare");
-        if(IsScoreIncrease)
+        if(IsScoreIncreaseByDia)
         {
             Debug.Log(compareScore * 1.5f);
             CurrentScore += compareScore * 1.5f;

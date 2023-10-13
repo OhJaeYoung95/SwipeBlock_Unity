@@ -35,7 +35,6 @@ public class BlockManager : MonoBehaviour
 
     List<List<Block>> comparePatternBlocks = new List<List<Block>>();
     List<Block> jokerList = new List<Block>();
-    //Dictionary<BlockPattern, List<Block>> patternsDic = new Dictionary<BlockPattern, List<Block>>();
 
     SwipeDir swipeDir = SwipeDir.None;
     BlockPattern standardBlock = BlockPattern.None;
@@ -63,9 +62,10 @@ public class BlockManager : MonoBehaviour
 
     public int currentStage;
 
-    public bool isSpawnObstacle = false;
     private bool isChainMerge = false;
-    public bool isCompare = false;
+    private bool isOnSpadeAttribute = false;
+    private bool isCompare = false;
+    public bool isSpawnObstacle = false;
 
     [SerializeField]
     private Block spadePrefab;
@@ -93,8 +93,6 @@ public class BlockManager : MonoBehaviour
     private string cloverBlockPoolKey = "CloverBlockPool";
     private string obstacleBlockPoolKey = "ObstacleBlockPool";
     private string jokerBlockPoolKey = "JokerBlockPool";
-
-    //private WaitForSeconds delayMergeTime = new WaitForSeconds(0.5f);
 
     private void Awake()
     {
@@ -157,6 +155,7 @@ public class BlockManager : MonoBehaviour
         gridPanel = GameObject.FindGameObjectWithTag("GridPanel");
 
         float panelSize = gridPanel.transform.localScale.x;
+        Vector2 panelPos = gridPanel.transform.position;
         float gridSize = 0f;
 
         int screenWidth = Screen.width;
@@ -181,7 +180,7 @@ public class BlockManager : MonoBehaviour
             for (int x = 0; x < blockIndexs.GetLength(1); ++x)
             {
                 blockIndexs[y, x] = 0;
-                indexPos[y, x] = (new Vector2(-(posOffset * 2) + posOffset * x, -(posOffset * 2) + posOffset * y) * panelSize);
+                indexPos[y, x] = (new Vector2(-(posOffset * 2) + posOffset * x, -(posOffset * 2) + posOffset * y) * panelSize) + panelPos;
                 if (boardSize % 2 == 0)
                     indexPos[y, x] += new Vector2(panelSize * 0.5f, panelSize * 0.5f) * Mathf.Pow(0.5f, 2f);
                 GameObject grid = Instantiate(gridPrefab, gridPanel.transform);
@@ -351,17 +350,23 @@ public class BlockManager : MonoBehaviour
         } while (isChainMerge);
 
         isCompare = false;
-        ScoreManager.Instance.IsScoreIncrease = false;
+        ScoreManager.Instance.IsScoreIncreaseByDia = false;
         comboCount = 0;
 
+        if (isOnSpadeAttribute)
+            OnSpadeAttribute();
+
         for (int x = 0; x < spawnCount; ++x)
+        {
             RandomBlockCreate();
+            if (CheckFullBoard())
+                break;
+        }
+
         GameManager.Instance.IsMove = false;
 
         if (CheckFullBoard())
-        {
             StartCoroutine(GameOver());
-        }
     }
 
     public void MoveBlock(int y, int x, Vector2Int moveIndex)
@@ -575,17 +580,13 @@ public class BlockManager : MonoBehaviour
             {
                 case BlockPattern.Spade:
                     if (blockList.Count >= 3)
-                    {
-                        Block newJoker = ObjectPoolManager.Instance.GetObjectPool<Block>(poolKeys[(int)BlockPattern.Joker - 1]);
-                        jokerList.Add(newJoker);
-                        RandomBlockCreate(newJoker);
-                    }
+                        isOnSpadeAttribute = true;
                     break;
                 case BlockPattern.Diamond:
-                    ScoreManager.Instance.IsScoreIncrease = true;
+                    ScoreManager.Instance.IsScoreIncreaseByDia = true;
                     break;
                 case BlockPattern.Heart:
-                    UIManager.Instance.gameTimer += (5f * (connectedCount - 1));
+                    UIManager.Instance.IncreaseTimer(5f * (connectedCount - 1));
                     break;
             }
 
@@ -671,9 +672,6 @@ public class BlockManager : MonoBehaviour
             if (!blocks[direction.x, direction.y])
                 continue;
 
-            //&&
-            //    blocks[currentBlock.Y, currentBlock.X].IsContainList
-            // 인덱스가 바뀌니 접근이 안된다.
             if ((blockIndexs[direction.x, direction.y] > blockIndexs[currentBlock.Y, currentBlock.X] &&
                 blocks[direction.x, direction.y].type == BlockPattern.Joker))
             {
@@ -822,6 +820,20 @@ public class BlockManager : MonoBehaviour
         else
         {
             return new Vector2Int(y, x);
+        }
+    }
+
+    private void OnSpadeAttribute()
+    {
+        Block newJoker = ObjectPoolManager.Instance.GetObjectPool<Block>(poolKeys[(int)BlockPattern.Joker - 1]);
+        jokerList.Add(newJoker);
+        RandomBlockCreate(newJoker);
+        isOnSpadeAttribute = false;
+
+        if (CheckFullBoard())
+        {
+            GameManager.Instance.IsMove = false;
+            StartCoroutine(GameOver());
         }
     }
 }

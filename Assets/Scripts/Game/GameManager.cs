@@ -22,8 +22,11 @@ public class GameManager : MonoBehaviour
         Instance.IsGameOver = false;
         Instance.IsPause = false;
         Instance.IsMove = false;
-        UIManager.Instance.UpdateBestScoreUI(ScoreManager.Instance.BestScore);
-        UIManager.Instance.UpdateScoreUI(ScoreManager.Instance.CurrentScore);
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.UpdateBestScoreUI(ScoreManager.Instance.BestScore);
+            UIManager.Instance.UpdateScoreUI(ScoreManager.Instance.CurrentScore);
+        }
     }
 
     public void GameOver()
@@ -47,6 +50,7 @@ public class GameManager : MonoBehaviour
 
     public void SelectStage()
     {
+        Time.timeScale = 0f;
         StopAllCoroutinesOfSingleTon();
         ScoreManager.Instance.CurrentScore = 0;
         BlockManager.Instance.ClearBoard();

@@ -22,6 +22,7 @@ TagManager:
   - Pause
   - FxTemporaire
   - JokerBlockPool
+  - ShopCanvas
   layers:
   - Default
   - TransparentFX

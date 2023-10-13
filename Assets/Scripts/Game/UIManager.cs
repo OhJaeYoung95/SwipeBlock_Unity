@@ -3,7 +3,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using static UnityEngine.EventSystems.EventTrigger;
 
 public class UIManager : MonoBehaviour
 {
@@ -47,7 +46,6 @@ public class UIManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-
         Instance.Init();
     }
 
@@ -55,6 +53,9 @@ public class UIManager : MonoBehaviour
     void Update()
     {
         if (GameManager.Instance.IsGameOver)
+            return;
+
+        if (Instance == null)
             return;
 
         gameTimer -= Time.deltaTime;
@@ -82,7 +83,8 @@ public class UIManager : MonoBehaviour
         if (isFadeHpBar)
             FadeHpBarFrame();
 
-        UpdateTimerUI(t);
+        if(hpBar != null)
+            UpdateTimerUI(t);
         if (gameTimer <= 0f && !GameManager.Instance.IsGameOver)
         {
             GameManager.Instance.GameOver();
@@ -111,6 +113,7 @@ public class UIManager : MonoBehaviour
         gameTimer = gameDuration;
 
         hpBar = GameObject.FindGameObjectWithTag("HpBar").GetComponent<Slider>();
+        hpBar.onValueChanged.AddListener(UpdateTimerUI);
         hpBarFadeFrame = hpBar.transform.GetChild(2).GetComponent<Image>();
         bestScore = GameObject.FindGameObjectWithTag("BestScore").GetComponent<TextMeshProUGUI>();
         score = GameObject.FindGameObjectWithTag("Score").GetComponent<TextMeshProUGUI>();
@@ -158,7 +161,6 @@ public class UIManager : MonoBehaviour
 
     public void GameOver()
     {
-        // ø©±‚º≠ πÃΩÃ¿Ã ≥µ¥Ÿ
         gameOverPanel.gameObject.SetActive(true);
         ScoreManager.Instance.UpdateBestScore();
         gameOverBestScore.text = $"{ScoreManager.Instance.BestScore}";
@@ -190,6 +192,12 @@ public class UIManager : MonoBehaviour
         Color newColor = hpBarFadeFrame.color;
         newColor.a = alpha;
         hpBarFadeFrame.color = newColor;
+    }
+
+    public void IncreaseTimer(float value)
+    {
+        gameTimer += value;
+        Mathf.Clamp(gameTimer, 0f, gameDuration);
     }
 
     public void UpdateTimerUI(float value)
