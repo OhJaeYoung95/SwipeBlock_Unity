@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public enum BlockPattern
@@ -591,6 +592,8 @@ public class BlockManager : MonoBehaviour
             comboCount++;
             int connectedCount = blockList.Count;
 
+            Vector3 center = GetCenter(blockList);
+
             // 블록 특성
             switch (blockList[0].type)
             {
@@ -608,14 +611,18 @@ public class BlockManager : MonoBehaviour
 
 
             // 점수
-            ScoreManager.Instance.AddScoreBase();
-            ScoreManager.Instance.AddScoreByConnected(connectedCount);
+            float scoreTextValue = 0f;
+
+            scoreTextValue += ScoreManager.Instance.AddScoreBase();
+            scoreTextValue += ScoreManager.Instance.AddScoreByConnected(connectedCount);
 
             if (blockList[0].type != standardBlock)
-                ScoreManager.Instance.AddScoreByComparePattern();
+                scoreTextValue += ScoreManager.Instance.AddScoreByComparePattern();
 
             if (comboCount > 1)
-                ScoreManager.Instance.AddScoreByCombo();
+                scoreTextValue += ScoreManager.Instance.AddScoreByCombo();
+
+            PlayTextEffect(center, scoreTextValue);
 
             foreach (Block block in blockList)
             {
@@ -893,5 +900,26 @@ public class BlockManager : MonoBehaviour
     {
         var mainModule = effect.main;
         mainModule.startColor = value;
+    }
+
+    public Vector3 GetCenter(List<Block> blockList)
+    {
+        Vector3 totalPosition = Vector3.zero;
+
+        foreach (Block block in blockList)
+        {
+            totalPosition += block.transform.position;
+        }
+
+        Vector3 center = totalPosition / blockList.Count;
+        return center;
+    }
+
+    public void PlayTextEffect(Vector3 center, float value)
+    {
+        TextMeshProUGUI scoreText = ObjectPoolManager.Instance.GetObjectPool<TextEffect>("ScoreTextPool").GetComponent<TextMeshProUGUI>();
+        scoreText.text = $"{value}";
+        scoreText.transform.SetParent(ObjectPoolManager.Instance.canvas.transform);
+        scoreText.transform.localPosition = center * 200;
     }
 }

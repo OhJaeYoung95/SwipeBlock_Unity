@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class ObjectPoolManager : MonoBehaviour
@@ -12,6 +13,7 @@ public class ObjectPoolManager : MonoBehaviour
     public Block cloverPrefab;
     public Block jokerPrefab;
     public Block obstaclePrefab;
+    public TextEffect scoreTextPrefab;
 
 
     private string spadeBlockPoolKey = "SpadeBlockPool";
@@ -20,6 +22,7 @@ public class ObjectPoolManager : MonoBehaviour
     private string cloverBlockPoolKey = "CloverBlockPool";
     private string jokerBlockPoolKey = "JokerBlockPool";
     private string obstacleBlockPoolKey = "ObstacleBlockPool";
+    private string scoreTextPoolKey = "ScoreTextPool";
     private string particlePoolKey = "ParticlePool";
 
     private GameObject spadePoolFolder;
@@ -28,6 +31,9 @@ public class ObjectPoolManager : MonoBehaviour
     private GameObject cloverPoolFolder;
     private GameObject jokerPoolFolder;
     private GameObject obstaclePoolFolder;
+    private GameObject scoreTextPoolFolder;
+
+    public GameObject canvas;
 
     private void Awake()
     {
@@ -40,8 +46,14 @@ public class ObjectPoolManager : MonoBehaviour
         else
         {
             Destroy(gameObject);
-            return;
         }
+
+        Instance.InstanceInit();
+    }
+
+    private void InstanceInit()
+    {
+        canvas = GameObject.FindGameObjectWithTag("ForeCanvas");
     }
 
     private void Init()
@@ -70,12 +82,18 @@ public class ObjectPoolManager : MonoBehaviour
         obstaclePoolFolder.name = obstacleBlockPoolKey;
         obstaclePoolFolder.tag = obstacleBlockPoolKey;
 
+
+        scoreTextPoolFolder = new GameObject();
+        scoreTextPoolFolder.name = scoreTextPoolKey;
+        scoreTextPoolFolder.tag = scoreTextPoolKey;
+
         DontDestroyOnLoad(spadePoolFolder);
         DontDestroyOnLoad(diamondPoolFolder);
         DontDestroyOnLoad(heartPoolFolder);
         DontDestroyOnLoad(cloverPoolFolder);
         DontDestroyOnLoad(jokerPoolFolder);
         DontDestroyOnLoad(obstaclePoolFolder);
+        DontDestroyOnLoad(scoreTextPoolFolder);
 
         CreateObjectPool<Component>(spadeBlockPoolKey, spadePrefab, 30);
         CreateObjectPool<Component>(diamondBlockPoolKey, diamondPrefab, 30);
@@ -83,6 +101,7 @@ public class ObjectPoolManager : MonoBehaviour
         CreateObjectPool<Component>(cloverBlockPoolKey, cloverPrefab, 30);
         CreateObjectPool<Component>(jokerBlockPoolKey, jokerPrefab, 30);
         CreateObjectPool<Component>(obstacleBlockPoolKey, obstaclePrefab, 30);
+        CreateObjectPool<Component>(scoreTextPoolKey, scoreTextPrefab, 30);
     }
 
     public void CreateObjectPool<T>(string poolName, T prefab, int initialCount) where T : Component
@@ -124,5 +143,6 @@ public class ObjectPoolManager : MonoBehaviour
         objectPools[cloverBlockPoolKey].ReturnAllObject();
         objectPools[jokerBlockPoolKey].ReturnAllObject();
         objectPools[obstacleBlockPoolKey].ReturnAllObject();
+        objectPools[scoreTextPoolKey].ReturnAllObject();
     }
 }

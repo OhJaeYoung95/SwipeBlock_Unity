@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 public class ScoreManager : MonoBehaviour
@@ -48,41 +49,50 @@ public class ScoreManager : MonoBehaviour
         BestScore = CurrentScore > BestScore ? CurrentScore : BestScore;
     }
 
-    public void AddScoreBase()
+    public float AddScoreBase()
     {
-        ApplyScore(baseScore);
+        return ApplyScore(baseScore);
     }
 
-    public void AddScoreByConnected(int count)
+    public float AddScoreByConnected(int count)
     {
         int factor = count - 2;
-        ApplyScore(chainMergeScore * factor);
+        return ApplyScore(chainMergeScore * factor);
     }
 
-    public void AddScoreByCombo()
+    public float AddScoreByCombo()
     {
         Debug.Log("Combo");
-        ApplyScore(comboScore);
+        return ApplyScore(comboScore);
     }
 
-    public void AddScoreByComparePattern()
+    public float AddScoreByComparePattern()
     {
         Debug.Log("Compare");
-        ApplyScore(compareScore);
+        return ApplyScore(compareScore);
     }
 
-    public void ApplyScore(float score)
+    public float ApplyScore(float score)
     {
+        float scoreTextValue = 0f;
         if (IsScoreIncreaseByPattern)
+        {
             CurrentScore += score * 1.5f;
-
+            scoreTextValue += score * 1.5f;
+        }
         if (IsScoreIncreaseByItem)
+        {
             CurrentScore += score * itemValue;
+            scoreTextValue += score * itemValue;
+        }
 
         if (!IsScoreIncreaseByPattern && !IsScoreIncreaseByItem)
+        {
             CurrentScore += score;
-
-
+            scoreTextValue += score * itemValue;
+        }
+        
         UIManager.Instance.UpdateScoreUI(CurrentScore);
+        return scoreTextValue;
     }
 }

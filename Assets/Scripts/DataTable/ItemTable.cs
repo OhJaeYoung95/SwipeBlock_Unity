@@ -48,7 +48,6 @@ public class ItemTable : DataTable
         {
             return new ItemInfo();
         }
-
         return dic[id];
     }
 

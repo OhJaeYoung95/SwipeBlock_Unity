@@ -1845,6 +1845,8 @@ MonoBehaviour:
   cloverPrefab: {fileID: 2599607750398807189, guid: 88c1be751492f6c408b985cb6dd48abf, type: 3}
   jokerPrefab: {fileID: 6239899266837480013, guid: c87444cdf30234f4188d7be73934b12e, type: 3}
   obstaclePrefab: {fileID: 2599607750398807189, guid: d7422decdc9c75b4eb4b9c52bd559aec, type: 3}
+  scoreTextPrefab: {fileID: 6815662401630338440, guid: 68582e0373756ef4d8f956c02903826f, type: 3}
+  canvas: {fileID: 1138354306}
 --- !u!1001 &631644893
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1940,7 +1942,7 @@ PrefabInstance:
     - target: {fileID: 4838160743185394425, guid: 2548dbb295d699149b1362c7a70e304e, type: 3}
       propertyPath: m_TargetGraphic
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1725290336}
     - target: {fileID: 4838160743185394425, guid: 2548dbb295d699149b1362c7a70e304e, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -5107,6 +5109,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 7918493056768502397, guid: 2548dbb295d699149b1362c7a70e304e, type: 3}
   m_PrefabInstance: {fileID: 631644893}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1725290336 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 927347840263281814, guid: 2548dbb295d699149b1362c7a70e304e, type: 3}
+  m_PrefabInstance: {fileID: 631644893}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1735554558
 GameObject:
   m_ObjectHideFlags: 0
@@ -6254,9 +6267,9 @@ SceneRoots:
   - {fileID: 1700283329}
   - {fileID: 1609883393}
   - {fileID: 1057953216}
-  - {fileID: 619310853}
   - {fileID: 35442883}
   - {fileID: 795183198}
   - {fileID: 631644893}
   - {fileID: 1138354310}
   - {fileID: 2005145616}
+  - {fileID: 619310853}
