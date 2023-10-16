@@ -920,6 +920,14 @@ public class BlockManager : MonoBehaviour
         TextMeshProUGUI scoreText = ObjectPoolManager.Instance.GetObjectPool<TextEffect>("ScoreTextPool").GetComponent<TextMeshProUGUI>();
         scoreText.text = $"{value}";
         scoreText.transform.SetParent(ObjectPoolManager.Instance.canvas.transform);
-        scoreText.transform.localPosition = center * 200;
+
+        float offsetX = Screen.width / 2;
+        float offsetY = Screen.height / 2;
+
+        float scoreTextSize = scoreText.transform.localScale.x;
+        scoreText.rectTransform.localScale /= scoreTextSize;
+
+        Vector3 worldToScreenPos = Camera.main.WorldToScreenPoint(center) - new Vector3(offsetX, offsetY);
+        scoreText.transform.localPosition = worldToScreenPos;
     }
 }

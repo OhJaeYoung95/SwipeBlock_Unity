@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class TextEffect : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField]
+    private float speed = 1f;
+    private void FixedUpdate()
     {
-        
+        transform.position += Vector3.up * Time.deltaTime * speed;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void ReturnPoolEffect()
     {
-        
+        ObjectPoolManager.Instance.ReturnObjectPool<TextEffect>("ScoreTextPool", this);
     }
 }
