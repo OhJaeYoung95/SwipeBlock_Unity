@@ -622,8 +622,8 @@ public class BlockManager : MonoBehaviour
                 if (block.type == BlockPattern.Joker)
                     jokerList.Remove(block);
 
+                PlayMergeEffect(block, blockList);
                 blockIndexs[block.Y, block.X] = 0;
-                PlayMergeEffect(block);
                 ObjectPoolManager.Instance.ReturnObjectPool<Block>(poolKeys[(int)blocks[block.Y, block.X].type - 1], block);
                 blocks[block.Y, block.X] = null;
             }
@@ -657,11 +657,15 @@ public class BlockManager : MonoBehaviour
         yield return new WaitForSeconds(0.1f + moveDuration);
         yield return StartCoroutine(MergeBlocks());
     }
-    public void PlayMergeEffect(Block block)
+    public void PlayMergeEffect(Block block, List<Block> blockList)
     {
         if (effectIndex == 0)
         {
             ParticleSystem effect = Instantiate(block.mergeEffect1, block.transform.position, Quaternion.identity);
+            if (isOnSpadeAttribute && block.type == BlockPattern.Spade && blockList.Count >= 3)
+            {
+                ApplyMergeEffectColor(effect);
+            }
             effect.gameObject.SetActive(true);
             effect.Play();
         }
@@ -861,5 +865,33 @@ public class BlockManager : MonoBehaviour
         blockIndexs[block.Y, block.X] = 0;
         ObjectPoolManager.Instance.ReturnObjectPool<Block>(poolKeys[(int)blocks[block.Y, block.X].type - 1], blocks[block.Y, block.X]);
         blocks[block.Y, block.X] = null;
+    }
+
+    public void ApplyMergeEffectColor(ParticleSystem effect)
+    {
+        Color newColor = new Color(40/ 255f, 40 / 255f, 40 / 255f);
+        var mainModule = effect.main;
+        mainModule.startColor = newColor;
+
+        ParticleSystem effect1 = effect.transform.GetChild(0).GetComponent<ParticleSystem>();
+        ApplytMergeColor(effect1, newColor);
+
+        ParticleSystem effect2 = effect.transform.GetChild(1).GetComponent<ParticleSystem>();
+        ApplytMergeColor(effect2, newColor);
+
+        ParticleSystem effect3 = effect.transform.GetChild(2).GetComponent<ParticleSystem>();
+        ApplytMergeColor(effect3, newColor);
+
+        ParticleSystem effect4 = effect.transform.GetChild(3).GetComponent<ParticleSystem>();
+        ApplytMergeColor(effect4, newColor);
+
+        Light light = effect.transform.GetChild(4).GetComponent<Light>();
+        light.color = newColor;
+    }
+
+    public void ApplytMergeColor(ParticleSystem effect, Color value)
+    {
+        var mainModule = effect.main;
+        mainModule.startColor = value;
     }
 }
