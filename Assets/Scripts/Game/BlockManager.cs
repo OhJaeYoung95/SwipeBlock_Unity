@@ -35,6 +35,7 @@ public class BlockManager : MonoBehaviour
 
     List<List<Block>> comparePatternBlocks = new List<List<Block>>();
     List<Block> jokerList = new List<Block>();
+    public List<Block> obsList = new List<Block>();
 
     SwipeDir swipeDir = SwipeDir.None;
     BlockPattern standardBlock = BlockPattern.None;
@@ -42,7 +43,7 @@ public class BlockManager : MonoBehaviour
     [SerializeField]
     private int initCount = 5;
     [SerializeField]
-    private int spawnCount = 2;
+    private int spawnCount = 1;
 
     public int effectIndex = 0;
 
@@ -52,7 +53,7 @@ public class BlockManager : MonoBehaviour
     [SerializeField]
     private float posOffset = 0.18f;
     [SerializeField]
-    private float moveDuration = 0.3f;
+    private float moveDuration = 1f;
     [SerializeField]
     private float acceleratedSpeed = 0.2f;
     [SerializeField]
@@ -113,26 +114,39 @@ public class BlockManager : MonoBehaviour
     public void ReloadBoard()
     {
         isSpawnObstacle = false;
+        obsList.Clear();
         int stage = PlayerPrefs.GetInt("CurrentStage", 1);
         switch (stage)
         {
             case 1:
                 currentStage = 0;
+                initCount = 5;
                 boardSize = 4;
+                spawnCount = 1;
                 break;
             case 0:
                 currentStage = 1;
+                initCount = 10;
                 boardSize = 5;
+                spawnCount = 2;
                 break;
             case 2:
                 currentStage = 2;
+                initCount = 10;
                 boardSize = 5;
+                spawnCount = 2;
                 break;
             default:
                 currentStage = 0;
+                initCount = 5;
                 boardSize = 4;
+                spawnCount = 1;
                 break;
         }
+
+        int itemSlot1 = PlayerPrefs.GetInt("ItemSlot1", 0);
+        int itemSlot2 = PlayerPrefs.GetInt("ItemSlot2", 0);
+        int itemSlot3 = PlayerPrefs.GetInt("ItemSlot3", 0);
 
         blockIndexs = new int[boardSize, boardSize];
         indexPos = new Vector2[boardSize, boardSize];
@@ -212,25 +226,27 @@ public class BlockManager : MonoBehaviour
         int ranBlockState;
 
         if (isSpawnObstacle)
-            ranBlockState = Random.Range((int)BlockPattern.None + 1, (int)BlockPattern.Count);
-        //ranBlockState = Random.Range((int)BlockPattern.None + 1, (int)BlockPattern.Joker);
+            ranBlockState = Random.Range((int)BlockPattern.None + 1, (int)BlockPattern.Joker);
         else
-            ranBlockState = Random.Range((int)BlockPattern.None + 1, (int)BlockPattern.Count);
-        //ranBlockState = Random.Range((int)BlockPattern.None + 1, (int)BlockPattern.Obstcle);
+            ranBlockState = Random.Range((int)BlockPattern.None + 1, (int)BlockPattern.Obstcle);
 
         float blockSize = 0f;
         switch (boardSize)
         {
             case 4:
-                blockSize = 1f;
+                blockSize = 0.9f;
                 break;
             case 5:
-                blockSize = 0.8f;
+                blockSize = 0.7f;
                 break;
         }
 
         blockIndexs[y, x] = ranBlockState;
         Block newBlock = ObjectPoolManager.Instance.GetObjectPool<Block>(poolKeys[ranBlockState - 1]);
+
+        if (ranBlockState == 5)
+            obsList.Add(newBlock);
+
         newBlock.transform.position = indexPos[y, x];
         newBlock.transform.localScale = new Vector2(blockSize, blockSize);
         blocks[y, x] = newBlock;
@@ -251,10 +267,10 @@ public class BlockManager : MonoBehaviour
         switch (boardSize)
         {
             case 4:
-                blockSize = 1f;
+                blockSize = 0.9f;
                 break;
             case 5:
-                blockSize = 0.8f;
+                blockSize = 0.7f;
                 break;
         }
 
@@ -350,7 +366,7 @@ public class BlockManager : MonoBehaviour
         } while (isChainMerge);
 
         isCompare = false;
-        ScoreManager.Instance.IsScoreIncreaseByDia = false;
+        ScoreManager.Instance.IsScoreIncreaseByPattern = false;
         comboCount = 0;
 
         if (isOnSpadeAttribute)
@@ -583,7 +599,7 @@ public class BlockManager : MonoBehaviour
                         isOnSpadeAttribute = true;
                     break;
                 case BlockPattern.Diamond:
-                    ScoreManager.Instance.IsScoreIncreaseByDia = true;
+                    ScoreManager.Instance.IsScoreIncreaseByPattern = true;
                     break;
                 case BlockPattern.Heart:
                     UIManager.Instance.IncreaseTimer(5f * (connectedCount - 1));
@@ -611,7 +627,7 @@ public class BlockManager : MonoBehaviour
                 ObjectPoolManager.Instance.ReturnObjectPool<Block>(poolKeys[(int)blocks[block.Y, block.X].type - 1], block);
                 blocks[block.Y, block.X] = null;
             }
-            yield return new WaitForSeconds(0.2f);
+            yield return new WaitForSeconds(0.1f);
         }
         comparePatternBlocks.Clear();
         foreach (Block joker in jokerList)
@@ -638,7 +654,7 @@ public class BlockManager : MonoBehaviour
     }
     IEnumerator MergeBlocksCoroutine()
     {
-        yield return new WaitForSeconds(0.2f + moveDuration);
+        yield return new WaitForSeconds(0.1f + moveDuration);
         yield return StartCoroutine(MergeBlocks());
     }
     public void PlayMergeEffect(Block block)
@@ -835,5 +851,15 @@ public class BlockManager : MonoBehaviour
             GameManager.Instance.IsMove = false;
             StartCoroutine(GameOver());
         }
+    }
+
+    public void RemoveBlock(Block block)
+    {
+        if (blockIndexs[block.Y, block.X] == 0)
+            return;
+
+        blockIndexs[block.Y, block.X] = 0;
+        ObjectPoolManager.Instance.ReturnObjectPool<Block>(poolKeys[(int)blocks[block.Y, block.X].type - 1], blocks[block.Y, block.X]);
+        blocks[block.Y, block.X] = null;
     }
 }

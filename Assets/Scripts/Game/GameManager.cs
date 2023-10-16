@@ -31,10 +31,15 @@ public class GameManager : MonoBehaviour
 
     public void GameOver()
     {
+        PlayerPrefs.SetInt("ItemSlot1", 0);
+        PlayerPrefs.SetInt("ItemSlot2", 0);
+        PlayerPrefs.SetInt("ItemSlot3", 0);
+
         IsGameOver = true;
         IsMove = false;
         Time.timeScale = 0f;
         StopAllCoroutinesOfSingleTon();
+        BlockManager.Instance.ClearBoard();
         UIManager.Instance.GameOver();
     }
 
@@ -43,6 +48,7 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;
 
         UIManager.Instance.gameTimer = UIManager.Instance.gameDuration;
+        StopAllCoroutinesOfSingleTon();
         BlockManager.Instance.ClearBoard();
         ScoreManager.Instance.Init();
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
@@ -50,6 +56,10 @@ public class GameManager : MonoBehaviour
 
     public void SelectStage()
     {
+        PlayerPrefs.SetInt("ItemSlot1", 0);
+        PlayerPrefs.SetInt("ItemSlot2", 0);
+        PlayerPrefs.SetInt("ItemSlot3", 0);
+
         Time.timeScale = 0f;
         StopAllCoroutinesOfSingleTon();
         ScoreManager.Instance.CurrentScore = 0;
@@ -72,8 +82,15 @@ public class GameManager : MonoBehaviour
     public void Quit()
     {
 #if UNITY_EDITOR
+        PlayerPrefs.SetInt("ItemSlot1", 0);
+        PlayerPrefs.SetInt("ItemSlot2", 0);
+        PlayerPrefs.SetInt("ItemSlot3", 0);
+
         EditorApplication.isPlaying = false;
 #else
+        PlayerPrefs.SetInt("ItemSlot1", 0);
+        PlayerPrefs.SetInt("ItemSlot2", 0);
+        PlayerPrefs.SetInt("ItemSlot3", 0);
         Application.Quit();
 #endif    
     }

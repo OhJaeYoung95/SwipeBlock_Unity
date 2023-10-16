@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -17,6 +18,11 @@ public class StageController : MonoBehaviour
     [SerializeField]
     private GameObject characterUICanvas;
 
+    [SerializeField]
+    private ShopController shopController;
+
+    [SerializeField]
+    private ScrollRect scrollRect;
 
     private void Awake()
     {
@@ -26,7 +32,7 @@ public class StageController : MonoBehaviour
         }
         DisableAllUI();
         //shopUICanvas.SetActive(true);
-        selectUICanvas.transform.GetChild(0).gameObject.SetActive(true);
+        selectUICanvas.SetActive(true);
 
         UpdateImagePositions();
 
@@ -43,7 +49,7 @@ public class StageController : MonoBehaviour
     {
         selectUICanvas.SetActive(false);
         shopUICanvas.SetActive(false);
-        //characterUICanvas.SetActive(false);
+        characterUICanvas.SetActive(false);
     }
     public void OnClickPlayButton()
     {
@@ -51,24 +57,36 @@ public class StageController : MonoBehaviour
         PlayerPrefs.SetInt("CurrentStage", currentIndex);
         PlayerPrefs.Save();
 
+        List<ItemID> itemInfos = shopController.GetItemSlotInfo();
+
+        if(itemInfos.Count > 0)
+        {
+            for (int i = 1; i < itemInfos.Count + 1; ++i)
+            {
+                int itemId = (int)itemInfos[i - 1];
+                PlayerPrefs.SetInt($"ItemSlot{i}", itemId);
+            }
+        }
+
         SceneManager.LoadScene(3);
     }
     public void OnClickShopButton()
     {
         DisableAllUI();
         shopUICanvas.SetActive(true);
-
-    }
-    public void OnClickReturnButton()
-    {
-        DisableAllUI();
-        selectUICanvas.SetActive(true);
-
+        scrollRect.normalizedPosition = Vector3.one;
     }
     public void OnClickCharacterButton()
     {
         DisableAllUI();
         characterUICanvas.SetActive(true);
+    }
+
+    public void OnClickReturnButton()
+    {
+        DisableAllUI();
+        selectUICanvas.SetActive(true);
+
     }
     public void OnClickLeftButton()
     {
