@@ -95,4 +95,9 @@ public class ScoreManager : MonoBehaviour
         UIManager.Instance.UpdateScoreUI(CurrentScore);
         return scoreTextValue;
     }
+
+    public void ConvertScoreToGold()
+    {
+        GameData.Gold += Mathf.RoundToInt(CurrentScore / 10);
+    }
 }

@@ -33,6 +33,8 @@ public class UIManager : MonoBehaviour
     private GameObject itemSlot2;
     private GameObject itemSlot3;
 
+    [SerializeField]
+    private float gameTimerSpeed = 1f;
     public float gameTimer;
     public float gameDuration = 20f;
 
@@ -75,12 +77,14 @@ public class UIManager : MonoBehaviour
         if (isStopTimer)
             stopTimer += Time.deltaTime;
         else
-            gameTimer -= Time.deltaTime;
+            gameTimer -= Time.deltaTime * gameTimerSpeed;
+
 
         if(stopTimer > stopDuration)
         {
             stopTimer = 0f;
             isStopTimer = false;
+            ApplyOriginTimerImage();
         }
 
         float t = gameTimer / gameDuration;
@@ -135,16 +139,16 @@ public class UIManager : MonoBehaviour
         switch (stage)
         {
             case 1:
-                gameDuration = 30;
+                gameDuration = 60;
                 break;
             case 0:
-                gameDuration = 240;
+                gameDuration = 180;
                 break;
             case 2:
-                gameDuration = 300;
+                gameDuration = 180;
                 break;
             default:
-                gameDuration = 30;
+                gameDuration = 60;
                 break;
         }
         ItemID itemInfo1 = (ItemID)PlayerPrefs.GetInt("ItemSlot1", 0);
@@ -184,9 +188,9 @@ public class UIManager : MonoBehaviour
         foreCanvas = GameObject.FindGameObjectWithTag("ForeCanvas");
         puaseButton = GameObject.FindGameObjectWithTag("Pause").GetComponent<Button>();
 
-        gameOverPanel = foreCanvas.transform.GetChild(0).gameObject;
+        gameOverPanel = foreCanvas.transform.GetChild(1).gameObject;
         gameOverPanel.gameObject.SetActive(false);
-        pausePanel = foreCanvas.transform.GetChild(1).gameObject;
+        pausePanel = foreCanvas.transform.GetChild(2).gameObject;
         pausePanel.gameObject.SetActive(false);
 
         gameOverBestScore = gameOverPanel.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
@@ -263,6 +267,20 @@ public class UIManager : MonoBehaviour
     {
         gameTimer += value;
         Mathf.Clamp(gameTimer, 0f, gameDuration);
+    }
+
+    public void ApplyStopTimerImage()
+    {
+        Image timerFillImage = GameObject.FindGameObjectWithTag("TimerFill").GetComponent<Image>();
+        timerFillImage.sprite = Resources.Load<Sprite>("Arts/TimerStop");
+        timerFillImage.color = Color.white;
+    }
+
+    public void ApplyOriginTimerImage()
+    {
+        Image timerFillImage = GameObject.FindGameObjectWithTag("TimerFill").GetComponent<Image>();
+        timerFillImage.sprite = Resources.Load<Sprite>("Arts/ProgressbarEmpty");
+        timerFillImage.color = Color.red;
     }
 
     public void UpdateTimerUI(float value)

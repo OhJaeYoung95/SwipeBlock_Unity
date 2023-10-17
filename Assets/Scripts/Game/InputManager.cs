@@ -42,8 +42,8 @@ public class InputManager : MonoBehaviour
 
         if(Input.GetKeyDown(KeyCode.Space))
         {
-            //GameManager.Instance.GameOver();
-            UIManager.Instance.gameTimer = UIManager.Instance.gameDuration / 2;
+            GameManager.Instance.GameOver();
+            //UIManager.Instance.gameTimer = UIManager.Instance.gameDuration / 2;
         }
     }
 

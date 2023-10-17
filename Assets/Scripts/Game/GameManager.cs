@@ -40,6 +40,8 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 0f;
         StopAllCoroutinesOfSingleTon();
         BlockManager.Instance.ClearBoard();
+        ScoreManager.Instance.ConvertScoreToGold();
+        PlayerPrefs.SetInt("Gold", GameData.Gold);
         UIManager.Instance.GameOver();
     }
 

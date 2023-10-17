@@ -50,6 +50,8 @@ public class ShopController : MonoBehaviour
 
     private List<Item> slots = new List<Item>();
 
+    private ItemTable itemTable;
+
     //private List<Toggle> toggles = new List<Toggle>();
     private Dictionary<Toggle, ItemID> toggleToItemMapping = new Dictionary<Toggle, ItemID>();
     private List<ItemID> itemInfos = new List<ItemID>();
@@ -67,6 +69,7 @@ public class ShopController : MonoBehaviour
 
     private void Awake()
     {
+        itemTable = DataTableManager.GetTable<ItemTable>();
         ShopInit();
     }
 
@@ -75,16 +78,14 @@ public class ShopController : MonoBehaviour
         itemCount = 0;
         slotContent = canvas.transform.GetChild(1).transform.GetChild(8).transform.GetChild(0).transform.GetChild(0);
 
-        var table = DataTableManager.GetTable<ItemTable>();
-        Debug.Log(table);
-        int itemSlotCount = table.GetTableSize();
+        int itemSlotCount = itemTable.GetTableSize();
         Debug.Log(itemSlotCount);
 
         for (int i = 1; i < itemSlotCount + 1; ++i)
         {
             GameObject slot = Instantiate(slotFrame, slotContent);
-            string itemImagePath = DataTableManager.GetTable<ItemTable>().GetItemInfo((ItemID)i).path;
-            int price = DataTableManager.GetTable<ItemTable>().GetItemInfo((ItemID)i).price;
+            string itemImagePath = itemTable.GetItemInfo((ItemID)i).path;
+            int price = itemTable.GetItemInfo((ItemID)i).price;
             slot.transform.GetChild(1).GetComponent<Image>().sprite = Resources.Load<Sprite>($"Arts/{itemImagePath}");
             slot.transform.GetChild(2).GetChild(0).GetComponent<TextMeshProUGUI>().text = $"{price} Gold";
             slot.GetComponent<Toggle>().group = toggleGroup;
@@ -104,17 +105,29 @@ public class ShopController : MonoBehaviour
 
         if (selectedToggle == null)
             return;
+
         if (itemCount == 3)
         {
-            Debug.Log("Full");
+            // 실패음
             return;
         }
 
         if(selectedToggle != null)
         {
             ItemID selectedItemID = toggleToItemMapping[selectedToggle];
+
+            int price = itemTable.GetItemInfo((ItemID)selectedItemID).price;
+            // 구입 실패
+            if(GameData.Gold < price)
+            {
+                // 실패음
+                return;
+            }
+            GameData.Gold -= price;
+
             itemInfos.Add(selectedItemID);
-            string itemImagePath = DataTableManager.GetTable<ItemTable>().GetItemInfo((ItemID)selectedItemID).path;
+
+            string itemImagePath = itemTable.GetItemInfo((ItemID)selectedItemID).path;
             Image itemSlotUIImage = itemUISlots[itemCount].transform.GetChild(1).GetComponent<Image>();
             itemSlotUIImage.sprite = Resources.Load<Sprite>($"Arts/{itemImagePath}");
             Color iamgeColor = itemSlotUIImage.color;
