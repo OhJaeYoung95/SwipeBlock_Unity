@@ -15,6 +15,12 @@ public class AbilitiesController : MonoBehaviour
     private bool isUsedSlot3 = false;
     private bool isUsedSkill = false;
 
+    private ItemTable itemTable;
+
+    private void Awake()
+    {
+        itemTable = DataTableManager.GetTable<ItemTable>();
+    }
     public void OnButtonHoverEnter()
     {
         if (InputManager.Instance != null)
@@ -78,10 +84,10 @@ public class AbilitiesController : MonoBehaviour
     public void UseItem(GameObject itemSlot, ItemID id)
     {
         // 아이템 사용 부분
-        ItemType type = DataTableManager.GetTable<ItemTable>().GetItemInfo(id).type;
-        float value = DataTableManager.GetTable<ItemTable>().GetItemInfo(id).value;
-        float duration = DataTableManager.GetTable<ItemTable>().GetItemInfo(id).duration;
-        int price = DataTableManager.GetTable<ItemTable>().GetItemInfo(id).price;
+        ItemType type = itemTable.GetItemInfo(id).type;
+        float value = itemTable.GetItemInfo(id).value;
+        float duration = itemTable.GetItemInfo(id).duration;
+        int price = itemTable.GetItemInfo(id).price;
 
 
         if (id != ItemID.None)
@@ -96,6 +102,7 @@ public class AbilitiesController : MonoBehaviour
                 case ItemType.Timer:
                     UIManager.Instance.isStopTimer = true;
                     UIManager.Instance.stopDuration = duration;
+                    UIManager.Instance.ApplyStopTimerImage();
                     break;
                 case ItemType.Bomb:
 
