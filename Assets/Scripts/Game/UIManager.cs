@@ -29,9 +29,13 @@ public class UIManager : MonoBehaviour
     private Button continueButton;
     private Button quitButton;
 
-    private GameObject itemSlot1;
-    private GameObject itemSlot2;
-    private GameObject itemSlot3;
+    //private GameObject itemSlot1;
+    //private GameObject itemSlot2;
+    //private GameObject itemSlot3;
+
+    private GameObject[] itemSlots = new GameObject[3];
+
+    private ItemTable itemTable;
 
     [SerializeField]
     private float gameTimerSpeed = 1f;
@@ -131,10 +135,8 @@ public class UIManager : MonoBehaviour
 
     public void Init()
     {
-        for (int i = 0; i < items.Length; i++)
-        {
-            items[i] = ItemID.None;
-        }
+        itemTable = DataTableManager.GetTable<ItemTable>();
+
         int stage = PlayerPrefs.GetInt("CurrentStage", 1);
         switch (stage)
         {
@@ -151,29 +153,11 @@ public class UIManager : MonoBehaviour
                 gameDuration = 60;
                 break;
         }
-        ItemID itemInfo1 = (ItemID)PlayerPrefs.GetInt("ItemSlot1", 0);
-        ItemID itemInfo2 = (ItemID)PlayerPrefs.GetInt("ItemSlot2", 0);
-        ItemID itemInfo3 = (ItemID)PlayerPrefs.GetInt("ItemSlot3", 0);
 
-        if(itemInfo1 != ItemID.None)
+        for(int i = 0; i < itemSlots.Length; ++i)
         {
-            items[0] = itemInfo1;
-            itemSlot1 = GameObject.FindGameObjectWithTag("ItemSlot1");
-            ApplyItemSlotImage(itemSlot1, items[0]);
-        }
-
-        if (itemInfo2 != ItemID.None)
-        {
-            items[1] = itemInfo2;
-            itemSlot2 = GameObject.FindGameObjectWithTag("ItemSlot2");
-            ApplyItemSlotImage(itemSlot2, items[1]);
-        }
-
-        if (itemInfo3 != ItemID.None)
-        {
-            items[2] = itemInfo3;
-            itemSlot3 = GameObject.FindGameObjectWithTag("ItemSlot3");
-            ApplyItemSlotImage(itemSlot3, items[2]);
+            itemSlots[i] = GameObject.FindGameObjectWithTag($"ItemSlot{i + 1}");
+            ApplyItemSlotImage(itemSlots[i], (ItemID)GameData.Slots[i]);
         }
 
         isStopTimer = false;
@@ -232,7 +216,7 @@ public class UIManager : MonoBehaviour
         isStopTimer = false;
         gameOverPanel.gameObject.SetActive(true);
         ScoreManager.Instance.UpdateBestScore();
-        gameOverBestScore.text = $"{ScoreManager.Instance.BestScore}";
+        gameOverBestScore.text = $"{GameData.BestScore}";
         gameOverScore.text = $"{ScoreManager.Instance.CurrentScore}";
     }
 
@@ -300,8 +284,10 @@ public class UIManager : MonoBehaviour
 
     public void ApplyItemSlotImage(GameObject slot, ItemID itemID)
     {
+        if (itemID == ItemID.None)
+            return;
         Image itemSlotImage = slot.transform.GetChild(1).GetComponent<Image>();
-        string itemImagePath = DataTableManager.GetTable<ItemTable>().GetItemInfo(itemID).path;
+        string itemImagePath = itemTable.GetItemInfo(itemID).path;
         itemSlotImage.sprite = Resources.Load<Sprite>($"Arts/{itemImagePath}");
         Color iamgeColor = itemSlotImage.color;
         iamgeColor.a = 255;

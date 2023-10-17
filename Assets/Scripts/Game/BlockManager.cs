@@ -147,10 +147,6 @@ public class BlockManager : MonoBehaviour
                 break;
         }
 
-        int itemSlot1 = PlayerPrefs.GetInt("ItemSlot1", 0);
-        int itemSlot2 = PlayerPrefs.GetInt("ItemSlot2", 0);
-        int itemSlot3 = PlayerPrefs.GetInt("ItemSlot3", 0);
-
         blockIndexs = new int[boardSize, boardSize];
         indexPos = new Vector2[boardSize, boardSize];
         blocks = new Block[boardSize, boardSize];
@@ -417,7 +413,9 @@ public class BlockManager : MonoBehaviour
             elapsedTime = Time.time - moveStartTime;
             yield return null;
         }
-        blocks[moveIndex.x, moveIndex.y].transform.position = destPos;
+
+        if(blocks[moveIndex.x, moveIndex.y] != null)
+            blocks[moveIndex.x, moveIndex.y].transform.position = destPos;
     }
     private IEnumerator MergeBlocks()
     {

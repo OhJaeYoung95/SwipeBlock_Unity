@@ -14,7 +14,8 @@ public static class SaveLoadSystem
         Binary,
         EncryptedBinary
     }
-    public static int SaveDataVersion { get; } = 3;
+    public static int SaveDataVersion { get; } = 1;
+    public static string SaveDataPath { get; } = "SaveData.json";
     public static string[] SaveSlotFileNames =
     {
         "Save0.json",

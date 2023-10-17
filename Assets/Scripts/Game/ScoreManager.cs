@@ -1,5 +1,5 @@
-using TMPro;
 using UnityEngine;
+using SaveDataVC = SaveDataV1;
 
 public class ScoreManager : MonoBehaviour
 {
@@ -38,7 +38,7 @@ public class ScoreManager : MonoBehaviour
     public void Init()
     {
         UpdateBestScore();
-        UIManager.Instance.UpdateBestScoreUI(BestScore);
+        UIManager.Instance.UpdateBestScoreUI(GameData.BestScore);
         IsScoreIncreaseByPattern = false;
         IsScoreIncreaseByItem = false;
         CurrentScore = 0f;
@@ -46,7 +46,7 @@ public class ScoreManager : MonoBehaviour
 
     public void UpdateBestScore()
     {
-        BestScore = CurrentScore > BestScore ? CurrentScore : BestScore;
+        GameData.BestScore = CurrentScore > GameData.BestScore ? CurrentScore : GameData.BestScore;
     }
 
     public float AddScoreBase()

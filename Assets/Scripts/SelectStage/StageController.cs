@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using SaveDataVC = SaveDataV1;
 
 public class StageController : MonoBehaviour
 {
@@ -39,6 +40,7 @@ public class StageController : MonoBehaviour
             pos[i] = images[i].transform.localPosition;
         }
 
+        GameData.LoadGameData();
         InitScene();
     }
     private void InitScene()
@@ -46,8 +48,6 @@ public class StageController : MonoBehaviour
         DisableAllUI();
         selectUICanvas.SetActive(true);
         DisplayGold();
-
-
         UpdateImagePositions();
     }
 
@@ -66,7 +66,7 @@ public class StageController : MonoBehaviour
         characterUICanvas.SetActive(false);
     }
 
-    private void DisplayGold()
+    public void DisplayGold()
     {
         int goldAmount = GameData.Gold;
         shopGold.text = $"{goldAmount} Gold";
