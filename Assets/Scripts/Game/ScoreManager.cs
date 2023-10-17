@@ -89,7 +89,7 @@ public class ScoreManager : MonoBehaviour
         if (!IsScoreIncreaseByPattern && !IsScoreIncreaseByItem)
         {
             CurrentScore += score;
-            scoreTextValue += score * itemValue;
+            scoreTextValue += score;
         }
         
         UIManager.Instance.UpdateScoreUI(CurrentScore);

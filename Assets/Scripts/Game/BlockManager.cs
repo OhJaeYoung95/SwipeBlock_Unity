@@ -127,13 +127,13 @@ public class BlockManager : MonoBehaviour
                 break;
             case 0:
                 currentStage = 1;
-                initCount = 10;
+                initCount = 10 *2;
                 boardSize = 5;
                 spawnCount = 2;
                 break;
             case 2:
                 currentStage = 2;
-                initCount = 10;
+                initCount = 10 *2;
                 boardSize = 5;
                 spawnCount = 2;
                 break;
@@ -612,16 +612,26 @@ public class BlockManager : MonoBehaviour
 
             // Á¡¼ö
             float scoreTextValue = 0f;
+            int check = 0;
 
             scoreTextValue += ScoreManager.Instance.AddScoreBase();
             scoreTextValue += ScoreManager.Instance.AddScoreByConnected(connectedCount);
-
+            check++;
             if (blockList[0].type != standardBlock)
+            {
                 scoreTextValue += ScoreManager.Instance.AddScoreByComparePattern();
+                check++;
+            }
 
             if (comboCount > 1)
+            {
                 scoreTextValue += ScoreManager.Instance.AddScoreByCombo();
+                check++;
+            }
 
+
+            if (scoreTextValue == 0)
+                check = 100;
             PlayTextEffect(center, scoreTextValue);
 
             foreach (Block block in blockList)
@@ -918,16 +928,44 @@ public class BlockManager : MonoBehaviour
     public void PlayTextEffect(Vector3 center, float value)
     {
         TextMeshProUGUI scoreText = ObjectPoolManager.Instance.GetObjectPool<TextEffect>("ScoreTextPool").GetComponent<TextMeshProUGUI>();
+        if(ScoreManager.Instance.IsScoreIncreaseByItem)
+        {
+            scoreText.color = Color.green;
+        }
+
+        if(ScoreManager.Instance.IsScoreIncreaseByPattern)
+        {
+            scoreText.color = Color.blue;
+        }
+
+        if(ScoreManager.Instance.IsScoreIncreaseByItem && ScoreManager.Instance.IsScoreIncreaseByPattern)
+        {
+            scoreText.color = Color.yellow;
+        }
+
         scoreText.text = $"{value}";
         scoreText.transform.SetParent(ObjectPoolManager.Instance.canvas.transform);
 
         float offsetX = Screen.width / 2;
         float offsetY = Screen.height / 2;
 
-        float scoreTextSize = scoreText.transform.localScale.x;
-        scoreText.rectTransform.localScale /= scoreTextSize;
 
-        Vector3 worldToScreenPos = Camera.main.WorldToScreenPoint(center) - new Vector3(offsetX, offsetY);
-        scoreText.transform.localPosition = worldToScreenPos;
+
+        //Vector2 ViewportPosition = Camara.main.WorldToViewportPoint(WorldObject.transform.position);
+        //Vector2 WorldObject_ScreenPosition = new Vector2(
+        //((ViewportPosition.x * CanvasRect.sizeDelta.x) - (CanvasRect.sizeDelta.x * 0.5f)),
+        //((ViewportPosition.y * CanvasRect.sizeDelta.y) - (CanvasRect.sizeDelta.y * 0.5f)));
+
+
+        RectTransform canvasRect = UIManager.Instance.foreCanvas.GetComponent<RectTransform>();
+
+        //float scoreTextSize = scoreText.transform.localScale.x;
+        //scoreText.rectTransform.localScale /= scoreTextSize;
+        scoreText.rectTransform.localScale = Vector3.one;
+
+        Vector3 viewportPosition = Camera.main.WorldToViewportPoint(center)/* - new Vector3(offsetX, offsetY)*/;
+
+        scoreText.rectTransform.anchoredPosition = new Vector3(((viewportPosition.x * canvasRect.sizeDelta.x) - (canvasRect.sizeDelta.x * 0.5f)),
+            ((viewportPosition.y * canvasRect.sizeDelta.y) - (canvasRect.sizeDelta.y * 0.5f)));
     }
 }

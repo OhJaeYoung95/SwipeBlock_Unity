@@ -16,7 +16,7 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI gameOverScore;
 
 
-    private GameObject foreCanvas;
+    public GameObject foreCanvas;
     private GameObject gameOverPanel;
     private GameObject pausePanel;
 
