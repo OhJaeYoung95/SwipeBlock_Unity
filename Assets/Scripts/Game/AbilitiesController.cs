@@ -9,6 +9,12 @@ public class AbilitiesController : MonoBehaviour
     private GameObject itemSlot2;
     [SerializeField]
     private GameObject itemSlot3;
+
+    private bool isUsedSlot1 = false;
+    private bool isUsedSlot2 = false;
+    private bool isUsedSlot3 = false;
+    private bool isUsedSkill = false;
+
     public void OnButtonHoverEnter()
     {
         if (InputManager.Instance != null)
@@ -23,29 +29,50 @@ public class AbilitiesController : MonoBehaviour
 
     public void UseItemSlot1()
     {
-        Debug.Log("UseItemSlot1");
-        PlayerPrefs.SetInt("ItemSlot1", 0);
-        UseItem(itemSlot1, UIManager.Instance.items[0]);
-
-        //ScoreManager.Instance.IsScoreIncreaseByItem = true;
-
+        if (GameManager.Instance.IsMove)
+            return;
+        if(!isUsedSlot1)
+        {
+            isUsedSlot1 = true;
+            Debug.Log("UseItemSlot1");
+            PlayerPrefs.SetInt("ItemSlot1", 0);
+            UseItem(itemSlot1, UIManager.Instance.items[0]);
+        }
     }
     public void UseItemSlot2()
     {
-        Debug.Log("UseItemSlot2");
-        PlayerPrefs.SetInt("ItemSlot2", 0);
-        UseItem(itemSlot2, UIManager.Instance.items[1]);
+        if (GameManager.Instance.IsMove)
+            return;
+        if(!isUsedSlot2)
+        {
+            isUsedSlot2 = true;
+            Debug.Log("UseItemSlot2");
+            PlayerPrefs.SetInt("ItemSlot2", 0);
+            UseItem(itemSlot2, UIManager.Instance.items[1]);
+        }
     }
     public void UseItemSlot3()
     {
-        Debug.Log("UseItemSlot3");
-        PlayerPrefs.SetInt("ItemSlot3", 0);
-        UseItem(itemSlot3, UIManager.Instance.items[2]);
+        if (GameManager.Instance.IsMove)
+            return;
+        if(!isUsedSlot3)
+        {
+            isUsedSlot3 = true;
+            Debug.Log("UseItemSlot3");
+            PlayerPrefs.SetInt("ItemSlot3", 0);
+            UseItem(itemSlot3, UIManager.Instance.items[2]);
+        }
 
     }
     public void UseSkillSlot()
     {
-        Debug.Log("UseSkillSlot");
+        if (GameManager.Instance.IsMove)
+            return;
+        if(!isUsedSkill)
+        {
+            isUsedSkill = true;
+            Debug.Log("UseSkillSlot");
+        }
     }
 
     public void UseItem(GameObject itemSlot, ItemID id)

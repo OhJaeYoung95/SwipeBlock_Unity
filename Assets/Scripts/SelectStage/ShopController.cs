@@ -100,12 +100,15 @@ public class ShopController : MonoBehaviour
 
     public void OnClickBuyButton()
     {
-        if(itemCount == 3)
+        Toggle selectedToggle = toggleGroup.ActiveToggles().FirstOrDefault();
+
+        if (selectedToggle == null)
+            return;
+        if (itemCount == 3)
         {
             Debug.Log("Full");
             return;
         }
-        Toggle selectedToggle = toggleGroup.ActiveToggles().FirstOrDefault();
 
         if(selectedToggle != null)
         {
