@@ -73,10 +73,9 @@ public class StageController : MonoBehaviour
     public void OnClickPlayButton()
     {
         Time.timeScale = 1f;
-        //PlayerPrefs.SetInt("CurrentStage", currentIndex);
-        //PlayerPrefs.Save();
-        GameData.CurrentStage = currentIndex;
 
+        GameData.CurrentStage = currentIndex;
+        SoundManager.Instance.OnGameBGM();
         SceneManager.LoadScene((int)Scene.Game);
     }
     public void OnClickShopButton()
