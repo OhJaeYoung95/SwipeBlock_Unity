@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using SaveDataVC = SaveDataV1;
 
 public class StageController : MonoBehaviour
 {
@@ -24,19 +26,31 @@ public class StageController : MonoBehaviour
     [SerializeField]
     private ScrollRect scrollRect;
 
+    [SerializeField]
+    private TextMeshProUGUI shopGold;
+
+    [SerializeField]
+    private TextMeshProUGUI charGold;
+
+
     private void Awake()
     {
         for (int i = 0; i < images.Length; i++)
         {
             pos[i] = images[i].transform.localPosition;
         }
-        DisableAllUI();
-        //shopUICanvas.SetActive(true);
-        selectUICanvas.SetActive(true);
 
-        UpdateImagePositions();
-
+        GameData.LoadGameData();
+        InitScene();
     }
+    private void InitScene()
+    {
+        DisableAllUI();
+        selectUICanvas.SetActive(true);
+        DisplayGold();
+        UpdateImagePositions();
+    }
+
     private void UpdateImagePositions()
     {
         for (int i = 0; i < images.Length; i++)
@@ -51,6 +65,14 @@ public class StageController : MonoBehaviour
         shopUICanvas.SetActive(false);
         characterUICanvas.SetActive(false);
     }
+
+    public void DisplayGold()
+    {
+        int goldAmount = GameData.Gold;
+        shopGold.text = $"{goldAmount} Gold";
+        charGold.text = $"{goldAmount} Gold";
+    }
+    
     public void OnClickPlayButton()
     {
         Time.timeScale = 1f;

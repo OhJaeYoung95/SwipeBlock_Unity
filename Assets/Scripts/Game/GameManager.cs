@@ -24,23 +24,24 @@ public class GameManager : MonoBehaviour
         Instance.IsMove = false;
         if (UIManager.Instance != null)
         {
-            UIManager.Instance.UpdateBestScoreUI(ScoreManager.Instance.BestScore);
+            UIManager.Instance.UpdateBestScoreUI(GameData.BestScore);
             UIManager.Instance.UpdateScoreUI(ScoreManager.Instance.CurrentScore);
         }
     }
 
     public void GameOver()
     {
-        PlayerPrefs.SetInt("ItemSlot1", 0);
-        PlayerPrefs.SetInt("ItemSlot2", 0);
-        PlayerPrefs.SetInt("ItemSlot3", 0);
+        for(int i = 0; i < GameData.Slots.Length; ++i)
+            GameData.Slots[i] = 0;
 
         IsGameOver = true;
         IsMove = false;
         Time.timeScale = 0f;
         StopAllCoroutinesOfSingleTon();
         BlockManager.Instance.ClearBoard();
+        ScoreManager.Instance.ConvertScoreToGold();
         UIManager.Instance.GameOver();
+        GameData.SaveGameData();
     }
 
     public void Restart()
@@ -56,9 +57,8 @@ public class GameManager : MonoBehaviour
 
     public void SelectStage()
     {
-        PlayerPrefs.SetInt("ItemSlot1", 0);
-        PlayerPrefs.SetInt("ItemSlot2", 0);
-        PlayerPrefs.SetInt("ItemSlot3", 0);
+        for (int i = 0; i < GameData.Slots.Length; ++i)
+            GameData.Slots[i] = 0;
 
         Time.timeScale = 0f;
         StopAllCoroutinesOfSingleTon();
@@ -82,15 +82,17 @@ public class GameManager : MonoBehaviour
     public void Quit()
     {
 #if UNITY_EDITOR
-        PlayerPrefs.SetInt("ItemSlot1", 0);
-        PlayerPrefs.SetInt("ItemSlot2", 0);
-        PlayerPrefs.SetInt("ItemSlot3", 0);
+        for (int i = 0; i < GameData.Slots.Length; ++i)
+            GameData.Slots[i] = 0;
 
+        GameData.SaveGameData();
         EditorApplication.isPlaying = false;
 #else
-        PlayerPrefs.SetInt("ItemSlot1", 0);
-        PlayerPrefs.SetInt("ItemSlot2", 0);
-        PlayerPrefs.SetInt("ItemSlot3", 0);
+        for (int i = 0; i < GameData.Slots.Length; ++i)
+            GameData.Slots[i] = 0;
+
+        GameData.SaveGameData();
+
         Application.Quit();
 #endif    
     }

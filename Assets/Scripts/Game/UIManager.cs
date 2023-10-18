@@ -29,10 +29,16 @@ public class UIManager : MonoBehaviour
     private Button continueButton;
     private Button quitButton;
 
-    private GameObject itemSlot1;
-    private GameObject itemSlot2;
-    private GameObject itemSlot3;
+    //private GameObject itemSlot1;
+    //private GameObject itemSlot2;
+    //private GameObject itemSlot3;
 
+    private GameObject[] itemSlots = new GameObject[3];
+
+    private ItemTable itemTable;
+
+    [SerializeField]
+    private float gameTimerSpeed = 1f;
     public float gameTimer;
     public float gameDuration = 20f;
 
@@ -75,12 +81,14 @@ public class UIManager : MonoBehaviour
         if (isStopTimer)
             stopTimer += Time.deltaTime;
         else
-            gameTimer -= Time.deltaTime;
+            gameTimer -= Time.deltaTime * gameTimerSpeed;
+
 
         if(stopTimer > stopDuration)
         {
             stopTimer = 0f;
             isStopTimer = false;
+            ApplyOriginTimerImage();
         }
 
         float t = gameTimer / gameDuration;
@@ -127,49 +135,29 @@ public class UIManager : MonoBehaviour
 
     public void Init()
     {
-        for (int i = 0; i < items.Length; i++)
-        {
-            items[i] = ItemID.None;
-        }
+        itemTable = DataTableManager.GetTable<ItemTable>();
+
         int stage = PlayerPrefs.GetInt("CurrentStage", 1);
         switch (stage)
         {
             case 1:
-                gameDuration = 30;
+                gameDuration = 60;
                 break;
             case 0:
-                gameDuration = 240;
+                gameDuration = 180;
                 break;
             case 2:
-                gameDuration = 300;
+                gameDuration = 180;
                 break;
             default:
-                gameDuration = 30;
+                gameDuration = 60;
                 break;
         }
-        ItemID itemInfo1 = (ItemID)PlayerPrefs.GetInt("ItemSlot1", 0);
-        ItemID itemInfo2 = (ItemID)PlayerPrefs.GetInt("ItemSlot2", 0);
-        ItemID itemInfo3 = (ItemID)PlayerPrefs.GetInt("ItemSlot3", 0);
 
-        if(itemInfo1 != ItemID.None)
+        for(int i = 0; i < itemSlots.Length; ++i)
         {
-            items[0] = itemInfo1;
-            itemSlot1 = GameObject.FindGameObjectWithTag("ItemSlot1");
-            ApplyItemSlotImage(itemSlot1, items[0]);
-        }
-
-        if (itemInfo2 != ItemID.None)
-        {
-            items[1] = itemInfo2;
-            itemSlot2 = GameObject.FindGameObjectWithTag("ItemSlot2");
-            ApplyItemSlotImage(itemSlot2, items[1]);
-        }
-
-        if (itemInfo3 != ItemID.None)
-        {
-            items[2] = itemInfo3;
-            itemSlot3 = GameObject.FindGameObjectWithTag("ItemSlot3");
-            ApplyItemSlotImage(itemSlot3, items[2]);
+            itemSlots[i] = GameObject.FindGameObjectWithTag($"ItemSlot{i + 1}");
+            ApplyItemSlotImage(itemSlots[i], (ItemID)GameData.Slots[i]);
         }
 
         isStopTimer = false;
@@ -184,9 +172,9 @@ public class UIManager : MonoBehaviour
         foreCanvas = GameObject.FindGameObjectWithTag("ForeCanvas");
         puaseButton = GameObject.FindGameObjectWithTag("Pause").GetComponent<Button>();
 
-        gameOverPanel = foreCanvas.transform.GetChild(0).gameObject;
+        gameOverPanel = foreCanvas.transform.GetChild(1).gameObject;
         gameOverPanel.gameObject.SetActive(false);
-        pausePanel = foreCanvas.transform.GetChild(1).gameObject;
+        pausePanel = foreCanvas.transform.GetChild(2).gameObject;
         pausePanel.gameObject.SetActive(false);
 
         gameOverBestScore = gameOverPanel.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
@@ -228,7 +216,7 @@ public class UIManager : MonoBehaviour
         isStopTimer = false;
         gameOverPanel.gameObject.SetActive(true);
         ScoreManager.Instance.UpdateBestScore();
-        gameOverBestScore.text = $"{ScoreManager.Instance.BestScore}";
+        gameOverBestScore.text = $"{GameData.BestScore}";
         gameOverScore.text = $"{ScoreManager.Instance.CurrentScore}";
     }
 
@@ -265,6 +253,20 @@ public class UIManager : MonoBehaviour
         Mathf.Clamp(gameTimer, 0f, gameDuration);
     }
 
+    public void ApplyStopTimerImage()
+    {
+        Image timerFillImage = GameObject.FindGameObjectWithTag("TimerFill").GetComponent<Image>();
+        timerFillImage.sprite = Resources.Load<Sprite>("Arts/TimerStop");
+        timerFillImage.color = Color.white;
+    }
+
+    public void ApplyOriginTimerImage()
+    {
+        Image timerFillImage = GameObject.FindGameObjectWithTag("TimerFill").GetComponent<Image>();
+        timerFillImage.sprite = Resources.Load<Sprite>("Arts/ProgressbarEmpty");
+        timerFillImage.color = Color.red;
+    }
+
     public void UpdateTimerUI(float value)
     {
         if (hpBar != null)
@@ -282,8 +284,10 @@ public class UIManager : MonoBehaviour
 
     public void ApplyItemSlotImage(GameObject slot, ItemID itemID)
     {
+        if (itemID == ItemID.None)
+            return;
         Image itemSlotImage = slot.transform.GetChild(1).GetComponent<Image>();
-        string itemImagePath = DataTableManager.GetTable<ItemTable>().GetItemInfo(itemID).path;
+        string itemImagePath = itemTable.GetItemInfo(itemID).path;
         itemSlotImage.sprite = Resources.Load<Sprite>($"Arts/{itemImagePath}");
         Color iamgeColor = itemSlotImage.color;
         iamgeColor.a = 255;

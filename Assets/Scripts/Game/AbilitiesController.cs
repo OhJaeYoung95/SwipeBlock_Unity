@@ -15,6 +15,12 @@ public class AbilitiesController : MonoBehaviour
     private bool isUsedSlot3 = false;
     private bool isUsedSkill = false;
 
+    private ItemTable itemTable;
+
+    private void Awake()
+    {
+        itemTable = DataTableManager.GetTable<ItemTable>();
+    }
     public void OnButtonHoverEnter()
     {
         if (InputManager.Instance != null)
@@ -35,8 +41,8 @@ public class AbilitiesController : MonoBehaviour
         {
             isUsedSlot1 = true;
             Debug.Log("UseItemSlot1");
-            PlayerPrefs.SetInt("ItemSlot1", 0);
-            UseItem(itemSlot1, UIManager.Instance.items[0]);
+            //PlayerPrefs.SetInt("ItemSlot1", 0);
+            UseItem(itemSlot1, (ItemID)GameData.Slots[0]);
         }
     }
     public void UseItemSlot2()
@@ -47,8 +53,8 @@ public class AbilitiesController : MonoBehaviour
         {
             isUsedSlot2 = true;
             Debug.Log("UseItemSlot2");
-            PlayerPrefs.SetInt("ItemSlot2", 0);
-            UseItem(itemSlot2, UIManager.Instance.items[1]);
+            //PlayerPrefs.SetInt("ItemSlot2", 0);
+            UseItem(itemSlot2, (ItemID)GameData.Slots[1]);
         }
     }
     public void UseItemSlot3()
@@ -59,8 +65,8 @@ public class AbilitiesController : MonoBehaviour
         {
             isUsedSlot3 = true;
             Debug.Log("UseItemSlot3");
-            PlayerPrefs.SetInt("ItemSlot3", 0);
-            UseItem(itemSlot3, UIManager.Instance.items[2]);
+            //PlayerPrefs.SetInt("ItemSlot3", 0);
+            UseItem(itemSlot3, (ItemID)GameData.Slots[2]);
         }
 
     }
@@ -78,10 +84,10 @@ public class AbilitiesController : MonoBehaviour
     public void UseItem(GameObject itemSlot, ItemID id)
     {
         // 아이템 사용 부분
-        ItemType type = DataTableManager.GetTable<ItemTable>().GetItemInfo(id).type;
-        float value = DataTableManager.GetTable<ItemTable>().GetItemInfo(id).value;
-        float duration = DataTableManager.GetTable<ItemTable>().GetItemInfo(id).duration;
-        int price = DataTableManager.GetTable<ItemTable>().GetItemInfo(id).price;
+        ItemType type = itemTable.GetItemInfo(id).type;
+        float value = itemTable.GetItemInfo(id).value;
+        float duration = itemTable.GetItemInfo(id).duration;
+        int price = itemTable.GetItemInfo(id).price;
 
 
         if (id != ItemID.None)
@@ -96,6 +102,7 @@ public class AbilitiesController : MonoBehaviour
                 case ItemType.Timer:
                     UIManager.Instance.isStopTimer = true;
                     UIManager.Instance.stopDuration = duration;
+                    UIManager.Instance.ApplyStopTimerImage();
                     break;
                 case ItemType.Bomb:
 

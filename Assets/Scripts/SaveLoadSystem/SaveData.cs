@@ -17,7 +17,8 @@ public class SaveDataV1 : SaveData
     }
 
     public int Gold { get; set; }
-
+    public int[] Slots { get; set; } = new int[3];
+    public float BestScore { get; set; }
     public override SaveData VersionUp()
     {
         return null;

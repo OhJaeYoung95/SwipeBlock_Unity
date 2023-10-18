@@ -52,6 +52,8 @@ public class BlockManager : MonoBehaviour
 
 
     [SerializeField]
+    private float increasedTimerRate = 1f;
+    [SerializeField]
     private float posOffset = 0.18f;
     [SerializeField]
     private float moveDuration = 1f;
@@ -144,10 +146,6 @@ public class BlockManager : MonoBehaviour
                 spawnCount = 1;
                 break;
         }
-
-        int itemSlot1 = PlayerPrefs.GetInt("ItemSlot1", 0);
-        int itemSlot2 = PlayerPrefs.GetInt("ItemSlot2", 0);
-        int itemSlot3 = PlayerPrefs.GetInt("ItemSlot3", 0);
 
         blockIndexs = new int[boardSize, boardSize];
         indexPos = new Vector2[boardSize, boardSize];
@@ -415,7 +413,9 @@ public class BlockManager : MonoBehaviour
             elapsedTime = Time.time - moveStartTime;
             yield return null;
         }
-        blocks[moveIndex.x, moveIndex.y].transform.position = destPos;
+
+        if(blocks[moveIndex.x, moveIndex.y] != null)
+            blocks[moveIndex.x, moveIndex.y].transform.position = destPos;
     }
     private IEnumerator MergeBlocks()
     {
@@ -605,7 +605,7 @@ public class BlockManager : MonoBehaviour
                     ScoreManager.Instance.IsScoreIncreaseByPattern = true;
                     break;
                 case BlockPattern.Heart:
-                    UIManager.Instance.IncreaseTimer(5f * (connectedCount - 1));
+                    UIManager.Instance.IncreaseTimer(increasedTimerRate * (connectedCount - 1));
                     break;
             }
 
@@ -886,7 +886,7 @@ public class BlockManager : MonoBehaviour
 
     public void ApplyMergeEffectColor(ParticleSystem effect)
     {
-        Color newColor = new Color(40/ 255f, 40 / 255f, 40 / 255f);
+        Color newColor = new Color(60 / 255f, 60 / 255f, 60 / 255f);
         var mainModule = effect.main;
         mainModule.startColor = newColor;
 
@@ -902,8 +902,8 @@ public class BlockManager : MonoBehaviour
         ParticleSystem effect4 = effect.transform.GetChild(3).GetComponent<ParticleSystem>();
         ApplytMergeColor(effect4, newColor);
 
-        Light light = effect.transform.GetChild(4).GetComponent<Light>();
-        light.color = newColor;
+        //Light light = effect.transform.GetChild(4).GetComponent<Light>();
+        //light.color = newColor;
     }
 
     public void ApplytMergeColor(ParticleSystem effect, Color value)
@@ -944,23 +944,9 @@ public class BlockManager : MonoBehaviour
         }
 
         scoreText.text = $"{value}";
-        scoreText.transform.SetParent(ObjectPoolManager.Instance.canvas.transform);
-
-        float offsetX = Screen.width / 2;
-        float offsetY = Screen.height / 2;
-
-
-
-        //Vector2 ViewportPosition = Camara.main.WorldToViewportPoint(WorldObject.transform.position);
-        //Vector2 WorldObject_ScreenPosition = new Vector2(
-        //((ViewportPosition.x * CanvasRect.sizeDelta.x) - (CanvasRect.sizeDelta.x * 0.5f)),
-        //((ViewportPosition.y * CanvasRect.sizeDelta.y) - (CanvasRect.sizeDelta.y * 0.5f)));
-
+        scoreText.transform.SetParent(ObjectPoolManager.Instance.canvas.transform.GetChild(0));
 
         RectTransform canvasRect = UIManager.Instance.foreCanvas.GetComponent<RectTransform>();
-
-        //float scoreTextSize = scoreText.transform.localScale.x;
-        //scoreText.rectTransform.localScale /= scoreTextSize;
         scoreText.rectTransform.localScale = Vector3.one;
 
         Vector3 viewportPosition = Camera.main.WorldToViewportPoint(center)/* - new Vector3(offsetX, offsetY)*/;

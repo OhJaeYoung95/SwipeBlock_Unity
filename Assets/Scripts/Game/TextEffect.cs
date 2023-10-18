@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class TextEffect : MonoBehaviour
@@ -19,6 +20,8 @@ public class TextEffect : MonoBehaviour
 
     public void ReturnPoolEffect()
     {
+        TextMeshProUGUI text = gameObject.GetComponent<TextMeshProUGUI>();
+        text.color = Color.white;
         gameObject.transform.SetParent(poolForder.transform);
         ObjectPoolManager.Instance.ReturnObjectPool<TextEffect>("ScoreTextPool", this);
     }

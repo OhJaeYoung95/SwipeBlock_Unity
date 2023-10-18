@@ -6,8 +6,12 @@ public class InputManager : MonoBehaviour
 
     private Vector2 mouseDownPos;
     private Vector2 mouseUpPos;
+    private Vector2 mouseDragPos;
     private float maxSwipeDistance = 50f;
     private float minSwipeDistance = 0.1f;
+    [SerializeField]
+    private float sensitivityDistance = 2f;
+    private bool isSwiping = false;
     public bool isHover = false;
 
     private void Awake()
@@ -27,26 +31,58 @@ public class InputManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0) && !GameManager.Instance.IsMove && !GameManager.Instance.IsGameOver && !GameManager.Instance.IsPause && !isHover)
+        if (Input.GetMouseButtonDown(0)  &&
+            !GameManager.Instance.IsGameOver && !GameManager.Instance.IsPause && !isHover)
         {
             mouseDownPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            mouseUpPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        }
-        
-        if (Input.GetMouseButtonUp(0) && !GameManager.Instance.IsMove && !GameManager.Instance.IsGameOver && !GameManager.Instance.IsPause && !isHover)
-        {
-            GameManager.Instance.IsMove = true;
-            mouseUpPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            DetectSwipe();
+            //mouseUpPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         }
 
-        if(Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetMouseButton(0) && !isSwiping && !GameManager.Instance.IsGameOver && !GameManager.Instance.IsPause && !isHover)
         {
-            //GameManager.Instance.GameOver();
-            UIManager.Instance.gameTimer = UIManager.Instance.gameDuration / 2;
+            mouseDragPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            TestDetectSwipe();
+        }
+
+        if (Input.GetMouseButtonUp(0) && !GameManager.Instance.IsGameOver && !GameManager.Instance.IsPause && !isHover)
+        {
+            isSwiping = false;
+        }
+        //if (Input.GetMouseButtonUp(0) && !GameManager.Instance.IsMove && 
+        //    !GameManager.Instance.IsGameOver && !GameManager.Instance.IsPause && !isHover)
+        //{
+        //    GameManager.Instance.IsMove = true;
+        //    mouseUpPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        //    DetectSwipe();
+        //}        
+
+
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            GameManager.Instance.GameOver();
+            //UIManager.Instance.gameTimer = UIManager.Instance.gameDuration / 2;
         }
     }
 
+    private void TestDetectSwipe()
+    {
+        Vector2 swipeDir = mouseDragPos - mouseDownPos;
+        float swipeDistance = swipeDir.magnitude;
+        Debug.Log(swipeDistance);
+        if (swipeDistance < sensitivityDistance)
+        {
+            return;
+        }
+
+        if(swipeDistance > sensitivityDistance && !GameManager.Instance.IsMove)
+        {
+            isSwiping = true;
+            GameManager.Instance.IsMove = true;
+            float swipeAngle = Mathf.Atan2(swipeDir.y, swipeDir.x) * Mathf.Rad2Deg;
+            StartCoroutine(BlockManager.Instance.MoveBlocks(swipeAngle));
+        }
+    }
     private void DetectSwipe()
     {
         Vector2 swipeDir = mouseUpPos - mouseDownPos;
