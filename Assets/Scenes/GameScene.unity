@@ -3385,7 +3385,7 @@ MonoBehaviour:
   spawnCount: 1
   effectIndex: 0
   comboCount: 0
-  increasedTimerRate: 5
+  increasedTimerRate: 3
   posOffset: 0.18
   moveDuration: 0.1
   acceleratedSpeed: 1
@@ -4894,6 +4894,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 679d8f0783238854bad68081beecedf0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sensitivityDistance: 0.7
   isHover: 0
 --- !u!1 &1687321383
 GameObject:

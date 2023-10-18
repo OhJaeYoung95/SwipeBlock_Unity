@@ -29,10 +29,6 @@ public class UIManager : MonoBehaviour
     private Button continueButton;
     private Button quitButton;
 
-    //private GameObject itemSlot1;
-    //private GameObject itemSlot2;
-    //private GameObject itemSlot3;
-
     private GameObject[] itemSlots = new GameObject[3];
 
     private ItemTable itemTable;
@@ -95,9 +91,11 @@ public class UIManager : MonoBehaviour
         // 에러 발생
         if (BlockManager.Instance != null)
         {
-            if (t <= 0.5f && !BlockManager.Instance.isSpawnObstacle)
+            if (t <= BlockManager.Instance.obsSpawnTimeRate && !BlockManager.Instance.isSpawnObstacle)
                 BlockManager.Instance.isSpawnObstacle = true;
         }
+
+        Debug.Log(t);
 
         if (t <= 0.1f && !isFadeHpBar)
         {

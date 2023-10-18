@@ -64,7 +64,7 @@ public class GameManager : MonoBehaviour
         StopAllCoroutinesOfSingleTon();
         ScoreManager.Instance.CurrentScore = 0;
         BlockManager.Instance.ClearBoard();
-        SceneManager.LoadScene(2);
+        SceneManager.LoadScene((int)Scene.Select);
     }
 
     public void Pause()

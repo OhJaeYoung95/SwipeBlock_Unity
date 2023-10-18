@@ -9,6 +9,6 @@ public class IntroController : MonoBehaviour
     }
     public void ChangeScene()
     {
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene((int)Scene.MainMenu);
     }
 }

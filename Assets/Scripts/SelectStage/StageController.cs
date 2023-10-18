@@ -8,9 +8,8 @@ using SaveDataVC = SaveDataV1;
 public class StageController : MonoBehaviour
 {
     [SerializeField]
-    private Image[] images;
+    private GameObject[] stageImages;
     [SerializeField]
-    private Vector2[] pos = new Vector2[3];
     private int currentIndex = 0;
 
     [SerializeField]
@@ -35,10 +34,6 @@ public class StageController : MonoBehaviour
 
     private void Awake()
     {
-        for (int i = 0; i < images.Length; i++)
-        {
-            pos[i] = images[i].transform.localPosition;
-        }
         InitScene();
     }
     private void InitScene()
@@ -46,16 +41,20 @@ public class StageController : MonoBehaviour
         DisableAllUI();
         selectUICanvas.SetActive(true);
         DisplayGold();
-        UpdateImagePositions();
     }
 
-    private void UpdateImagePositions()
+    private void DisableAllStageImage()
     {
-        for (int i = 0; i < images.Length; i++)
+        foreach (var image in stageImages)
         {
-            int newIndex = (i + currentIndex) % images.Length;
-            images[i].rectTransform.anchoredPosition = pos[newIndex];
+            image.SetActive(false);
         }
+    }
+
+    private void UpdateStageImage(int index)
+    {
+        DisableAllStageImage();
+        stageImages[index].SetActive(true);
     }
     private void DisableAllUI()
     {
@@ -74,21 +73,11 @@ public class StageController : MonoBehaviour
     public void OnClickPlayButton()
     {
         Time.timeScale = 1f;
-        PlayerPrefs.SetInt("CurrentStage", currentIndex);
-        PlayerPrefs.Save();
+        //PlayerPrefs.SetInt("CurrentStage", currentIndex);
+        //PlayerPrefs.Save();
+        GameData.CurrentStage = currentIndex;
 
-        List<ItemID> itemInfos = shopController.GetItemSlotInfo();
-
-        if(itemInfos.Count > 0)
-        {
-            for (int i = 1; i < itemInfos.Count + 1; ++i)
-            {
-                int itemId = (int)itemInfos[i - 1];
-                PlayerPrefs.SetInt($"ItemSlot{i}", itemId);
-            }
-        }
-
-        SceneManager.LoadScene(3);
+        SceneManager.LoadScene((int)Scene.Game);
     }
     public void OnClickShopButton()
     {
@@ -110,12 +99,12 @@ public class StageController : MonoBehaviour
     }
     public void OnClickLeftButton()
     {
-        currentIndex = (currentIndex + 1) % images.Length;
-        UpdateImagePositions();
+        currentIndex = (currentIndex - 1 + stageImages.Length) % stageImages.Length;
+        UpdateStageImage(currentIndex);
     }
     public void OnClickRightButton()
     {
-        currentIndex = (currentIndex - 1 + images.Length) % images.Length;
-        UpdateImagePositions();
+        currentIndex = (currentIndex + 1) % stageImages.Length;
+        UpdateStageImage(currentIndex);
     }
 }

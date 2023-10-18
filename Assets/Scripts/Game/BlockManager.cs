@@ -45,6 +45,7 @@ public class BlockManager : MonoBehaviour
     private int initCount = 5;
     [SerializeField]
     private int spawnCount = 1;
+    private int failedMergeSpawnCount;
 
     public int effectIndex = 0;
 
@@ -64,11 +65,14 @@ public class BlockManager : MonoBehaviour
 
     private float moveStartTime = 0f;
 
+    public float obsSpawnTimeRate;
+
     public int currentStage;
 
     private bool isChainMerge = false;
     private bool isOnSpadeAttribute = false;
     private bool isCompare = false;
+    private bool isMergedDuringSwipe = false;
     public bool isSpawnObstacle = false;
 
     [SerializeField]
@@ -118,32 +122,36 @@ public class BlockManager : MonoBehaviour
     {
         isSpawnObstacle = false;
         obsList.Clear();
-        int stage = PlayerPrefs.GetInt("CurrentStage", 1);
-        switch (stage)
+        currentStage = GameData.CurrentStage;
+        switch (currentStage)
         {
-            case 1:
-                currentStage = 0;
-                initCount = 5;
-                boardSize = 4;
-                spawnCount = 1;
-                break;
             case 0:
-                currentStage = 1;
-                initCount = 10 *2;
-                boardSize = 5;
+                initCount = 6;
+                boardSize = 4;
                 spawnCount = 2;
+                failedMergeSpawnCount = 1;
+                obsSpawnTimeRate = 0;
+                break;
+            case 1:
+                initCount = 10;
+                boardSize = 5;
+                spawnCount = 3;
+                failedMergeSpawnCount = 1;
+                obsSpawnTimeRate = 0.25f;
                 break;
             case 2:
-                currentStage = 2;
-                initCount = 10 *2;
+                initCount = 10;
                 boardSize = 5;
-                spawnCount = 2;
+                spawnCount = 3;
+                failedMergeSpawnCount = 2;
+                obsSpawnTimeRate = 0.5f;
                 break;
             default:
                 currentStage = 0;
-                initCount = 5;
+                initCount = 6;
                 boardSize = 4;
-                spawnCount = 1;
+                spawnCount = 2;
+                failedMergeSpawnCount = 1;
                 break;
         }
 
@@ -209,10 +217,10 @@ public class BlockManager : MonoBehaviour
     {
         for (int i = 0; i < initCount; i++)
         {
-            RandomBlockCreate();
+            CreateRandomBlock();
         }
     }
-    private void RandomBlockCreate()
+    private void CreateRandomBlock()
     {
         int y = 0;
         int x = 0;
@@ -252,7 +260,7 @@ public class BlockManager : MonoBehaviour
         blocks[y, x].SetIndex(y, x);
     }
 
-    private void RandomBlockCreate(Block newBlock)
+    private void CreateRandomBlock(Block newBlock)
     {
         int y = 0;
         int x = 0;
@@ -278,6 +286,13 @@ public class BlockManager : MonoBehaviour
         newBlock.transform.localScale = new Vector2(blockSize, blockSize);
         blocks[y, x] = newBlock;
         blocks[y, x].SetIndex(y, x);
+    }
+
+    private void CreateObsBlock()
+    {
+        Block newObs = ObjectPoolManager.Instance.GetObjectPool<Block>(poolKeys[(int)BlockPattern.Obstcle - 1]);
+        obsList.Add(newObs);
+        CreateRandomBlock(newObs);
     }
 
     public IEnumerator MoveBlocks(float swipeAngle)
@@ -371,9 +386,21 @@ public class BlockManager : MonoBehaviour
         if (isOnSpadeAttribute)
             OnSpadeAttribute();
 
+        if(!isMergedDuringSwipe)
+        {
+            for(int i = 0; i < failedMergeSpawnCount; ++i)
+            {
+                CreateObsBlock();
+                if (CheckFullBoard())
+                    break;
+            }
+        }
+
+        isMergedDuringSwipe = false;
+
         for (int x = 0; x < spawnCount; ++x)
         {
-            RandomBlockCreate();
+            CreateRandomBlock();
             if (CheckFullBoard())
                 break;
         }
@@ -497,6 +524,7 @@ public class BlockManager : MonoBehaviour
 
                 if (connectedBlocks.Count >= 2)
                 {
+                    isMergedDuringSwipe = true;
                     comparePatternBlocks.Add(new List<Block>(connectedBlocks));
                 }
                 connectedBlocks.Clear();
@@ -864,7 +892,7 @@ public class BlockManager : MonoBehaviour
     {
         Block newJoker = ObjectPoolManager.Instance.GetObjectPool<Block>(poolKeys[(int)BlockPattern.Joker - 1]);
         jokerList.Add(newJoker);
-        RandomBlockCreate(newJoker);
+        CreateRandomBlock(newJoker);
         isOnSpadeAttribute = false;
 
         if (CheckFullBoard())

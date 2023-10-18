@@ -3,11 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using SaveDataVC = SaveDataV1;
 
+public enum Scene
+{
+    Intro,
+    MainMenu,
+    Select,
+    Game
+}
+
 public static class GameData
 {
     public static int Gold { get; set; }
     public static int[] Slots { get; set; } = new int[3];
     public static float BestScore { get; set; }
+
+    public static int CurrentStage { get; set; } = 0;
 
     public static void SaveGameData()
     {
