@@ -40,8 +40,6 @@ public class AbilitiesController : MonoBehaviour
         if(!isUsedSlot1)
         {
             isUsedSlot1 = true;
-            Debug.Log("UseItemSlot1");
-            //PlayerPrefs.SetInt("ItemSlot1", 0);
             UseItem(itemSlot1, (ItemID)GameData.Slots[0]);
         }
     }
@@ -52,8 +50,6 @@ public class AbilitiesController : MonoBehaviour
         if(!isUsedSlot2)
         {
             isUsedSlot2 = true;
-            Debug.Log("UseItemSlot2");
-            //PlayerPrefs.SetInt("ItemSlot2", 0);
             UseItem(itemSlot2, (ItemID)GameData.Slots[1]);
         }
     }
@@ -64,8 +60,6 @@ public class AbilitiesController : MonoBehaviour
         if(!isUsedSlot3)
         {
             isUsedSlot3 = true;
-            Debug.Log("UseItemSlot3");
-            //PlayerPrefs.SetInt("ItemSlot3", 0);
             UseItem(itemSlot3, (ItemID)GameData.Slots[2]);
         }
 
@@ -77,7 +71,6 @@ public class AbilitiesController : MonoBehaviour
         if(!isUsedSkill)
         {
             isUsedSkill = true;
-            Debug.Log("UseSkillSlot");
         }
     }
 

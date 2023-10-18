@@ -95,8 +95,6 @@ public class UIManager : MonoBehaviour
                 BlockManager.Instance.isSpawnObstacle = true;
         }
 
-        Debug.Log(t);
-
         if (t <= 0.1f && !isFadeHpBar)
         {
             isFadeHpBar = true;

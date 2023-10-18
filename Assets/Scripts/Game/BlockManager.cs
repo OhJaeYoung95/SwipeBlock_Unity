@@ -386,13 +386,13 @@ public class BlockManager : MonoBehaviour
         if (isOnSpadeAttribute)
             OnSpadeAttribute();
 
-        if(!isMergedDuringSwipe)
+        if(!isMergedDuringSwipe && currentStage != 0)
         {
             for(int i = 0; i < failedMergeSpawnCount; ++i)
             {
-                CreateObsBlock();
                 if (CheckFullBoard())
                     break;
+                CreateObsBlock();
             }
         }
 
@@ -400,9 +400,9 @@ public class BlockManager : MonoBehaviour
 
         for (int x = 0; x < spawnCount; ++x)
         {
-            CreateRandomBlock();
             if (CheckFullBoard())
                 break;
+            CreateRandomBlock();
         }
 
         GameManager.Instance.IsMove = false;

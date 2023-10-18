@@ -70,7 +70,6 @@ public static class SaveLoadSystem
     {
 
         var path = Path.Combine(SaveDirectory, fileName);
-        Debug.Log(path);
         if (!File.Exists(path))
             return null;
 
