@@ -8,6 +8,7 @@ public static class GameData
     public static int Gold { get; set; }
     public static int[] Slots { get; set; } = new int[3];
     public static float BestScore { get; set; }
+
     public static void SaveGameData()
     {
         var saveData = new SaveDataVC();
@@ -20,6 +21,9 @@ public static class GameData
     public static void LoadGameData()
     {
         var saveData = SaveLoadSystem.Load(SaveLoadSystem.SaveDataPath) as SaveDataVC;
+        if (saveData == null)
+            SaveGameData();
+
         Gold = saveData.Gold;
         Slots = saveData.Slots;
         BestScore = saveData.BestScore;

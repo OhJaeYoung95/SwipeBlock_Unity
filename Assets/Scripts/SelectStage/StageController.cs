@@ -39,8 +39,6 @@ public class StageController : MonoBehaviour
         {
             pos[i] = images[i].transform.localPosition;
         }
-
-        GameData.LoadGameData();
         InitScene();
     }
     private void InitScene()
