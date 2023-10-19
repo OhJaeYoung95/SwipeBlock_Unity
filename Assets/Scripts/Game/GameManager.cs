@@ -75,14 +75,16 @@ public class GameManager : MonoBehaviour
     public void Pause()
     {
         IsPause = true;
-        SoundManager.Instance.PlayAllButtonClickSound();
+        //SoundManager.Instance.PlayAllButtonClickSound();
+        SoundManager.Instance.PlaynPopupOpenSound();
         UIManager.Instance.Pause();
     }
 
     public void Continue()
     {
         IsPause = false;
-        SoundManager.Instance.PlayAllButtonClickSound();
+        //SoundManager.Instance.PlayAllButtonClickSound();
+        SoundManager.Instance.PlayPopupCloseSound();
         UIManager.Instance.Continue();
     }
 

@@ -13,7 +13,7 @@ public enum Scene
 
 public static class GameData
 {
-    public static int Gold { get; set; }
+    public static int Gold { get; set; } = 10000;
     public static int[] Slots { get; set; } = new int[3];
     public static float BestScore { get; set; }
 
@@ -35,7 +35,7 @@ public static class GameData
             SaveGameData();
 
         Gold = saveData.Gold;
-        Gold = 100000;
+        //Gold = 100000;
         Slots = saveData.Slots;
         BestScore = saveData.BestScore;
     }

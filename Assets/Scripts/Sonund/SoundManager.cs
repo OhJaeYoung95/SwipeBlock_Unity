@@ -26,7 +26,9 @@ public enum SoundEffectID
     FailedBuy,
     ShopItemToggle,
     GameOver,
-    AllButtonClick
+    AllButtonClick,
+    PopupOpen,
+    PopupClose
 }
 
 public class SoundManager : MonoBehaviour
@@ -36,7 +38,6 @@ public class SoundManager : MonoBehaviour
     public List<AudioSource> effectsAudio;
 
     public AudioMixer audioMixer;
-    public AudioMixerGroup bgm;
 
     private float masterVolume;
     private float bgmVolume;
@@ -155,6 +156,16 @@ public class SoundManager : MonoBehaviour
     {
         effectsAudio[(int)SoundEffectID.AllButtonClick].Stop();
         effectsAudio[(int)SoundEffectID.AllButtonClick].Play();
+    }
+    public void PlaynPopupOpenSound()
+    {
+        effectsAudio[(int)SoundEffectID.PopupOpen].Stop();
+        effectsAudio[(int)SoundEffectID.PopupOpen].Play();
+    }
+    public void PlayPopupCloseSound()
+    {
+        effectsAudio[(int)SoundEffectID.PopupClose].Stop();
+        effectsAudio[(int)SoundEffectID.PopupClose].Play();
     }
 
     public void OnOffMasterVolume(bool value)
