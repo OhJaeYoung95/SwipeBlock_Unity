@@ -1,6 +1,5 @@
 using CsvHelper.Configuration;
 using CsvHelper;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -26,9 +25,6 @@ public class ItemTable : DataTable
     }
     public override void Load()
     {
-        //string csvFileText =File.ReadAllText(path);
-        //TextReader reader = new StringReader(csvFileText);
-
         var csvStr = Resources.Load<TextAsset>(path);
         TextReader reader = new StringReader(csvStr.text);
         var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture));

@@ -12,19 +12,12 @@ public class UIManager : MonoBehaviour
     private TextMeshProUGUI bestScore;
     private TextMeshProUGUI score;
 
-    public TextMeshProUGUI gameOverBestScore;
-    public TextMeshProUGUI gameOverScore;
-
-
-    public GameObject foreCanvas;
     private GameObject gameOverPanel;
     private GameObject pausePanel;
 
     private Button puaseButton;
-
     private Button selectStage;
     private Button restart;
-
     private Button pauseSelectStage;
     private Button continueButton;
     private Button quitButton;
@@ -32,10 +25,10 @@ public class UIManager : MonoBehaviour
     private Slider masterSlider;
     private Slider bgmSlider;
     private Slider seSlider;
+
     private Toggle masterMuteToggle;
     private Toggle bgmMuteToggle;
     private Toggle seMuteToggle;
-
 
     private GameObject[] itemSlots = new GameObject[3];
 
@@ -43,6 +36,16 @@ public class UIManager : MonoBehaviour
 
     [SerializeField]
     private float gameTimerSpeed = 1f;
+
+    private bool isFadeHpBar = false;
+
+    public TextMeshProUGUI gameOverBestScore;
+    public TextMeshProUGUI gameOverScore;
+
+    public GameObject foreCanvas;
+
+    public ItemID[] items = new ItemID[3];
+
     public float gameTimer;
     public float gameDuration = 20f;
 
@@ -50,14 +53,11 @@ public class UIManager : MonoBehaviour
     public float stopDuration = 0f;
 
     public float fadeSpeed = 5f;
-    private bool isFadeHpBar = false;
-
-    public bool isStopTimer = false;
 
     public float scoreItemTimer = 0f;
     public float scoreItemDuration = 0f;
 
-    public ItemID[] items = new ItemID[3];
+    public bool isStopTimer = false;
 
     private void Awake()
     {
@@ -72,8 +72,6 @@ public class UIManager : MonoBehaviour
         }
         Instance.Init();
     }
-
-    // Update is called once per frame
     void Update()
     {
         if (GameManager.Instance.IsGameOver)
@@ -136,8 +134,7 @@ public class UIManager : MonoBehaviour
             GameManager.Instance.GameOver();
         }
     }
-
-    public void Init()
+    private void Init()
     {
         itemTable = DataTableManager.GetTable<ItemTable>();
 
@@ -200,9 +197,13 @@ public class UIManager : MonoBehaviour
         bgmMuteToggle.onValueChanged.AddListener(SoundManager.Instance.OnOffBGMVolume);
         seMuteToggle.onValueChanged.AddListener(SoundManager.Instance.OnOffSEVolume);
 
-        masterMuteToggle.isOn = false;
-        bgmMuteToggle.isOn = false;
-        seMuteToggle.isOn = false;
+        masterSlider.value = GameData.MasterVolume;
+        bgmSlider.value = GameData.BGMVolune;
+        seSlider.value = GameData.SEVolume;
+
+        masterMuteToggle.isOn = GameData.IsOffMasterMute;
+        bgmMuteToggle.isOn = GameData.IsOffBGMMute;
+        seMuteToggle.isOn = GameData.IsOffSEMute;
 
         if (GameManager.Instance != null)
         {
@@ -233,79 +234,30 @@ public class UIManager : MonoBehaviour
             quitButton.onClick.AddListener(GameManager.Instance.Quit);
         }
     }
-
-    public void GameOver()
-    {
-        isStopTimer = false;
-        gameOverPanel.gameObject.SetActive(true);
-        ScoreManager.Instance.UpdateBestScore();
-        gameOverBestScore.text = $"{GameData.BestScore}";
-        gameOverScore.text = $"{ScoreManager.Instance.CurrentScore}";
-    }
-
-    public void Pause()
-    {
-        Time.timeScale = 0f;
-        pausePanel.SetActive(true);
-    }
-
-    public void Continue()
-    {
-        Time.timeScale = 1f;
-        pausePanel.SetActive(false);
-        StartCoroutine(ContinueDelay());
-    }
-
-    public IEnumerator ContinueDelay()
+    private IEnumerator ContinueDelay()
     {
         yield return new WaitForSeconds(0.5f);
         InputManager.Instance.isHover = false;
     }
-
-    public void FadeHpBarFrame()
+    private void FadeHpBarFrame()
     {
         float alpha = Mathf.PingPong(Time.time * fadeSpeed, 1f);
         Color newColor = hpBarFadeFrame.color;
         newColor.a = alpha;
         hpBarFadeFrame.color = newColor;
     }
-
-    public void IncreaseTimer(float value)
-    {
-        gameTimer += value;
-        Mathf.Clamp(gameTimer, 0f, gameDuration);
-    }
-
-    public void ApplyStopTimerImage()
-    {
-        Image timerFillImage = GameObject.FindGameObjectWithTag("TimerFill").GetComponent<Image>();
-        timerFillImage.sprite = Resources.Load<Sprite>("Arts/TimerStop");
-        timerFillImage.color = Color.white;
-    }
-
-    public void ApplyOriginTimerImage()
+    private void ApplyOriginTimerImage()
     {
         Image timerFillImage = GameObject.FindGameObjectWithTag("TimerFill").GetComponent<Image>();
         timerFillImage.sprite = Resources.Load<Sprite>("Arts/ProgressbarEmpty");
         timerFillImage.color = Color.red;
     }
-
-    public void UpdateTimerUI(float value)
+    private void UpdateTimerUI(float value)
     {
         if (hpBar != null)
             hpBar.value = value;
     }
-
-    public void UpdateBestScoreUI(float value)
-    {
-        bestScore.text = $"BEST SCORE \n {Mathf.RoundToInt(value)}";
-    }
-    public void UpdateScoreUI(float value)
-    {
-        score.text = $"SCORE \n {Mathf.RoundToInt(value)}";
-    }
-
-    public void ApplyItemSlotImage(GameObject slot, ItemID itemID)
+    private void ApplyItemSlotImage(GameObject slot, ItemID itemID)
     {
         if (itemID == ItemID.None)
             return;
@@ -315,5 +267,43 @@ public class UIManager : MonoBehaviour
         Color iamgeColor = itemSlotImage.color;
         iamgeColor.a = 255;
         itemSlotImage.color = iamgeColor;
+    }
+    public void GameOver()
+    {
+        isStopTimer = false;
+        gameOverPanel.gameObject.SetActive(true);
+        ScoreManager.Instance.UpdateBestScore();
+        gameOverBestScore.text = $"{GameData.BestScore}";
+        gameOverScore.text = $"{ScoreManager.Instance.CurrentScore}";
+    }
+    public void Pause()
+    {
+        Time.timeScale = 0f;
+        pausePanel.SetActive(true);
+    }
+    public void Continue()
+    {
+        Time.timeScale = 1f;
+        pausePanel.SetActive(false);
+        StartCoroutine(ContinueDelay());
+    }
+    public void IncreaseTimer(float value)
+    {
+        gameTimer += value;
+        Mathf.Clamp(gameTimer, 0f, gameDuration);
+    }
+    public void ApplyStopTimerImage()
+    {
+        Image timerFillImage = GameObject.FindGameObjectWithTag("TimerFill").GetComponent<Image>();
+        timerFillImage.sprite = Resources.Load<Sprite>("Arts/TimerStop");
+        timerFillImage.color = Color.white;
+    }
+    public void UpdateBestScoreUI(float value)
+    {
+        bestScore.text = $"BEST SCORE \n {Mathf.RoundToInt(value)}";
+    }
+    public void UpdateScoreUI(float value)
+    {
+        score.text = $"SCORE \n {Mathf.RoundToInt(value)}";
     }
 }

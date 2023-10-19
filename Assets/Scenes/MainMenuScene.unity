@@ -546,6 +546,14 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1640510336667805386, guid: d0e38b8972d20d14f9f7e4023519df8e, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 1640510336667805386, guid: d0e38b8972d20d14f9f7e4023519df8e, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 5388616696930114235, guid: d0e38b8972d20d14f9f7e4023519df8e, type: 3}
       propertyPath: m_Name
       value: SE Slider
@@ -1593,6 +1601,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Master Slider
       objectReference: {fileID: 0}
+    - target: {fileID: 427516997689703999, guid: 82597ebb471359645b7b363174f8d4f9, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 427516997689703999, guid: 82597ebb471359645b7b363174f8d4f9, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 1647838327052078806, guid: 82597ebb471359645b7b363174f8d4f9, type: 3}
       propertyPath: m_SizeDelta.x
       value: 238.69
@@ -1795,6 +1811,14 @@ PrefabInstance:
     - target: {fileID: 31351189190178679, guid: 7547a1cb5d96a3f4eb833234bf66dfe7, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 99144522795760185, guid: 7547a1cb5d96a3f4eb833234bf66dfe7, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 99144522795760185, guid: 7547a1cb5d96a3f4eb833234bf66dfe7, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 167104752001238875, guid: 7547a1cb5d96a3f4eb833234bf66dfe7, type: 3}
       propertyPath: m_Pivot.x

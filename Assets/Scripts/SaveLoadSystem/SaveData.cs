@@ -17,8 +17,16 @@ public class SaveDataV1 : SaveData
     }
 
     public int Gold { get; set; }
+    public int ItemCount { get; set; }
     public int[] Slots { get; set; } = new int[3];
     public float BestScore { get; set; }
+    public float MasterVolume { get; set; }
+    public float BGMVolume { get; set; }
+    public float SEVolume { get; set; }
+    public bool IsOffMasterMute { get; set; }
+    public bool IsOffBGMMute { get; set; }
+    public bool IsOffSEMute { get; set; }
+
     public override SaveData VersionUp()
     {
         return null;

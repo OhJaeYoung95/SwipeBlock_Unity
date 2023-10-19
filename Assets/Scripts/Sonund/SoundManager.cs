@@ -39,10 +39,6 @@ public class SoundManager : MonoBehaviour
 
     public AudioMixer audioMixer;
 
-    private float masterVolume;
-    private float bgmVolume;
-    private float seVolume;
-
     private bool isOffMasterMute = false;
     private bool isOffBgmMute = false;
     private bool isOffSeMute = false;
@@ -54,16 +50,9 @@ public class SoundManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    // Start is called before the first frame update
     void Start()
     {
         OnIntroBGM();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 
     // BGM
@@ -170,34 +159,34 @@ public class SoundManager : MonoBehaviour
 
     public void OnOffMasterVolume(bool value)
     {
-        isOffMasterMute = value;
+        GameData.IsOffMasterMute = value;
         audioMixer.SetFloat("Master", -80);
         if (!isOffMasterMute)
-            SetMasterVolume(masterVolume);
+            SetMasterVolume(GameData.MasterVolume);
     }
     public void OnOffBGMVolume(bool value)
     {
-        isOffBgmMute = value;
+        GameData.IsOffBGMMute = value;
         audioMixer.SetFloat("BGM", -80);
         if(!isOffBgmMute)
-            SetBGMVolume(bgmVolume);
+            SetBGMVolume(GameData.BGMVolune);
     }
     public void OnOffSEVolume(bool value)
     {
-        isOffSeMute = value;
+        GameData.IsOffSEMute = value;
         audioMixer.SetFloat("SE", -80);
         if(!isOffSeMute)
-            SetSEVolume(seVolume);
+            SetSEVolume(GameData.SEVolume);
     }
     public void SetMasterVolume(float volume)
     {
-        masterVolume = volume;
-        if (isOffMasterMute)
+        GameData.MasterVolume = volume;
+        if (GameData.IsOffMasterMute)
             return;
 
         if (volume == -40f)
         {
-            masterVolume = -80;
+            GameData.MasterVolume = -80;
             audioMixer.SetFloat("Master", -80);
         }
         else
@@ -208,13 +197,13 @@ public class SoundManager : MonoBehaviour
     }
     public void SetBGMVolume(float volume)
     {
-        bgmVolume = volume;
-        if (isOffBgmMute)
+        GameData.BGMVolune = volume;
+        if (GameData.IsOffBGMMute)
             return;
 
         if (volume == -40f)
         {
-            bgmVolume = -80;
+            GameData.BGMVolune = -80;
             audioMixer.SetFloat("BGM", -80);
         }
         else
@@ -224,13 +213,13 @@ public class SoundManager : MonoBehaviour
     }
     public void SetSEVolume(float volume)
     {
-        seVolume = volume;
-        if (isOffSeMute)
+        GameData.SEVolume = volume;
+        if (GameData.IsOffSEMute)
             return;
 
         if (volume == -40f)
         {
-            seVolume = -80;
+            GameData.SEVolume = -80;
             audioMixer.SetFloat("SE", -80);
         }
         else

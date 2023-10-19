@@ -97,15 +97,31 @@ public class ShopController : MonoBehaviour
         }
 
         Toggle[] toggles = toggleGroup.GetComponentsInChildren<Toggle>();
-        for (int i = 1; i <= itemSlotCount; i++)
+        foreach( Toggle toggle in toggles )
+        {
+            toggle.onValueChanged.AddListener(OnClickItemToggle);
+        }
+        for (int i = 1; i <= itemSlotCount; ++i)
         {
             toggleToItemMapping[toggles[i - 1]] = (ItemID)i;
         }
+
+        for(int i = 0; i < shopItemUISlots.Length; ++i)
+        {
+            if (GameData.Slots[i] == 0)
+                continue;
+            ApplyItemSlotImage(shopItemUISlots[i], (ItemID)GameData.Slots[i]);
+            ApplyItemSlotImage(stageItemUISlots[i], (ItemID)(ItemID)GameData.Slots[i]);
+        }
+    }
+
+    public void OnClickItemToggle(bool value)
+    {
+        SoundManager.Instance.PlayShopItemToggleSound();
     }
 
     public void OnClickBuyButton()
     {
-
         Toggle selectedToggle = toggleGroup.ActiveToggles().FirstOrDefault();
 
         if (selectedToggle == null)
@@ -114,7 +130,7 @@ public class ShopController : MonoBehaviour
             return;
         }
 
-        if (itemCount == 3)
+        if (GameData.ItemCount == 3)
         {
             // ½ÇÆÐÀ½
             SoundManager.Instance.PlayFailedBuySound();
@@ -135,21 +151,29 @@ public class ShopController : MonoBehaviour
 
             SoundManager.Instance.PlayBuyButtonClickSound();
             GameData.Gold -= price;
-            GameData.SaveGameData();
-
-            itemInfos.Add(selectedItemID);
-            GameData.Slots[itemCount] = (int)selectedItemID;
-            ApplyItemSlotImage(shopItemUISlots[itemCount], (ItemID)selectedItemID);
-            ApplyItemSlotImage(stageItemUISlots[itemCount], (ItemID)selectedItemID);
+            //itemInfos.Add(selectedItemID);
+            int index = 0;
+            for (int i = 0; i < shopItemUISlots.Length; ++i)
+            {
+                if (GameData.Slots[i] == 0)
+                {
+                    index = i;
+                    GameData.Slots[i] = (int)selectedItemID;
+                    break;
+                }
+            }
+            ApplyItemSlotImage(shopItemUISlots[index], (ItemID)selectedItemID);
+            ApplyItemSlotImage(stageItemUISlots[index], (ItemID)selectedItemID);
+            GameData.ItemCount++;
         }
         stageController.DisplayGold();
-        itemCount++;
+        GameData.SaveGameData();
     }
 
-    public List<ItemID> GetItemSlotInfo()
-    {
-        return itemInfos;
-    }
+    //public List<ItemID> GetItemSlotInfo()
+    //{
+    //    return itemInfos;
+    //}
 
     public void ApplyItemSlotImage(GameObject slot, ItemID selectedItemID)
     {

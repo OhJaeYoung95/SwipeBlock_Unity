@@ -31,9 +31,6 @@ public class GameManager : MonoBehaviour
 
     public void GameOver()
     {
-        for(int i = 0; i < GameData.Slots.Length; ++i)
-            GameData.Slots[i] = 0;
-
         IsGameOver = true;
         IsMove = false;
         Time.timeScale = 0f;
@@ -60,9 +57,6 @@ public class GameManager : MonoBehaviour
 
     public void SelectStage()
     {
-        for (int i = 0; i < GameData.Slots.Length; ++i)
-            GameData.Slots[i] = 0;
-
         Time.timeScale = 0f;
         StopAllCoroutinesOfSingleTon();
         SoundManager.Instance.OnTitleBGM();
@@ -91,9 +85,6 @@ public class GameManager : MonoBehaviour
     public void Quit()
     {
 #if UNITY_EDITOR
-        for (int i = 0; i < GameData.Slots.Length; ++i)
-            GameData.Slots[i] = 0;
-
         GameData.SaveGameData();
         SoundManager.Instance.PlayAllButtonClickSound();
         EditorApplication.isPlaying = false;

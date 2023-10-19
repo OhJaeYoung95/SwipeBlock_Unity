@@ -40,7 +40,7 @@ public class AbilitiesController : MonoBehaviour
         if(!isUsedSlot1)
         {
             isUsedSlot1 = true;
-            UseItem(itemSlot1, (ItemID)GameData.Slots[0]);
+            UseItem(itemSlot1, (ItemID)GameData.Slots[0], 0);
         }
     }
     public void UseItemSlot2()
@@ -50,7 +50,7 @@ public class AbilitiesController : MonoBehaviour
         if(!isUsedSlot2)
         {
             isUsedSlot2 = true;
-            UseItem(itemSlot2, (ItemID)GameData.Slots[1]);
+            UseItem(itemSlot2, (ItemID)GameData.Slots[1], 1);
         }
     }
     public void UseItemSlot3()
@@ -60,7 +60,7 @@ public class AbilitiesController : MonoBehaviour
         if(!isUsedSlot3)
         {
             isUsedSlot3 = true;
-            UseItem(itemSlot3, (ItemID)GameData.Slots[2]);
+            UseItem(itemSlot3, (ItemID)GameData.Slots[2], 2);
         }
 
     }
@@ -74,9 +74,22 @@ public class AbilitiesController : MonoBehaviour
         }
     }
 
-    public void UseItem(GameObject itemSlot, ItemID id)
+    public void UseItem(GameObject itemSlot, ItemID id, int index)
     {
         // 아이템 사용 부분
+        if (id == ItemID.None)
+            return;
+
+        GameData.Slots[index] = 0;
+
+        if (GameData.ItemCount > 0)
+        {
+            GameData.ItemCount--;
+        }
+        else
+        {
+            return;
+        }
         SoundManager.Instance.PlayItemClickSound();
 
         ItemType type = itemTable.GetItemInfo(id).type;

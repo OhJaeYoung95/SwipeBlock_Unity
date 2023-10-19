@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -12,12 +10,10 @@ public class TextEffect : MonoBehaviour
     {
         transform.position += Vector3.up * Time.deltaTime * speed;
     }
-
     private void OnEnable()
     {
         poolForder = GameObject.FindGameObjectWithTag("ScoreTextPool");
     }
-
     public void ReturnPoolEffect()
     {
         TextMeshProUGUI text = gameObject.GetComponent<TextMeshProUGUI>();

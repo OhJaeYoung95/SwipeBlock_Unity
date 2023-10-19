@@ -1316,8 +1316,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 100}
-  m_SizeDelta: {x: 600, y: 50}
+  m_AnchoredPosition: {x: 0, y: 34.4}
+  m_SizeDelta: {x: 600, y: 81.19}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &545786519
 MonoBehaviour:
@@ -2185,9 +2185,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseScore: 10
-  chainMergeScore: 20
-  comboScore: 30
-  compareScore: 40
+  chainMergeScore: 40
+  comboScore: 60
+  compareScore: 70
   itemValue: 0
 --- !u!1 &805349913
 GameObject:
@@ -2518,7 +2518,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 0, y: 0, z: 0, w: -35.090267}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -3450,7 +3450,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 0, y: 0, z: 0, w: -33.03618}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -4821,7 +4821,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 0, y: 0, z: 0, w: -35.10094}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -4998,6 +4998,14 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1640510336667805386, guid: d0e38b8972d20d14f9f7e4023519df8e, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 1640510336667805386, guid: d0e38b8972d20d14f9f7e4023519df8e, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 5388616696930114235, guid: d0e38b8972d20d14f9f7e4023519df8e, type: 3}
       propertyPath: m_Name
       value: SE Slider
@@ -5115,6 +5123,14 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 99144522795760185, guid: 7547a1cb5d96a3f4eb833234bf66dfe7, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 99144522795760185, guid: 7547a1cb5d96a3f4eb833234bf66dfe7, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 167104752001238875, guid: 7547a1cb5d96a3f4eb833234bf66dfe7, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -5227,6 +5243,14 @@ PrefabInstance:
     - target: {fileID: 170689174600803788, guid: 82597ebb471359645b7b363174f8d4f9, type: 3}
       propertyPath: m_Name
       value: Master Slider
+      objectReference: {fileID: 0}
+    - target: {fileID: 427516997689703999, guid: 82597ebb471359645b7b363174f8d4f9, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 427516997689703999, guid: 82597ebb471359645b7b363174f8d4f9, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 4575890976684420144, guid: 82597ebb471359645b7b363174f8d4f9, type: 3}
       propertyPath: m_AnchorMax.x

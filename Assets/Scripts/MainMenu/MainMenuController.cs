@@ -30,9 +30,13 @@ public class MainMenuController : MonoBehaviour
         bgmMuteToggle.onValueChanged.AddListener(SoundManager.Instance.OnOffBGMVolume);
         seMuteToggle.onValueChanged.AddListener(SoundManager.Instance.OnOffSEVolume);
 
-        masterMuteToggle.isOn = false;
-        bgmMuteToggle.isOn = false;
-        seMuteToggle.isOn = false;
+        masterSlider.value = GameData.MasterVolume;
+        bgmSlider.value = GameData.BGMVolune;
+        seSlider.value = GameData.SEVolume;
+
+        masterMuteToggle.isOn = GameData.IsOffMasterMute;
+        bgmMuteToggle.isOn = GameData.IsOffBGMMute;
+        seMuteToggle.isOn = GameData.IsOffSEMute;
     }
 
     public void OnClickPlayButton()

@@ -1,6 +1,5 @@
 using CsvHelper.Configuration;
 using CsvHelper;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -18,8 +17,6 @@ public class StringTable : DataTable
 
     public StringTable()
     {
-        //path = Path.Combine(Application.dataPath, "Tables/StringTable.csv");
-
         path = "Tables/StringTable";
         Load();
     }
