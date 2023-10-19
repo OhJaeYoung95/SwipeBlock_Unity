@@ -62,13 +62,11 @@ public class ScoreManager : MonoBehaviour
 
     public float AddScoreByCombo()
     {
-        Debug.Log("Combo");
         return ApplyScore(comboScore);
     }
 
     public float AddScoreByComparePattern()
     {
-        Debug.Log("Compare");
         return ApplyScore(compareScore);
     }
 
@@ -98,6 +96,20 @@ public class ScoreManager : MonoBehaviour
 
     public void ConvertScoreToGold()
     {
-        GameData.Gold += Mathf.RoundToInt(CurrentScore / 10);
+        switch(GameData.CurrentStage)
+        {
+            case 0:
+                GameData.Gold += Mathf.RoundToInt(CurrentScore / 100);
+                break;
+            case 1:
+                GameData.Gold += Mathf.RoundToInt(CurrentScore / 10);
+                break;
+            case 2:
+                GameData.Gold += Mathf.RoundToInt(CurrentScore * 2 / 10);
+                break;
+            default:
+                GameData.Gold += Mathf.RoundToInt(CurrentScore / 100);
+                break;
+        }
     }
 }

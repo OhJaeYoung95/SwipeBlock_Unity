@@ -64,9 +64,9 @@ public class ResolutionOption : MonoBehaviour
     public void OkBtnClick()
     {
         SoundManager.Instance.PlayAllButtonClickSound();
-        Screen.SetResolution(resolutions[resolutionNum].width,
-            resolutions[resolutionNum].height,
-            screenMode);
+        //Screen.SetResolution(resolutions[resolutionNum].width,
+        //    resolutions[resolutionNum].height,
+        //    screenMode);
 
         transform.GetChild(0).gameObject.SetActive(false);
     }

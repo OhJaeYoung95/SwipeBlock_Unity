@@ -5,12 +5,34 @@ using UnityEngine.UI;
 
 public class MainMenuController : MonoBehaviour
 {
-    public Button play;
-    public Button option;
+    [SerializeField]
+    private Slider masterSlider;
+    [SerializeField]
+    private Slider bgmSlider;
+    [SerializeField]
+    private Slider seSlider;
+    [SerializeField]
+    private Toggle masterMuteToggle;
+    [SerializeField]
+    private Toggle bgmMuteToggle;
+    [SerializeField]
+    private Toggle seMuteToggle;
+
 
     private void Awake()
     {
         transform.GetChild(0).gameObject.SetActive(false);
+        masterSlider.onValueChanged.AddListener(SoundManager.Instance.SetMasterVolume);
+        bgmSlider.onValueChanged.AddListener(SoundManager.Instance.SetBGMVolume);
+        seSlider.onValueChanged.AddListener(SoundManager.Instance.SetSEVolume);
+
+        masterMuteToggle.onValueChanged.AddListener(SoundManager.Instance.OnOffMasterVolume);
+        bgmMuteToggle.onValueChanged.AddListener(SoundManager.Instance.OnOffBGMVolume);
+        seMuteToggle.onValueChanged.AddListener(SoundManager.Instance.OnOffSEVolume);
+
+        masterMuteToggle.isOn = false;
+        bgmMuteToggle.isOn = false;
+        seMuteToggle.isOn = false;
     }
 
     public void OnClickPlayButton()
