@@ -15,7 +15,6 @@ public class Block : MonoBehaviour
     public int Y { get; set; }
 
     public int CurrentPattern { get; set; } = 0;
-    public int ListCount { get; set; } = 0;
     public bool IsMerged { get; set; } = false;
     public bool IsChcekIndex { get; set; } = false;
     public bool IsContainList { get; set; } = false;
@@ -25,7 +24,6 @@ public class Block : MonoBehaviour
         Y = y;
         X = x;
         CurrentPattern = (int)type;
-        ListCount = 0;
     }
 
     protected virtual void OnEnable()

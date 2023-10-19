@@ -473,13 +473,9 @@ public class BlockManager : MonoBehaviour
                             block.IsChcekIndex = false;
                             if (block.CurrentPattern >= (int)connectedBlocks[0].type)
                             {
-                                if(block.ListCount < connectedBlocks.Count)
-                                {
                                     block.IsContainList = true;
                                     blockIndexs[block.Y, block.X] = (int)connectedBlocks[0].type;
                                     block.CurrentPattern = (int)connectedBlocks[0].type;
-                                    block.ListCount = connectedBlocks.Count;
-                                }
                             }
                         }
                     }
@@ -680,7 +676,6 @@ public class BlockManager : MonoBehaviour
             joker.IsContainList = false;
             joker.CurrentPattern = (int)BlockPattern.Joker;
             blockIndexs[joker.Y, joker.X] = (int)BlockPattern.Joker;
-            joker.ListCount = 0;
         }
     }
     public void ClearBoard()
@@ -796,7 +791,6 @@ public class BlockManager : MonoBehaviour
             block.IsChcekIndex = false;
             block.IsContainList = false;
             block.CurrentPattern = (int)block.type;
-            block.ListCount = 0;
             blockIndexs[block.Y, block.X] = (int)block.type;
         }
     }
