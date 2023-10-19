@@ -35,6 +35,7 @@ public static class GameData
             SaveGameData();
 
         Gold = saveData.Gold;
+        Gold = 100000;
         Slots = saveData.Slots;
         BestScore = saveData.BestScore;
     }

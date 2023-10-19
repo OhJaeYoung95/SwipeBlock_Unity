@@ -29,6 +29,14 @@ public class UIManager : MonoBehaviour
     private Button continueButton;
     private Button quitButton;
 
+    private Slider masterSlider;
+    private Slider bgmSlider;
+    private Slider seSlider;
+    private Toggle masterMuteToggle;
+    private Toggle bgmMuteToggle;
+    private Toggle seMuteToggle;
+
+
     private GameObject[] itemSlots = new GameObject[3];
 
     private ItemTable itemTable;
@@ -176,6 +184,26 @@ public class UIManager : MonoBehaviour
         gameOverBestScore = gameOverPanel.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
         gameOverScore = gameOverPanel.transform.GetChild(2).GetComponent<TextMeshProUGUI>();
 
+        masterSlider = pausePanel.transform.GetChild(4).GetComponent<Slider>();
+        bgmSlider = pausePanel.transform.GetChild(5).GetComponent<Slider>();
+        seSlider = pausePanel.transform.GetChild(6).GetComponent<Slider>();
+
+        masterMuteToggle = masterSlider.transform.GetChild(0).GetComponent<Toggle>();
+        bgmMuteToggle = bgmSlider.transform.GetChild(0).GetComponent<Toggle>();
+        seMuteToggle = seSlider.transform.GetChild(0).GetComponent<Toggle>();
+
+        masterSlider.onValueChanged.AddListener(SoundManager.Instance.SetMasterVolume);
+        bgmSlider.onValueChanged.AddListener(SoundManager.Instance.SetBGMVolume);
+        seSlider.onValueChanged.AddListener(SoundManager.Instance.SetSEVolume);
+
+        masterMuteToggle.onValueChanged.AddListener(SoundManager.Instance.OnOffMasterVolume);
+        bgmMuteToggle.onValueChanged.AddListener(SoundManager.Instance.OnOffBGMVolume);
+        seMuteToggle.onValueChanged.AddListener(SoundManager.Instance.OnOffSEVolume);
+
+        masterMuteToggle.isOn = false;
+        bgmMuteToggle.isOn = false;
+        seMuteToggle.isOn = false;
+
         if (GameManager.Instance != null)
         {
             puaseButton.onClick.AddListener(GameManager.Instance.Pause);
@@ -203,7 +231,6 @@ public class UIManager : MonoBehaviour
 
             quitButton = pausePanel.transform.GetChild(3).GetChild(0).GetComponent<Button>(); ;
             quitButton.onClick.AddListener(GameManager.Instance.Quit);
-
         }
     }
 

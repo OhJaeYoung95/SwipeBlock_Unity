@@ -667,6 +667,7 @@ public class BlockManager : MonoBehaviour
                 if (block.type == BlockPattern.Joker)
                     jokerList.Remove(block);
 
+                SoundManager.Instance.PlayMergeSound();
                 PlayMergeEffect(block, blockList);
                 blockIndexs[block.Y, block.X] = 0;
                 ObjectPoolManager.Instance.ReturnObjectPool<Block>(poolKeys[(int)blocks[block.Y, block.X].type - 1], block);
@@ -955,6 +956,7 @@ public class BlockManager : MonoBehaviour
 
     public void PlayTextEffect(Vector3 center, float value)
     {
+        SoundManager.Instance.PlayScoreUpSound();
         TextMeshProUGUI scoreText = ObjectPoolManager.Instance.GetObjectPool<TextEffect>("ScoreTextPool").GetComponent<TextMeshProUGUI>();
         if(ScoreManager.Instance.IsScoreIncreaseByItem)
         {

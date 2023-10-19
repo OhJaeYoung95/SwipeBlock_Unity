@@ -351,6 +351,10 @@ PrefabInstance:
       propertyPath: m_fontSizeBase
       value: 60
       objectReference: {fileID: 0}
+    - target: {fileID: 6360284106988667717, guid: 659f14d7c7a447049a2667c9e6e750b5, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7059399897946991789, guid: 659f14d7c7a447049a2667c9e6e750b5, type: 3}
       propertyPath: m_Name
       value: SelectUICanvas
@@ -542,6 +546,7 @@ MonoBehaviour:
   - {fileID: 1761765414}
   - {fileID: 741560481}
   - {fileID: 2104918233}
+  currentIndex: 0
   selectUICanvas: {fileID: 241601125}
   shopUICanvas: {fileID: 1070619430588649825}
   characterUICanvas: {fileID: 726950647}
@@ -905,7 +910,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8840533419182818968, guid: 54ab7e8dcd4ebbe4fb92e14a997d6b50, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0.30414844
+      value: 0.30414838
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2237,7 +2242,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!222 &4555967008778217791
 CanvasRenderer:
   m_ObjectHideFlags: 0

@@ -105,17 +105,21 @@ public class ShopController : MonoBehaviour
 
     public void OnClickBuyButton()
     {
+
         Toggle selectedToggle = toggleGroup.ActiveToggles().FirstOrDefault();
 
         if (selectedToggle == null)
+        {
+            SoundManager.Instance.PlayFailedBuySound();
             return;
+        }
 
         if (itemCount == 3)
         {
             // 실패음
+            SoundManager.Instance.PlayFailedBuySound();
             return;
         }
-
         if(selectedToggle != null)
         {
             ItemID selectedItemID = toggleToItemMapping[selectedToggle];
@@ -125,9 +129,11 @@ public class ShopController : MonoBehaviour
             if(GameData.Gold < price)
             {
                 // 실패음
+                SoundManager.Instance.PlayFailedBuySound();
                 return;
             }
 
+            SoundManager.Instance.PlayBuyButtonClickSound();
             GameData.Gold -= price;
             GameData.SaveGameData();
 

@@ -147,6 +147,22 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: OkBtnClick
       objectReference: {fileID: 0}
+    - target: {fileID: 5584128629109658433, guid: ac9cdc509454f324f87c815a93ea861b, type: 3}
+      propertyPath: m_Color.a
+      value: 0.9411765
+      objectReference: {fileID: 0}
+    - target: {fileID: 5584128629109658433, guid: ac9cdc509454f324f87c815a93ea861b, type: 3}
+      propertyPath: m_Color.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5584128629109658433, guid: ac9cdc509454f324f87c815a93ea861b, type: 3}
+      propertyPath: m_Color.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5584128629109658433, guid: ac9cdc509454f324f87c815a93ea861b, type: 3}
+      propertyPath: m_Color.r
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8214849143654527907, guid: ac9cdc509454f324f87c815a93ea861b, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

@@ -77,6 +77,8 @@ public class AbilitiesController : MonoBehaviour
     public void UseItem(GameObject itemSlot, ItemID id)
     {
         // 아이템 사용 부분
+        SoundManager.Instance.PlayItemClickSound();
+
         ItemType type = itemTable.GetItemInfo(id).type;
         float value = itemTable.GetItemInfo(id).value;
         float duration = itemTable.GetItemInfo(id).duration;
@@ -98,7 +100,7 @@ public class AbilitiesController : MonoBehaviour
                     UIManager.Instance.ApplyStopTimerImage();
                     break;
                 case ItemType.Bomb:
-
+                    SoundManager.Instance.PlayBombSound();
                     if (value == 0)
                     {
                         BlockManager blockManager = BlockManager.Instance;

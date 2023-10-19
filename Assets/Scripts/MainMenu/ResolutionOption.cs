@@ -57,11 +57,13 @@ public class ResolutionOption : MonoBehaviour
 
     public void FullScreenBtn(bool isFull)
     {
+        SoundManager.Instance.PlayShopItemToggleSound();
         screenMode = isFull ? FullScreenMode.FullScreenWindow : FullScreenMode.Windowed;
     }
 
     public void OkBtnClick()
     {
+        SoundManager.Instance.PlayAllButtonClickSound();
         Screen.SetResolution(resolutions[resolutionNum].width,
             resolutions[resolutionNum].height,
             screenMode);

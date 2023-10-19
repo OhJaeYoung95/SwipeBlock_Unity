@@ -73,14 +73,16 @@ public class StageController : MonoBehaviour
     public void OnClickPlayButton()
     {
         Time.timeScale = 1f;
-        //PlayerPrefs.SetInt("CurrentStage", currentIndex);
-        //PlayerPrefs.Save();
+        SoundManager.Instance.PlayPlayButtonClickSound();
+        SoundManager.Instance.OnGameBGM();
         GameData.CurrentStage = currentIndex;
 
         SceneManager.LoadScene((int)Scene.Game);
     }
     public void OnClickShopButton()
     {
+        SoundManager.Instance.PlayShopIconClickSound();
+
         DisableAllUI();
         shopUICanvas.SetActive(true);
         scrollRect.normalizedPosition = Vector3.one;
@@ -93,17 +95,20 @@ public class StageController : MonoBehaviour
 
     public void OnClickReturnButton()
     {
+        SoundManager.Instance.PlayReturnButtonClickSound();
         DisableAllUI();
         selectUICanvas.SetActive(true);
 
     }
     public void OnClickLeftButton()
     {
+        SoundManager.Instance.PlayArrowButtonClickSound();
         currentIndex = (currentIndex - 1 + stageImages.Length) % stageImages.Length;
         UpdateStageImage(currentIndex);
     }
     public void OnClickRightButton()
     {
+        SoundManager.Instance.PlayArrowButtonClickSound();
         currentIndex = (currentIndex + 1) % stageImages.Length;
         UpdateStageImage(currentIndex);
     }

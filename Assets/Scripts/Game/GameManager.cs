@@ -38,6 +38,7 @@ public class GameManager : MonoBehaviour
         IsMove = false;
         Time.timeScale = 0f;
         StopAllCoroutinesOfSingleTon();
+        SoundManager.Instance.PlayGameOverSound();
         BlockManager.Instance.ClearBoard();
         ScoreManager.Instance.ConvertScoreToGold();
         UIManager.Instance.GameOver();
@@ -49,6 +50,8 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;
 
         UIManager.Instance.gameTimer = UIManager.Instance.gameDuration;
+        SoundManager.Instance.OnGameBGM();
+        SoundManager.Instance.PlayAllButtonClickSound();
         StopAllCoroutinesOfSingleTon();
         BlockManager.Instance.ClearBoard();
         ScoreManager.Instance.Init();
@@ -62,6 +65,8 @@ public class GameManager : MonoBehaviour
 
         Time.timeScale = 0f;
         StopAllCoroutinesOfSingleTon();
+        SoundManager.Instance.OnTitleBGM();
+        SoundManager.Instance.PlayAllButtonClickSound();
         ScoreManager.Instance.CurrentScore = 0;
         BlockManager.Instance.ClearBoard();
         SceneManager.LoadScene((int)Scene.Select);
@@ -70,12 +75,14 @@ public class GameManager : MonoBehaviour
     public void Pause()
     {
         IsPause = true;
+        SoundManager.Instance.PlayAllButtonClickSound();
         UIManager.Instance.Pause();
     }
 
     public void Continue()
     {
         IsPause = false;
+        SoundManager.Instance.PlayAllButtonClickSound();
         UIManager.Instance.Continue();
     }
 
@@ -86,11 +93,13 @@ public class GameManager : MonoBehaviour
             GameData.Slots[i] = 0;
 
         GameData.SaveGameData();
+        SoundManager.Instance.PlayAllButtonClickSound();
         EditorApplication.isPlaying = false;
 #else
         for (int i = 0; i < GameData.Slots.Length; ++i)
             GameData.Slots[i] = 0;
 
+        SoundManager.Instance.PlayAllButtonClickSound();
         GameData.SaveGameData();
 
         Application.Quit();
