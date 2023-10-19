@@ -55,9 +55,11 @@ public class MainMenuController : MonoBehaviour
     {
 #if UNITY_EDITOR
         SoundManager.Instance.PlayAllButtonClickSound();
+        GameData.SaveGameData();
         EditorApplication.isPlaying = false;
 #else
         SoundManager.Instance.PlayAllButtonClickSound();
+        GameData.SaveGameData();
         Application.Quit();
 #endif    
     }

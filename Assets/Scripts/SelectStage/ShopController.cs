@@ -151,7 +151,7 @@ public class ShopController : MonoBehaviour
 
             SoundManager.Instance.PlayBuyButtonClickSound();
             GameData.Gold -= price;
-            //itemInfos.Add(selectedItemID);
+
             int index = 0;
             for (int i = 0; i < shopItemUISlots.Length; ++i)
             {
@@ -169,11 +169,6 @@ public class ShopController : MonoBehaviour
         stageController.DisplayGold();
         GameData.SaveGameData();
     }
-
-    //public List<ItemID> GetItemSlotInfo()
-    //{
-    //    return itemInfos;
-    //}
 
     public void ApplyItemSlotImage(GameObject slot, ItemID selectedItemID)
     {

@@ -46,9 +46,8 @@ public class BlockManager : MonoBehaviour
     [SerializeField]
     private int spawnCount = 1;
     private int failedMergeSpawnCount;
-
+    private int spadeAttributeCount = 0;
     public int effectIndex = 0;
-
     public int comboCount = 0;
 
 
@@ -66,8 +65,6 @@ public class BlockManager : MonoBehaviour
     private float moveStartTime = 0f;
 
     public float obsSpawnTimeRate;
-
-    public int currentStage;
 
     private bool isChainMerge = false;
     private bool isOnSpadeAttribute = false;
@@ -122,8 +119,7 @@ public class BlockManager : MonoBehaviour
     {
         isSpawnObstacle = false;
         obsList.Clear();
-        currentStage = GameData.CurrentStage;
-        switch (currentStage)
+        switch (GameData.CurrentStage)
         {
             case 0:
                 initCount = 6;
@@ -147,7 +143,7 @@ public class BlockManager : MonoBehaviour
                 obsSpawnTimeRate = 0.5f;
                 break;
             default:
-                currentStage = 0;
+                GameData.CurrentStage = 0;
                 initCount = 6;
                 boardSize = 4;
                 spawnCount = 2;
@@ -259,7 +255,6 @@ public class BlockManager : MonoBehaviour
         blocks[y, x] = newBlock;
         blocks[y, x].SetIndex(y, x);
     }
-
     private void CreateRandomBlock(Block newBlock)
     {
         int y = 0;
@@ -287,14 +282,12 @@ public class BlockManager : MonoBehaviour
         blocks[y, x] = newBlock;
         blocks[y, x].SetIndex(y, x);
     }
-
     private void CreateObsBlock()
     {
         Block newObs = ObjectPoolManager.Instance.GetObjectPool<Block>(poolKeys[(int)BlockPattern.Obstcle - 1]);
         obsList.Add(newObs);
         CreateRandomBlock(newObs);
     }
-
     public IEnumerator MoveBlocks(float swipeAngle)
     {
         do
@@ -386,7 +379,7 @@ public class BlockManager : MonoBehaviour
         if (isOnSpadeAttribute)
             OnSpadeAttribute();
 
-        if(!isMergedDuringSwipe && currentStage != 0)
+        if(!isMergedDuringSwipe && GameData.CurrentStage != 0)
         {
             for(int i = 0; i < failedMergeSpawnCount; ++i)
             {
@@ -448,6 +441,7 @@ public class BlockManager : MonoBehaviour
     {
         ConvertJokerIndex();
         CheckPattern();
+        yield return null;
         yield return StartCoroutine(TryMerge());
     }
     public void ConvertJokerIndex()
@@ -477,10 +471,15 @@ public class BlockManager : MonoBehaviour
                         if (block.type == BlockPattern.Joker)
                         {
                             block.IsChcekIndex = false;
-                            if (block.CurrentPattern > (int)connectedBlocks[0].type)
+                            if (block.CurrentPattern >= (int)connectedBlocks[0].type)
                             {
-                                block.IsContainList = true;
-                                block.CurrentPattern = (int)connectedBlocks[0].type;
+                                if(block.ListCount < connectedBlocks.Count)
+                                {
+                                    block.IsContainList = true;
+                                    blockIndexs[block.Y, block.X] = (int)connectedBlocks[0].type;
+                                    block.CurrentPattern = (int)connectedBlocks[0].type;
+                                    block.ListCount = connectedBlocks.Count;
+                                }
                             }
                         }
                     }
@@ -492,8 +491,7 @@ public class BlockManager : MonoBehaviour
                         if (block.type == BlockPattern.Joker)
                         {
                             block.IsChcekIndex = false;
-                            if (!block.IsContainList)
-                                blockIndexs[block.Y, block.X] = block.CurrentPattern;
+                            blockIndexs[block.Y, block.X] = block.CurrentPattern;
                         }
                     }
                 }
@@ -627,7 +625,10 @@ public class BlockManager : MonoBehaviour
             {
                 case BlockPattern.Spade:
                     if (blockList.Count >= 3)
+                    {
                         isOnSpadeAttribute = true;
+                        spadeAttributeCount++;
+                    }
                     break;
                 case BlockPattern.Diamond:
                     ScoreManager.Instance.IsScoreIncreaseByPattern = true;
@@ -657,9 +658,6 @@ public class BlockManager : MonoBehaviour
                 check++;
             }
 
-
-            if (scoreTextValue == 0)
-                check = 100;
             PlayTextEffect(center, scoreTextValue);
 
             foreach (Block block in blockList)
@@ -681,6 +679,8 @@ public class BlockManager : MonoBehaviour
             joker.IsChcekIndex = false;
             joker.IsContainList = false;
             joker.CurrentPattern = (int)BlockPattern.Joker;
+            blockIndexs[joker.Y, joker.X] = (int)BlockPattern.Joker;
+            joker.ListCount = 0;
         }
     }
     public void ClearBoard()
@@ -739,18 +739,18 @@ public class BlockManager : MonoBehaviour
                 continue;
 
             if ((blockIndexs[direction.x, direction.y] > blockIndexs[currentBlock.Y, currentBlock.X] &&
-                blocks[direction.x, direction.y].type == BlockPattern.Joker))
+                blocks[direction.x, direction.y].type == BlockPattern.Joker) && !blocks[direction.x, direction.y].IsChcekIndex)
             {
-                blocks[direction.x, direction.y].IsChcekIndex = true;
                 blocks[direction.x, direction.y].IsChcekIndex = true;
                 blockIndexs[direction.x, direction.y] = blockIndexs[currentBlock.Y, currentBlock.X];
                 connectedBlocks.Add(blocks[direction.x, direction.y]);
                 FindConnectedIndexs(blocks[direction.x, direction.y], connectedBlocks);
             }
 
-            if ((blockIndexs[direction.x, direction.y] == blockIndexs[currentBlock.Y, currentBlock.X] ||
-                blockIndexs[direction.x, direction.y] == (int)BlockPattern.Joker) &&
-                (!blocks[direction.x, direction.y].IsChcekIndex /*|| blocks[direction.x, direction.y].IsContainList*/))
+            if ((blockIndexs[direction.x, direction.y] == blockIndexs[currentBlock.Y, currentBlock.X] 
+                //|| blockIndexs[direction.x, direction.y] == (int)BlockPattern.Joker) 
+                &&
+                !blocks[direction.x, direction.y].IsChcekIndex /*|| blocks[direction.x, direction.y].IsContainList*/))
             {
                 blocks[direction.x, direction.y].IsChcekIndex = true;
                 blockIndexs[direction.x, direction.y] = blockIndexs[currentBlock.Y, currentBlock.X];
@@ -795,6 +795,9 @@ public class BlockManager : MonoBehaviour
             block.IsMerged = false;
             block.IsChcekIndex = false;
             block.IsContainList = false;
+            block.CurrentPattern = (int)block.type;
+            block.ListCount = 0;
+            blockIndexs[block.Y, block.X] = (int)block.type;
         }
     }
     public bool CheckFullBoard()
@@ -891,16 +894,20 @@ public class BlockManager : MonoBehaviour
 
     private void OnSpadeAttribute()
     {
-        Block newJoker = ObjectPoolManager.Instance.GetObjectPool<Block>(poolKeys[(int)BlockPattern.Joker - 1]);
-        jokerList.Add(newJoker);
-        CreateRandomBlock(newJoker);
         isOnSpadeAttribute = false;
-
-        if (CheckFullBoard())
+        for (int i = 0; i < spadeAttributeCount; ++i)
         {
-            GameManager.Instance.IsMove = false;
-            StartCoroutine(GameOver());
+            if (CheckFullBoard())
+            {
+                GameManager.Instance.IsMove = false;
+                StartCoroutine(GameOver());
+                return;
+            }
+            Block newJoker = ObjectPoolManager.Instance.GetObjectPool<Block>(poolKeys[(int)BlockPattern.Joker - 1]);
+            jokerList.Add(newJoker);
+            CreateRandomBlock(newJoker);
         }
+        spadeAttributeCount = 0;
     }
 
     public void RemoveBlock(Block block)

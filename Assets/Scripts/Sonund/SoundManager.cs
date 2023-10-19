@@ -39,11 +39,6 @@ public class SoundManager : MonoBehaviour
 
     public AudioMixer audioMixer;
 
-    private bool isOffMasterMute = false;
-    private bool isOffBgmMute = false;
-    private bool isOffSeMute = false;
-
-
     private void Awake()
     {
         Instance = this;
@@ -53,6 +48,17 @@ public class SoundManager : MonoBehaviour
     void Start()
     {
         OnIntroBGM();
+        InitSound();
+    }
+
+    private void InitSound()
+    {
+        OnOffMasterVolume(GameData.IsOffMasterMute);
+        OnOffBGMVolume(GameData.IsOffBGMMute);
+        OnOffSEVolume(GameData.IsOffSEMute);
+        SetMasterVolume(GameData.MasterVolume);
+        SetBGMVolume(GameData.BGMVolune);
+        SetSEVolume(GameData.SEVolume);
     }
 
     // BGM
@@ -157,25 +163,26 @@ public class SoundManager : MonoBehaviour
         effectsAudio[(int)SoundEffectID.PopupClose].Play();
     }
 
+    // Control
     public void OnOffMasterVolume(bool value)
     {
         GameData.IsOffMasterMute = value;
         audioMixer.SetFloat("Master", -80);
-        if (!isOffMasterMute)
+        if (!GameData.IsOffMasterMute)
             SetMasterVolume(GameData.MasterVolume);
     }
     public void OnOffBGMVolume(bool value)
     {
         GameData.IsOffBGMMute = value;
         audioMixer.SetFloat("BGM", -80);
-        if(!isOffBgmMute)
+        if(!GameData.IsOffBGMMute)
             SetBGMVolume(GameData.BGMVolune);
     }
     public void OnOffSEVolume(bool value)
     {
         GameData.IsOffSEMute = value;
         audioMixer.SetFloat("SE", -80);
-        if(!isOffSeMute)
+        if(!GameData.IsOffSEMute)
             SetSEVolume(GameData.SEVolume);
     }
     public void SetMasterVolume(float volume)

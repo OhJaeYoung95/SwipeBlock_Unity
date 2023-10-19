@@ -67,7 +67,7 @@ public class ResolutionOption : MonoBehaviour
         //Screen.SetResolution(resolutions[resolutionNum].width,
         //    resolutions[resolutionNum].height,
         //    screenMode);
-
+        GameData.SaveGameData();
         transform.GetChild(0).gameObject.SetActive(false);
     }
 }
