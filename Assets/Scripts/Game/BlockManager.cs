@@ -70,6 +70,7 @@ public class BlockManager : MonoBehaviour
     private bool isOnSpadeAttribute = false;
     private bool isCompare = false;
     private bool isMergedDuringSwipe = false;
+    private bool isConvertJoker = false;
     public bool isSpawnObstacle = false;
 
     [SerializeField]
@@ -208,7 +209,6 @@ public class BlockManager : MonoBehaviour
         }
         InitRandomCreate();
     }
-
     private void InitRandomCreate()
     {
         for (int i = 0; i < initCount; i++)
@@ -379,9 +379,9 @@ public class BlockManager : MonoBehaviour
         if (isOnSpadeAttribute)
             OnSpadeAttribute();
 
-        if(!isMergedDuringSwipe && GameData.CurrentStage != 0)
+        if (!isMergedDuringSwipe && GameData.CurrentStage != 0)
         {
-            for(int i = 0; i < failedMergeSpawnCount; ++i)
+            for (int i = 0; i < failedMergeSpawnCount; ++i)
             {
                 if (CheckFullBoard())
                     break;
@@ -403,7 +403,6 @@ public class BlockManager : MonoBehaviour
         if (CheckFullBoard())
             StartCoroutine(GameOver());
     }
-
     public void MoveBlock(int y, int x, Vector2Int moveIndex)
     {
         blocks[y, x].transform.position = indexPos[moveIndex.x, moveIndex.y];
@@ -434,15 +433,15 @@ public class BlockManager : MonoBehaviour
             yield return null;
         }
 
-        if(blocks[moveIndex.x, moveIndex.y] != null)
+        if (blocks[moveIndex.x, moveIndex.y] != null)
             blocks[moveIndex.x, moveIndex.y].transform.position = destPos;
     }
-    private IEnumerator MergeBlocks()
+    private void MergeBlocks()
     {
         ConvertJokerIndex();
         CheckPattern();
-        yield return null;
-        yield return StartCoroutine(TryMerge());
+        //yield return TryMerge();
+        TryMerge();
     }
     public void ConvertJokerIndex()
     {
@@ -473,9 +472,9 @@ public class BlockManager : MonoBehaviour
                             block.IsChcekIndex = false;
                             if (block.CurrentPattern >= (int)connectedBlocks[0].type)
                             {
-                                    block.IsContainList = true;
-                                    blockIndexs[block.Y, block.X] = (int)connectedBlocks[0].type;
-                                    block.CurrentPattern = (int)connectedBlocks[0].type;
+                                block.IsContainList = true;
+                                blockIndexs[block.Y, block.X] = (int)connectedBlocks[0].type;
+                                block.CurrentPattern = (int)connectedBlocks[0].type;
                             }
                         }
                     }
@@ -494,7 +493,6 @@ public class BlockManager : MonoBehaviour
                 connectedBlocks.Clear();
             }
         }
-
     }
 
     public void CheckPattern()
@@ -606,7 +604,7 @@ public class BlockManager : MonoBehaviour
             }
         }
     }
-    public IEnumerator TryMerge()
+    public void TryMerge()
     {
         foreach (List<Block> blockList in comparePatternBlocks)
         {
@@ -667,7 +665,7 @@ public class BlockManager : MonoBehaviour
                 ObjectPoolManager.Instance.ReturnObjectPool<Block>(poolKeys[(int)blocks[block.Y, block.X].type - 1], block);
                 blocks[block.Y, block.X] = null;
             }
-            yield return new WaitForSeconds(0.1f);
+            //yield return new WaitForSeconds(0.1f);
         }
         comparePatternBlocks.Clear();
         foreach (Block joker in jokerList)
@@ -696,7 +694,8 @@ public class BlockManager : MonoBehaviour
     IEnumerator MergeBlocksCoroutine()
     {
         yield return new WaitForSeconds(0.1f + moveDuration);
-        yield return StartCoroutine(MergeBlocks());
+        //yield return StartCoroutine(MergeBlocks());
+          MergeBlocks();
     }
     public void PlayMergeEffect(Block block, List<Block> blockList)
     {
@@ -742,7 +741,7 @@ public class BlockManager : MonoBehaviour
                 FindConnectedIndexs(blocks[direction.x, direction.y], connectedBlocks);
             }
 
-            if ((blockIndexs[direction.x, direction.y] == blockIndexs[currentBlock.Y, currentBlock.X] 
+            if ((blockIndexs[direction.x, direction.y] == blockIndexs[currentBlock.Y, currentBlock.X]
                 //|| blockIndexs[direction.x, direction.y] == (int)BlockPattern.Joker) 
                 &&
                 !blocks[direction.x, direction.y].IsChcekIndex /*|| blocks[direction.x, direction.y].IsContainList*/))
@@ -959,17 +958,17 @@ public class BlockManager : MonoBehaviour
     {
         SoundManager.Instance.PlayScoreUpSound();
         TextMeshProUGUI scoreText = ObjectPoolManager.Instance.GetObjectPool<TextEffect>("ScoreTextPool").GetComponent<TextMeshProUGUI>();
-        if(ScoreManager.Instance.IsScoreIncreaseByItem)
+        if (ScoreManager.Instance.IsScoreIncreaseByItem)
         {
             scoreText.color = Color.green;
         }
 
-        if(ScoreManager.Instance.IsScoreIncreaseByPattern)
+        if (ScoreManager.Instance.IsScoreIncreaseByPattern)
         {
             scoreText.color = Color.blue;
         }
 
-        if(ScoreManager.Instance.IsScoreIncreaseByItem && ScoreManager.Instance.IsScoreIncreaseByPattern)
+        if (ScoreManager.Instance.IsScoreIncreaseByItem && ScoreManager.Instance.IsScoreIncreaseByPattern)
         {
             scoreText.color = Color.yellow;
         }
