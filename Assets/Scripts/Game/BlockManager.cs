@@ -439,6 +439,10 @@ public class BlockManager : MonoBehaviour
     private void MergeBlocks()
     {
         ConvertJokerIndex();
+        foreach(Block block in jokerList)
+        {
+
+        }
         CheckPattern();
         //yield return TryMerge();
         TryMerge();
@@ -694,8 +698,8 @@ public class BlockManager : MonoBehaviour
     IEnumerator MergeBlocksCoroutine()
     {
         yield return new WaitForSeconds(0.1f + moveDuration);
+        MergeBlocks();
         //yield return StartCoroutine(MergeBlocks());
-          MergeBlocks();
     }
     public void PlayMergeEffect(Block block, List<Block> blockList)
     {

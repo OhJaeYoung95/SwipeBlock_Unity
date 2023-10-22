@@ -24,6 +24,9 @@ public class Block : MonoBehaviour
         Y = y;
         X = x;
         CurrentPattern = (int)type;
+        IsMerged = false;
+        IsChcekIndex = false;
+        IsContainList = false;
     }
 
     protected virtual void OnEnable()
