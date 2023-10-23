@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
+    [SerializeField]
+    private GameObject soundManager;
     public static UIManager Instance { get; private set; }
     private Slider hpBar;
     private Image hpBarFadeFrame;
@@ -70,6 +72,10 @@ public class UIManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        if (SoundManager.Instance == null)
+            Instantiate(soundManager);
+
         Instance.Init();
     }
     void Update()

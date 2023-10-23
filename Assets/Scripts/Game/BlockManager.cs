@@ -304,7 +304,7 @@ public class BlockManager : MonoBehaviour
                             continue;
 
                         // 이동 위치 계산
-                        Vector2Int moveIndex = IsRightBlockEmpty(y, x);
+                        Vector2Int moveIndex = FindEmptyBlockIndexRight(y, x);
                         if (moveIndex.x != y || moveIndex.y != x)
                         {
                             StartCoroutine(MoveBlockCoroutine(y, x, moveIndex));
@@ -323,7 +323,7 @@ public class BlockManager : MonoBehaviour
                         if (blockIndexs[y, x] == 0)
                             continue;
 
-                        Vector2Int moveIndex = IsLeftBlockEmpty(y, x);
+                        Vector2Int moveIndex = FindEmptyBlockIndexLeft(y, x);
                         if (moveIndex.x != y || moveIndex.y != x)
                         {
                             StartCoroutine(MoveBlockCoroutine(y, x, moveIndex));
@@ -342,7 +342,7 @@ public class BlockManager : MonoBehaviour
                         if (blockIndexs[y, x] == 0)
                             continue;
 
-                        Vector2Int moveIndex = IsDownBlockEmpty(y, x);
+                        Vector2Int moveIndex = FindEmptyBlockIndexDown(y, x);
                         if (moveIndex.x != y || moveIndex.y != x)
                         {
                             StartCoroutine(MoveBlockCoroutine(y, x, moveIndex));
@@ -360,7 +360,7 @@ public class BlockManager : MonoBehaviour
                     {
                         if (blockIndexs[y, x] == 0)
                             continue;
-                        Vector2Int moveIndex = IsUpBlockEmpty(y, x);
+                        Vector2Int moveIndex = FindEmptyBlockIndexUp(y, x);
                         if (moveIndex.x != y || moveIndex.y != x)
                         {
                             StartCoroutine(MoveBlockCoroutine(y, x, moveIndex));
@@ -816,77 +816,61 @@ public class BlockManager : MonoBehaviour
         GameManager.Instance.GameOver();
     }
 
-    private Vector2Int IsUpBlockEmpty(int y, int x)
+    private Vector2Int FindEmptyBlockIndexUp(int y, int x)
     {
         if (y + 1 == blockIndexs.GetLength(0))
-        {
             return new Vector2Int(y, x);
-        }
 
         if (blockIndexs[y + 1, x] == 0)
         {
             blockIndexs[y + 1, x] = blockIndexs[y, x];
             blockIndexs[y, x] = 0;
-            return IsUpBlockEmpty(++y, x);
+            return FindEmptyBlockIndexUp(++y, x);
         }
         else
-        {
             return new Vector2Int(y, x);
-        }
     }
-    private Vector2Int IsDownBlockEmpty(int y, int x)
+    private Vector2Int FindEmptyBlockIndexDown(int y, int x)
     {
         if (y - 1 == -1)
-        {
             return new Vector2Int(y, x);
-        }
 
         if (blockIndexs[y - 1, x] == 0)
         {
             blockIndexs[y - 1, x] = blockIndexs[y, x];
             blockIndexs[y, x] = 0;
-            return IsDownBlockEmpty(--y, x);
+            return FindEmptyBlockIndexDown(--y, x);
         }
         else
-        {
             return new Vector2Int(y, x);
-        }
     }
-    private Vector2Int IsRightBlockEmpty(int y, int x)
+    private Vector2Int FindEmptyBlockIndexRight(int y, int x)
     {
         if (x + 1 == blockIndexs.GetLength(1))
-        {
             return new Vector2Int(y, x);
-        }
 
         if (blockIndexs[y, x + 1] == 0)
         {
             blockIndexs[y, x + 1] = blockIndexs[y, x];
             blockIndexs[y, x] = 0;
-            return IsRightBlockEmpty(y, ++x);
+            return FindEmptyBlockIndexRight(y, ++x);
         }
         else
-        {
             return new Vector2Int(y, x);
-        }
     }
-    private Vector2Int IsLeftBlockEmpty(int y, int x)
+    private Vector2Int FindEmptyBlockIndexLeft(int y, int x)
     {
         if (x - 1 == -1)
-        {
             return new Vector2Int(y, x);
-        }
 
         if (blockIndexs[y, x - 1] == 0)
         {
             blockIndexs[y, x - 1] = blockIndexs[y, x];
             blockIndexs[y, x] = 0;
-            return IsLeftBlockEmpty(y, --x);
+            return FindEmptyBlockIndexLeft(y, --x);
         }
         else
-        {
             return new Vector2Int(y, x);
-        }
     }
 
     private void OnSpadeAttribute()

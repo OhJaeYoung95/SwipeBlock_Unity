@@ -542,6 +542,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb74e22d215ddf844b4350328c9db222, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  soundManager: {fileID: 6868809489354688468, guid: 480a5cf262a68ad458093c78bb80dc02, type: 3}
   stageImages:
   - {fileID: 1761765414}
   - {fileID: 741560481}

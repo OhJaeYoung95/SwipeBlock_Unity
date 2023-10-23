@@ -44,17 +44,19 @@ public static class GameData
         var saveData = SaveLoadSystem.Load(SaveLoadSystem.SaveDataPath) as SaveDataVC;
         if (saveData == null)
             SaveGameData();
-
-        Gold = saveData.Gold;
-        ItemCount = saveData.ItemCount;
-        Slots = saveData.Slots;
-        BestScore = saveData.BestScore;
-        MasterVolume = saveData.MasterVolume;
-        BGMVolune = saveData.BGMVolume;
-        SEVolume = saveData.SEVolume;
-        IsOffMasterMute = saveData.IsOffMasterMute;
-        IsOffBGMMute = saveData.IsOffBGMMute;
-        IsOffSEMute = saveData.IsOffSEMute;
+        else
+        {
+            Gold = saveData.Gold;
+            ItemCount = saveData.ItemCount;
+            Slots = saveData.Slots;
+            BestScore = saveData.BestScore;
+            MasterVolume = saveData.MasterVolume;
+            BGMVolune = saveData.BGMVolume;
+            SEVolume = saveData.SEVolume;
+            IsOffMasterMute = saveData.IsOffMasterMute;
+            IsOffBGMMute = saveData.IsOffBGMMute;
+            IsOffSEMute = saveData.IsOffSEMute;
+        }
     }
 
 }

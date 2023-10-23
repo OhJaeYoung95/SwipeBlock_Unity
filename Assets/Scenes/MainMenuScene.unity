@@ -1354,6 +1354,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ef6b051351df63498eea1e2bcbaf622, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  soundManager: {fileID: 6868809489354688468, guid: 480a5cf262a68ad458093c78bb80dc02, type: 3}
   masterSlider: {fileID: 1813148767}
   bgmSlider: {fileID: 2005598534}
   seSlider: {fileID: 641651442}

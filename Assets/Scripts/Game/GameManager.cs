@@ -4,6 +4,8 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    [SerializeField]
+    private GameObject soundManager;
     public static GameManager Instance { get; private set; }
     public bool IsMove { get; set; } = false;
     public bool IsGameOver { get; private set; } = false;
@@ -18,6 +20,9 @@ public class GameManager : MonoBehaviour
         }
         else
             Destroy(gameObject);
+
+        if (SoundManager.Instance == null)
+            Instantiate(soundManager);
 
         Instance.IsGameOver = false;
         Instance.IsPause = false;

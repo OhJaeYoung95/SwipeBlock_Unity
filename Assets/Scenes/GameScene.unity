@@ -167,6 +167,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6714845c87559c144b66e0e73f9b523e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  soundManager: {fileID: 6868809489354688468, guid: 480a5cf262a68ad458093c78bb80dc02, type: 3}
   gameTimerSpeed: 1
   gameOverBestScore: {fileID: 0}
   gameOverScore: {fileID: 0}
@@ -4032,6 +4033,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 913ba08a9d3d1b344889037ec6cdee59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  soundManager: {fileID: 6868809489354688468, guid: 480a5cf262a68ad458093c78bb80dc02, type: 3}
 --- !u!224 &1725290333 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7918493056768502397, guid: 2548dbb295d699149b1362c7a70e304e, type: 3}

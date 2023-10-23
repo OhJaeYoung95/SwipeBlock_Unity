@@ -8,6 +8,8 @@ using SaveDataVC = SaveDataV1;
 public class StageController : MonoBehaviour
 {
     [SerializeField]
+    private GameObject soundManager;
+    [SerializeField]
     private GameObject[] stageImages;
     [SerializeField]
     private int currentIndex = 0;
@@ -38,6 +40,8 @@ public class StageController : MonoBehaviour
     }
     private void InitScene()
     {
+        if (SoundManager.Instance == null)
+            Instantiate(soundManager);
         DisableAllUI();
         selectUICanvas.SetActive(true);
         DisplayGold();
