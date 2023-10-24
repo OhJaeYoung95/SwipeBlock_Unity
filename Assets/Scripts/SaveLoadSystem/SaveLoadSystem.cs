@@ -44,7 +44,7 @@ public static class SaveLoadSystem
         }
 
         var path = Path.Combine(SaveDirectory, fileName);
-        Debug.Log($"Save{path}");
+        Debug.Log($"SaveInfo{path}");
         //using (var file = File.CreateText(path))
         //{
         //    var serializer = new JsonSerializer();

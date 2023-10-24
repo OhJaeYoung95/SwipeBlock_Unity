@@ -191,9 +191,9 @@ public class UIManager : MonoBehaviour
         bgmSlider = pausePanel.transform.GetChild(5).GetComponent<Slider>();
         seSlider = pausePanel.transform.GetChild(6).GetComponent<Slider>();
 
-        masterMuteToggle = masterSlider.transform.GetChild(0).GetComponent<Toggle>();
-        bgmMuteToggle = bgmSlider.transform.GetChild(0).GetComponent<Toggle>();
-        seMuteToggle = seSlider.transform.GetChild(0).GetComponent<Toggle>();
+        masterMuteToggle = pausePanel.transform.GetChild(7).GetComponent<Toggle>();
+        bgmMuteToggle = pausePanel.transform.GetChild(8).GetComponent<Toggle>();
+        seMuteToggle = pausePanel.transform.GetChild(9).GetComponent<Toggle>();
 
         masterSlider.onValueChanged.AddListener(SoundManager.Instance.SetMasterVolume);
         bgmSlider.onValueChanged.AddListener(SoundManager.Instance.SetBGMVolume);

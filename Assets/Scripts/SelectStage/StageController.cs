@@ -99,6 +99,7 @@ public class StageController : MonoBehaviour
 
     public void OnClickReturnButton()
     {
+        shopController.ResetChekdeToggle();
         SoundManager.Instance.PlayReturnButtonClickSound();
         DisableAllUI();
         selectUICanvas.SetActive(true);
