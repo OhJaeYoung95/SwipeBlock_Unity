@@ -112,7 +112,6 @@ public class ShopController : MonoBehaviour
                 continue;
             ApplyItemSlotImage(shopItemUISlots[i], (ItemID)GameData.Slots[i]);
             ApplyItemSlotImage(stageItemUISlots[i], (ItemID)(ItemID)GameData.Slots[i]);
-            Debug.Log(GameData.Slots[i]);
         }
 
     }
@@ -178,13 +177,6 @@ public class ShopController : MonoBehaviour
             GameData.ItemCount++;
         }
         stageController.DisplayGold();
-        for(int i = 0; i < 3; ++i)
-        {
-            Debug.Log($"Slot{i} : {GameData.Slots[i]}");
-        }
-        Debug.Log($"Gold : {GameData.Gold}");
-        Debug.Log($"ItemCount : {GameData.ItemCount}");
-        Debug.Log($"Bool : {GameData.IsOffBGMMute}");
         GameData.SaveGameData();
     }
 

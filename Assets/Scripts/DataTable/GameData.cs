@@ -1,3 +1,4 @@
+using UnityEngine;
 using SaveDataVC = SaveDataV1;
 
 public enum Scene
@@ -36,6 +37,14 @@ public static class GameData
         saveData.IsOffMasterMute = IsOffMasterMute;
         saveData.IsOffBGMMute = IsOffBGMMute;
         saveData.IsOffSEMute = IsOffSEMute;
+
+        Debug.Log($"Gold : {saveData.Gold}");
+        Debug.Log($"Item Count : {saveData.ItemCount}");
+        for(int i = 0; i < saveData.Slots.Length; i++) 
+        {
+            Debug.Log($"Slots{i} : {saveData.Slots[i]}");
+        }
+
         SaveLoadSystem.Save(saveData, SaveLoadSystem.SaveDataPath);
     }
 
@@ -43,9 +52,17 @@ public static class GameData
     {
         var saveData = SaveLoadSystem.Load(SaveLoadSystem.SaveDataPath) as SaveDataVC;
         if (saveData == null)
+        {
             SaveGameData();
+        }
         else
         {
+            Debug.Log($"Gold : {saveData.Gold}");
+            Debug.Log($"Item Count : {saveData.ItemCount}");
+            for (int i = 0; i < saveData.Slots.Length; i++)
+            {
+                Debug.Log($"Slots{i} : {saveData.Slots[i]}");
+            }
             Gold = saveData.Gold;
             ItemCount = saveData.ItemCount;
             Slots = saveData.Slots;

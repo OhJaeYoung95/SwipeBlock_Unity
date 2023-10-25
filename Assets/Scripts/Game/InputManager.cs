@@ -31,42 +31,38 @@ public class InputManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0)  &&
-            !GameManager.Instance.IsGameOver && !GameManager.Instance.IsPause && !isHover)
+        TrySwipeInPC();
+
+
+
+        //if (Input.GetKeyDown(KeyCode.Space))
+        //{
+        //    //GameData.Gold = 10000;
+        //    //GameManager.Instance.GameOver();
+        //    UIManager.Instance.gameTimer -= 10f;
+        //}
+    }
+
+    private void TrySwipeInPC()
+    {
+        if (Input.GetMouseButtonDown(0) && !GameManager.Instance.IsGameOver && !GameManager.Instance.IsPause && !isHover)
         {
             mouseDownPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            //mouseUpPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         }
 
         if (Input.GetMouseButton(0) && !isSwiping && !GameManager.Instance.IsGameOver && !GameManager.Instance.IsPause && !isHover)
         {
             mouseDragPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            TestDetectSwipe();
+            DetectSwipeLatestVersion();
         }
 
         if (Input.GetMouseButtonUp(0) && !GameManager.Instance.IsGameOver && !GameManager.Instance.IsPause && !isHover)
         {
             isSwiping = false;
         }
-        //if (Input.GetMouseButtonUp(0) && !GameManager.Instance.IsMove && 
-        //    !GameManager.Instance.IsGameOver && !GameManager.Instance.IsPause && !isHover)
-        //{
-        //    GameManager.Instance.IsMove = true;
-        //    mouseUpPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        //    DetectSwipe();
-        //}        
-
-
-
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            //GameData.Gold = 10000;
-            //GameManager.Instance.GameOver();
-            UIManager.Instance.gameTimer -= 10f;
-        }
     }
 
-    private void TestDetectSwipe()
+    private void DetectSwipeLatestVersion()
     {
         Vector2 swipeDir = mouseDragPos - mouseDownPos;
         float swipeDistance = swipeDir.magnitude;
@@ -83,7 +79,7 @@ public class InputManager : MonoBehaviour
             StartCoroutine(BlockManager.Instance.MoveBlocks(swipeAngle));
         }
     }
-    private void DetectSwipe()
+    private void DetectSwipePreviousVersion()
     {
         Vector2 swipeDir = mouseUpPos - mouseDownPos;
         float swipeDistance = swipeDir.magnitude;
