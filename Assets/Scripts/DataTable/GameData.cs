@@ -24,6 +24,11 @@ public static class GameData
 
     public static int CurrentStage { get; set; } = 0;
 
+    public static float RectX;
+    public static float RectY;
+    public static float RectW;
+    public static float RectH;
+
     public static void SaveGameData()
     {
         var saveData = new SaveDataVC();
