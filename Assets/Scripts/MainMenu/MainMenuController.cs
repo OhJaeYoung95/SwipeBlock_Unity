@@ -58,11 +58,11 @@ public class MainMenuController : MonoBehaviour
 
     public void OnClikQuitButton()
     {
-#if UNITY_EDITOR
+#if UNITY_EDITOR || UNITY_STANDALONE
         SoundManager.Instance.PlayAllButtonClickSound();
         GameData.SaveGameData();
         EditorApplication.isPlaying = false;
-#else
+#elif UNITY_ANDROID || UNITY_IOS
         SoundManager.Instance.PlayAllButtonClickSound();
         GameData.SaveGameData();
         Application.Quit();

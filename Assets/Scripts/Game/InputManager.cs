@@ -1,6 +1,7 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class InputManager : MonoBehaviour
+public class InputManager : MonoBehaviour, IDragHandler, IPointerUpHandler, IPointerDownHandler
 {
     public static InputManager Instance { get; private set; }
 
@@ -10,15 +11,20 @@ public class InputManager : MonoBehaviour
     private float maxSwipeDistance = 50f;
     private float minSwipeDistance = 0.1f;
     [SerializeField]
-    private float sensitivityDistance = 2f;
+    private float sensitivityDistance = 0.1f;
     private bool isSwiping = false;
     public bool isHover = false;
+
+    private Touch touchDown;
+    private Touch touchDrag;
+    private Touch touchUp;
 
     private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
+            sensitivityDistance /= Screen.dpi;
             DontDestroyOnLoad(gameObject);
         }
         else
@@ -31,8 +37,10 @@ public class InputManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+#if UNITY_EDITOR || UNITY_STANDALONE
         TrySwipeInPC();
-
+#elif UNITY_ANDROID || UNITY_IOS
+#endif
 
 
         //if (Input.GetKeyDown(KeyCode.Space))
@@ -65,13 +73,13 @@ public class InputManager : MonoBehaviour
     private void DetectSwipeLatestVersion()
     {
         Vector2 swipeDir = mouseDragPos - mouseDownPos;
-        float swipeDistance = swipeDir.magnitude;
+        float swipeDistance = swipeDir.magnitude / Screen.dpi;
         if (swipeDistance < sensitivityDistance)
         {
             return;
         }
 
-        if(swipeDistance > sensitivityDistance && !GameManager.Instance.IsMove)
+        if (swipeDistance > sensitivityDistance && !GameManager.Instance.IsMove)
         {
             isSwiping = true;
             GameManager.Instance.IsMove = true;
@@ -105,5 +113,42 @@ public class InputManager : MonoBehaviour
     public void OnButtonHoverExit()
     {
         isHover = false;
+    }
+
+    public void OnDrag(PointerEventData eventData)
+    {
+        if (Input.touchCount > 0)
+        {
+            touchDrag = Input.GetTouch(0);
+            if (!isSwiping && !GameManager.Instance.IsGameOver && !GameManager.Instance.IsPause && !isHover)
+            {
+                mouseDragPos = Camera.main.ScreenToWorldPoint(touchDrag.position);
+                DetectSwipeLatestVersion();
+            }
+        }
+    }
+
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        if (Input.touchCount > 0)
+        {
+            touchUp = Input.GetTouch(0);
+            if (!GameManager.Instance.IsGameOver && !GameManager.Instance.IsPause && !isHover)
+            {
+                isSwiping = false;
+            }
+        }
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        if (Input.touchCount > 0)
+        {
+            touchDown = Input.GetTouch(0);
+            if (!GameManager.Instance.IsGameOver && !GameManager.Instance.IsPause && !isHover)
+            {
+                mouseDownPos = Camera.main.ScreenToWorldPoint(touchDown.position);
+            }
+        }
     }
 }

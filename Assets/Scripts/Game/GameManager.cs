@@ -87,17 +87,13 @@ public class GameManager : MonoBehaviour
 
     public void Quit()
     {
-#if UNITY_EDITOR
+#if UNITY_EDITOR || UNITY_STANDALONE
         GameData.SaveGameData();
         SoundManager.Instance.PlayAllButtonClickSound();
         EditorApplication.isPlaying = false;
-#else
-        for (int i = 0; i < GameData.Slots.Length; ++i)
-            GameData.Slots[i] = 0;
-
+#elif UNITY_ANDROID || UNITY_IOS
         SoundManager.Instance.PlayAllButtonClickSound();
         GameData.SaveGameData();
-
         Application.Quit();
 #endif    
     }

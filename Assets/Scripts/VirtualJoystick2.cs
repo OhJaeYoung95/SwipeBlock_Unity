@@ -1,12 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class VirtualJoystick2 : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
 {
     public Vector2 Value { get; private set; }
-
 
     private int pointerId;
     private bool isDragging = false;
