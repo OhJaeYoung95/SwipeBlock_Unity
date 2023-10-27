@@ -1,4 +1,5 @@
 using UnityEngine;
+using GooglePlayGames;
 
 public class ScoreManager : MonoBehaviour
 {
@@ -45,6 +46,7 @@ public class ScoreManager : MonoBehaviour
     public void UpdateBestScore()
     {
         GameData.BestScore = CurrentScore > GameData.BestScore ? CurrentScore : GameData.BestScore;
+        PlayGamesPlatform.Instance.ReportScore((long)GameData.BestScore, "CgkIl-aKn6IbEAIQAQ", (bool success) => { });
     }
     public void ConvertScoreToGold()
     {

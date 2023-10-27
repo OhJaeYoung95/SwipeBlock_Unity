@@ -1,3 +1,4 @@
+using GooglePlayGames;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -36,6 +37,7 @@ public class GameManager : MonoBehaviour
 
     public void GameOver()
     {
+        PlayGamesPlatform.Instance.ShowLeaderboardUI();
         IsGameOver = true;
         IsMove = false;
         Time.timeScale = 0f;
